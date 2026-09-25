@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>リレー走順きめ</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#1d2330; --sub:#5b6475; --line:#d9dde5;
+  --accent:#1f6feb; --accent-weak:#e7f0ff; --good:#16803c; --good-weak:#e6f6ec;
+  --warn:#9a5b00; --warn-weak:#fff4e0; --bad:#b42318; --bad-weak:#fdecea;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:15px;line-height:1.6}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:20px}
+#ver{font-size:12px;color:var(--sub);white-space:nowrap}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 20px 0;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{border:1px solid var(--line);border-bottom:none;background:var(--bg);padding:8px 14px;border-radius:8px 8px 0 0;font:inherit;cursor:pointer;color:var(--sub)}
+nav button.on{background:var(--card);color:var(--ink);font-weight:bold;border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:16px 20px 60px}
+section.tab{display:none}
+section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 14px}
+.card h2{margin:0 0 8px;font-size:17px}
+.card h3{margin:12px 0 6px;font-size:15px}
+.hint{color:var(--sub);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px 18px}
+.field{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.field label{flex:1 1 180px}
+.field input[type=number],.field input[type=text],.field select{width:90px;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.field input[type=text]{width:160px}
+textarea{width:100%;min-height:130px;font:13px/1.5 ui-monospace,Consolas,monospace;padding:8px;border:1px solid var(--line);border-radius:8px}
+button.btn{font:inherit;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:bold}
+button.primary:hover{filter:brightness(1.08)}
+button.small{padding:2px 8px;font-size:13px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:bold;white-space:nowrap;position:sticky;top:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+td input[type=text]{width:9em;font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:4px}
+td input[type=number]{width:5em;font:inherit;padding:2px 4px;border:1px solid var(--line);border-radius:4px}
+td select{font:inherit;padding:1px 2px}
+.tablewrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:8px}
+.msg{padding:8px 12px;border-radius:8px;margin:6px 0;font-size:14px}
+.msg.good{background:var(--good-weak);color:var(--good)}
+.msg.warn{background:var(--warn-weak);color:var(--warn)}
+.msg.bad{background:var(--bad-weak);color:var(--bad)}
+.msg.info{background:var(--accent-weak);color:#174ea6}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:8px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat .k{font-size:12px;color:var(--sub)}
+.stat .v{font-size:22px;font-weight:bold;font-variant-numeric:tabular-nums}
+.stat .d{font-size:13px}
+.tag{display:inline-block;font-size:12px;padding:0 6px;border-radius:10px;border:1px solid var(--line);white-space:nowrap}
+.tag.m{background:#e8f0fe;border-color:#b6ccf5}
+.tag.f{background:#fde8f1;border-color:#f3b7cf}
+.tag.up{background:var(--good-weak);border-color:#9fd3b0;color:var(--good)}
+.tag.down{background:var(--warn-weak);border-color:#f0c889;color:var(--warn)}
+.tag.eq{background:#f0f2f6}
+.tag.rep{background:#fff4e0;border-color:#f0c889}
+.bar{display:inline-block;height:8px;background:var(--accent);border-radius:4px;vertical-align:middle}
+.muted{color:var(--sub)}
+.ok{color:var(--good)} .ng{color:var(--bad)} .cau{color:var(--warn)}
+details summary{cursor:pointer;color:var(--accent)}
+#busy{display:none;position:fixed;inset:0;background:rgba(255,255,255,.6);z-index:10;align-items:center;justify-content:center;font-size:18px}
+#busy.on{display:flex}
+.printonly{display:none}
+@media print{
+  header,nav,.noprint,#busy{display:none!important}
+  body{background:#fff;font-size:11pt}
+  main{padding:0;max-width:none}
+  section.tab{display:none!important}
+  section#tab-print{display:block!important}
+  .card{border:none;padding:0;margin:0 0 10pt}
+  .tablewrap{max-height:none;overflow:visible;border:none}
+  th{position:static}
+  th,td{border:1px solid #999;padding:3pt 4pt}
+  .printonly{display:block}
+  .pagebreak{break-before:page}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>リレー走順きめ</h1>
+  <span id="ver">版 2026-09-25</span>
+</header>
+<nav class="noprint" id="nav">
+  <button data-tab="rules">① ルール</button>
+  <button data-tab="roster">② 名簿とタイム</button>
+  <button data-tab="current">③ いまの走順</button>
+  <button data-tab="best">④ いちばん速い走順</button>
+  <button data-tab="print">⑤ 印刷</button>
+  <button data-tab="save">⑥ 保存・控え</button>
+</nav>
+<main>
+
+<!-- ① ルール -->
+<section class="tab" id="tab-rules">
+  <div class="card">
+    <h2>ルール</h2>
+    <p class="hint">ここで決めたルールは自動で保存されます。あとからいつでも変えられます。変えたときは、④でもう一度計算してください。</p>
+    <div class="row">
+      <label>保存したルール：</label>
+      <select id="presetSel"></select>
+      <button class="btn small" id="presetLoad">呼び出す</button>
+      <button class="btn small" id="presetSave">いまのルールに名前をつけて保存</button>
+      <button class="btn small" id="presetDel">消す</button>
+    </div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>走る区間</h3>
+      <div class="field"><label>走る回数（区間の数）<br><span class="hint">空欄なら、名簿で走る人の数と同じ</span></label><input type="number" data-key="legs" min="2" step="1"></div>
+      <div class="field"><label>1区間の長さ（m）</label><input type="number" data-key="legLen" min="20" step="1"></div>
+      <div class="field"><label>最後の区間（アンカー）の長さ（m）<br><span class="hint">空欄なら、ほかと同じ</span></label><input type="number" data-key="lastLen" min="20" step="1"></div>
+      <div class="field"><label>名簿のタイムは何mのタイムか</label><select data-key="timeDist"><option value="50">50m走</option><option value="100">100m走</option></select></div>
+    </div>
+    <div class="card">
+      <h3>男女・2回走る人</h3>
+      <div class="field"><label><input type="checkbox" data-key="alternate"> 男女交互に走る</label></div>
+      <div class="field"><label>1走は</label><select data-key="firstGender"><option value="auto">どちらでもよい</option><option value="男">男子</option><option value="女">女子</option></select></div>
+      <div class="field"><label><input type="checkbox" data-key="useGenderCounts"> 男女の走る回数を決める</label></div>
+      <div class="field"><label>　男子の回数</label><input type="number" data-key="maleLegs" min="0" step="1"></div>
+      <div class="field"><label>　女子の回数</label><input type="number" data-key="femaleLegs" min="0" step="1"></div>
+      <div class="field"><label>2回走る人は、1回目と2回目の間を最低何人あけるか</label><input type="number" data-key="minGap" min="0" step="1"></div>
+      <p class="hint">人数が走る回数より少ないときは、足りない分を速い人から自動で選んで2回走らせます（②で変えられます）。</p>
+    </div>
+    <div class="card">
+      <h3>バトンゾーン</h3>
+      <div class="field"><label>ゾーンの長さ（m）</label><input type="number" data-key="zoneLen" min="5" step="1"></div>
+      <div class="field"><label>ゾーンの入口は、区間の線の何m手前か<br><span class="hint">線の前後10mずつなら 10</span></label><input type="number" data-key="zoneBefore" min="0" step="1"></div>
+      <div class="field"><label>ゾーンの手前から走り出してよい距離（m）<br><span class="hint">助走区間。なければ 0</span></label><input type="number" data-key="runup" min="0" step="1"></div>
+      <div class="field"><label>安全のため、ゾーンの出口の何m手前までに受け取るか</label><input type="number" data-key="margin" min="0" step="0.5"></div>
+    </div>
+    <div class="card">
+      <h3>受け渡しと目印（くわしい設定）</h3>
+      <div class="field"><label>受け渡すときの2人の間隔（m）<br><span class="hint">利得距離。腕を伸ばして約1m</span></label><input type="number" data-key="gain" min="0" step="0.1"></div>
+      <div class="field"><label>1足（足長）の長さ（cm）</label><input type="number" data-key="footCm" min="15" step="1"></div>
+      <div class="field"><label>受け手が目印を見てから走り出すまで（秒）</label><input type="number" data-key="reactRecv" min="0" step="0.05"></div>
+      <div class="field"><label>安全のため、目印を近くして遅らせる時間（秒）<br><span class="hint">早く出すぎて追いつけない失敗を防ぐ</span></label><input type="number" data-key="safety" min="0" step="0.05"></div>
+    </div>
+  </div>
+  <div id="rulesMsg"></div>
+</section>
+
+<!-- ② 名簿 -->
+<section class="tab" id="tab-roster">
+  <div class="card noprint">
+    <h2>名簿とタイムを貼り付ける</h2>
+    <p class="hint">Excelから「名前・男女・タイム」の列をコピーして貼り付けます。出席番号の列が入っていても大丈夫です。タイムは <b>7.6</b>、<b>7"6</b>、<b>7秒6</b> のどれでも読めます。</p>
+    <textarea id="rosterPaste" placeholder="例）&#10;1	山田 太郎	男	7.6&#10;2	佐藤 花子	女	8.9"></textarea>
+    <div class="row">
+      <button class="btn primary" id="rosterReplace">名簿を置きかえる</button>
+      <button class="btn" id="rosterAppend">名簿に追加する</button>
+    </div>
+    <div id="rosterParseMsg"></div>
+  </div>
+  <div class="card">
+    <h2>名簿</h2>
+    <div id="rosterSummary"></div>
+    <div class="tablewrap"><table id="rosterTable"></table></div>
+    <div class="row noprint">
+      <button class="btn" id="rosterAdd">1行ふやす</button>
+      <button class="btn" id="rosterSortTime">タイム順に並べる</button>
+      <button class="btn" id="rosterClear">名簿をすべて消す</button>
+    </div>
+    <p class="hint">「区間を固定」に番号を入れると、その人はその区間で走ります（例：1走に決めたい人に 1）。タイムのない人は、同じ男女の真ん中のタイムとして計算します。</p>
+  </div>
+</section>
+
+<!-- ③ いまの走順 -->
+<section class="tab" id="tab-current">
+  <div class="card">
+    <h2>もう決まっている走順（あれば）</h2>
+    <p class="hint">走順表をExcelからそのまま貼り付けます。「番号・名前」が1行に2組ある表（奇数と偶数で左右に分かれた表など）も読めます。番号がないときは上から順に1走、2走…とします。</p>
+    <textarea id="currentPaste" placeholder="例）&#10;1	山田 太郎	2	佐藤 花子&#10;3	鈴木 一郎	4	高橋 さくら"></textarea>
+    <div class="row">
+      <button class="btn primary" id="currentRead">読み込んで評価する</button>
+      <button class="btn" id="currentFromBest">④の案をここに入れる</button>
+      <button class="btn" id="currentClear">消す</button>
+    </div>
+    <div id="currentParseMsg"></div>
+  </div>
+  <div class="card" id="currentEvalCard" style="display:none">
+    <h2>評価と、入れ替えの提案</h2>
+    <div id="currentEval"></div>
+  </div>
+</section>
+
+<!-- ④ いちばん速い走順 -->
+<section class="tab" id="tab-best">
+  <div class="card">
+    <h2>いちばん速い走順を計算する</h2>
+    <p class="hint">ルールと名簿をもとに、走りのモデルで全体のタイムがいちばん短くなる走順と、受け手の待つ位置・走り出しの目印を計算します。</p>
+    <div class="row"><button class="btn primary" id="bestRun">計算する</button><span id="bestStatus" class="hint"></span></div>
+    <div id="bestMsg"></div>
+  </div>
+  <div id="bestOut"></div>
+</section>
+
+<!-- ⑤ 印刷 -->
+<section class="tab" id="tab-print">
+  <div class="card noprint">
+    <h2>印刷</h2>
+    <div class="row">
+      <label><input type="radio" name="printSrc" value="best" checked> ④の案</label>
+      <label><input type="radio" name="printSrc" value="current"> ③のいまの走順</label>
+      <label><input type="checkbox" id="printPractice" checked> パス練習の記録用紙もつける</label>
+      <button class="btn primary" id="printGo">印刷する</button>
+    </div>
+    <p class="hint">下が印刷される内容です。</p>
+  </div>
+  <div id="printOut"></div>
+</section>
+
+<!-- ⑥ 保存 -->
+<section class="tab" id="tab-save">
+  <div class="card">
+    <h2>自動保存の控え（最新10件）</h2>
+    <p class="hint">入力は、このパソコンのこのブラウザの中に自動で保存されます（ほかの人やインターネットには送られません）。1分以上あけて変更すると、新しい控えが1つ作られます。</p>
+    <div id="genList"></div>
+  </div>
+  <div class="card">
+    <h2>ファイルに書き出す・読み込む</h2>
+    <p class="hint">別のパソコンに移すときや、学年ごとに分けて残すときに使います。</p>
+    <div class="row">
+      <button class="btn" id="exportBtn">ファイルに書き出す</button>
+      <label class="btn">ファイルを読み込む<input type="file" id="importFile" accept=".json,application/json" style="display:none"></label>
+    </div>
+    <div id="saveMsg"></div>
+  </div>
+  <div class="card">
+    <h2>このアプリの計算について</h2>
+    <p class="hint">1人ひとりのタイムから「加速して、後半に少しずつ落ちる」走り方を作り、受け渡しの位置によって各自がバトンを運ぶ距離が変わることを計算しています。速い人ほど長く運ぶように並べると、全体が速くなります。パスはいつも理想どおりに渡せたものとして計算しているので、秒数は目安です。実際にはパスの上手・下手のほうがずっと大きく効きます。</p>
+  </div>
+</section>
+</main>
+<div id="busy">計算しています…</div>
+
+<script>
+'use strict';
+// ===ENGINE-START===
+// 走りのモデル：v(t) = Vm (1 - e^(-t/tau)) × 疲れ（d0 m から先、1mごとに c ずつ落ちる）
+// 50m走 7.6秒 → 100m 14.2秒 前後（中学生の平均）になるよう合わせてある
+var MODEL = { tau: 1.2, d0: 25, c: 0.0015, floor: 0.55, react: 0.2, dt: 0.004, step: 0.1 };
+
+function makeProfile(Vm, maxD) {
+  var m = MODEL, n = Math.ceil(maxD / m.step) + 2;
+  var T = new Float64Array(n), V = new Float64Array(n);
+  var t = 0, d = 0, v = 0, i = 1;
+  while (i < n) {
+    var f = d <= m.d0 ? 1 : Math.max(m.floor, 1 - m.c * (d - m.d0));
+    var tn = t + m.dt;
+    var vn = Vm * (1 - Math.exp(-tn / m.tau)) * f;
+    var dn = d + 0.5 * (v + vn) * m.dt;
+    while (i < n && i * m.step <= dn) {
+      var r = (i * m.step - d) / (dn - d);
+      T[i] = t + r * m.dt; V[i] = v + r * (vn - v); i++;
+    }
+    t = tn; d = dn; v = vn;
+  }
+  return { Vm: Vm, T: T, V: V };
+}
+function tAt(p, d) {
+  if (d <= 0) return 0;
+  var x = d / MODEL.step, i = Math.floor(x), last = p.T.length - 1;
+  if (i >= last) return p.T[last] + (d - last * MODEL.step) / Math.max(p.V[last], 0.5);
+  return p.T[i] + (x - i) * (p.T[i + 1] - p.T[i]);
+}
+function vAt(p, d) {
+  if (d <= 0) return 0;
+  var x = d / MODEL.step, i = Math.floor(x), last = p.T.length - 1;
+  if (i >= last) return p.V[last];
+  return p.V[i] + (x - i) * (p.V[i + 1] - p.V[i]);
+}
+// 走り出してから t 秒で進む距離
+function dAtTime(p, t) {
+  if (t <= 0) return 0;
+  var T = p.T, lo = 0, hi = T.length - 1;
+  if (t >= T[hi]) return hi * MODEL.step + (t - T[hi]) * Math.max(p.V[hi], 0.5);
+  while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (T[mid] <= t) lo = mid; else hi = mid; }
+  return (lo + (t - T[lo]) / (T[hi] - T[lo])) * MODEL.step;
+}
+var _vmCache = {};
+// 合図からのタイム（反応時間ふくむ）→ 最高速度
+function solveVm(time, dist) {
+  var key = time + '@' + dist;
+  if (_vmCache[key]) return _vmCache[key];
+  var target = time - MODEL.react, lo = 2, hi = 14;
+  for (var k = 0; k < 40; k++) {
+    var mid = (lo + hi) / 2, p = makeProfile(mid, dist + 1);
+    if (tAt(p, dist) > target) lo = mid; else hi = mid;
+  }
+  return (_vmCache[key] = (lo + hi) / 2);
+}
+
+// コースの形
+function makeGeom(S, N) {
+  var L = +S.legLen, LN = +S.lastLen || L, Z = +S.zoneLen, zb = +S.zoneBefore, R = +S.runup || 0;
+  var g = +S.gain || 0, mg = +S.margin || 0, us = [], etas = [], x;
+  for (x = -R; x <= Z - mg + 1e-9; x += 0.5) us.push(Math.round(x * 100) / 100);
+  var e0 = Math.ceil((g / 2) / 0.5 - 1e-9) * 0.5;
+  for (x = e0; x <= Z - mg + 1e-9; x += 0.5) etas.push(Math.round(x * 100) / 100);
+  return { N: N, L: L, LN: LN, Z: Z, zb: zb, R: R, g: g, mg: mg, us: us, etas: etas,
+           uNom: -R, uPen: 0.005, etaMid: etas.length ? etas[Math.floor(etas.length / 2)] : 0 };
+}
+function checkGeom(G) {
+  var e = [];
+  if (!(G.L > 0)) e.push('1区間の長さを入れてください。');
+  if (!(G.Z > 0)) e.push('ゾーンの長さを入れてください。');
+  if (G.zb > G.L) e.push('ゾーンの入口が区間の長さより手前になっています。');
+  if (G.zb > G.Z) e.push('ゾーンの入口が区間の線から離れすぎています（線がゾーンの外に出ます）。');
+  if (!G.etas.length) e.push('ゾーンが短すぎるか、安全の余裕が大きすぎて、受け渡せる場所がありません。');
+  return e;
+}
+
+// 走順の正確な計算：受け手ごとの待つ位置 u と受け渡し位置 eta を動的計画法で最適化
+function evaluate(seq, G) {
+  var N = seq.length, us = G.us, etas = G.etas, nu = us.length;
+  if (N < 2) return { total: tAt(seq[0], G.LN) + MODEL.react, u: [null], eta: [null] };
+  var prevF = [0], prevD0 = [G.L - G.zb], back = [];
+  // 入口から奥で待つほど少しだけ不利にする（差がわずかなら、わかりやすい入口の近くを選ぶ）
+  var pen = us.map(function (u) { return (G.uPen || 0) * (u + G.R); });
+  for (var k = 1; k < N; k++) {
+    var A = seq[k - 1], B = seq[k];
+    var f = new Float64Array(nu).fill(Infinity), bp = new Int32Array(nu).fill(-1), be = new Float64Array(nu);
+    var vB = new Float64Array(0);
+    for (var a = 0; a < prevF.length; a++) {
+      var fa = prevF[a]; if (!isFinite(fa)) continue;
+      var dA0 = prevD0[a];
+      for (var j = 0; j < etas.length; j++) {
+        var eta = etas[j], dA = dA0 + eta - G.g; if (dA < 0) continue;
+        var vA = vAt(A, dA), base = fa + tAt(A, dA);
+        for (var b = 0; b < nu; b++) {
+          var u = us[b]; if (u > eta) break;
+          var dB = eta - u;
+          if (vAt(B, dB) > vA + 1e-9) continue;      // 受け手の方が速くなると追いつけない
+          var val = base - tAt(B, dB) + pen[b];
+          if (val < f[b]) { f[b] = val; bp[b] = a; be[b] = eta; }
+        }
+      }
+    }
+    back.push({ bp: bp, be: be });
+    prevF = f; prevD0 = us.map(function (u) { return G.L - u; });
+  }
+  var best = Infinity, bi = -1, Z = seq[N - 1];
+  for (var b2 = 0; b2 < nu; b2++) {
+    if (!isFinite(prevF[b2])) continue;
+    var v = prevF[b2] + tAt(Z, G.LN + G.zb - us[b2]);
+    if (v < best) { best = v; bi = b2; }
+  }
+  var uu = new Array(N).fill(null), ee = new Array(N).fill(null), cur = bi, penSum = 0;
+  for (var k2 = N - 1; k2 >= 1 && cur >= 0; k2--) {
+    uu[k2] = us[cur]; ee[k2] = back[k2 - 1].be[cur]; penSum += pen[cur]; cur = back[k2 - 1].bp[cur];
+  }
+  return { total: best - penSum + MODEL.react, u: uu, eta: ee };
+}
+
+// 受け手の出発時刻が start のとき、受け渡しの位置（ゾーンの入口から）を求める
+function catchPos(A, sA, startAbsA, B, start, startAbsB, zoneAbs, G) {
+  for (var t = start; t < start + 12; t += 0.005) {
+    var rPos = startAbsB + dAtTime(B, t - start), aPos = startAbsA + dAtTime(A, t - sA);
+    if (rPos - aPos <= G.g) return rPos - zoneAbs;
+    if (rPos - zoneAbs > G.Z + 10) return Infinity;
+  }
+  return Infinity;
+}
+
+// 表示用のくわしい情報
+function details(seq, G, res, S) {
+  var N = seq.length, rows = [], sA = MODEL.react, startAbsA = 0, prevBaton = 0;
+  var rr = +S.reactRecv || 0, sd = +S.safety || 0, foot = (+S.footCm || 25) / 100;
+  for (var k = 0; k < N; k++) rows.push({ leg: k + 1 });
+  for (k = 1; k < N; k++) {
+    var A = seq[k - 1], B = seq[k], u = res.u[k], eta = res.eta[k];
+    var zoneAbs = G.L * k - G.zb;
+    var dA = zoneAbs + eta - G.g - startAbsA, tH = sA + tAt(A, dA);
+    var dB = eta - u, sB = tH - tAt(B, dB), startAbsB = zoneAbs + u;
+    var tm = sB - rr + sd, posA = startAbsA + dAtTime(A, tm - sA);
+    var baton = zoneAbs + eta - G.g / 2;
+    rows[k - 1].carry = baton - prevBaton;
+    // 目印どおりに出たとき（安全のため sd 秒遅れ）の受け渡し位置と、早く出てもよい余裕
+    var plan = sB + sd, etaPlan = catchPos(A, sA, startAbsA, B, plan, startAbsB, zoneAbs, G);
+    var lo = 0, hi = 0.6;
+    if (catchPos(A, sA, startAbsA, B, plan - hi, startAbsB, zoneAbs, G) <= G.Z) lo = hi;
+    else for (var it = 0; it < 9; it++) {
+      var mid = (lo + hi) / 2;
+      if (catchPos(A, sA, startAbsA, B, plan - mid, startAbsB, zoneAbs, G) <= G.Z) lo = mid; else hi = mid;
+    }
+    rows[k].recv = {
+      u: u, eta: eta, etaPlan: etaPlan, earlyTol: lo, mark: startAbsB - posA, markFoot: (startAbsB - posA) / foot,
+      vA: vAt(A, dA), vB: vAt(B, dB), ratio: B.Vm / A.Vm, handTime: tH
+    };
+    prevBaton = baton; sA = sB; startAbsA = startAbsB;
+  }
+  rows[N - 1].carry = G.L * (N - 1) + G.LN - prevBaton;
+  return rows;
+}
+
+// 並べ替えの探索に使う近似：隣り合う2人ごとのコスト表
+function pairMatrix(profs, G) {
+  var P = profs.length, C = new Float64Array(P * P), first = new Float64Array(P), last = new Float64Array(P);
+  var us = G.us, etas = G.etas;
+  for (var i = 0; i < P; i++) {
+    var p = profs[i];
+    first[i] = tAt(p, G.L - G.zb + G.etaMid - G.g) - tAt(p, G.L - G.uNom + G.etaMid - G.g);
+    last[i] = tAt(p, G.LN + G.zb - G.uNom);
+  }
+  for (var a = 0; a < P; a++) for (var b = 0; b < P; b++) {
+    var A = profs[a], B = profs[b], best = Infinity;
+    var corrBase = tAt(B, G.L - G.uNom + G.etaMid - G.g);
+    for (var j = 0; j < etas.length; j++) {
+      var eta = etas[j], dA = G.L - G.uNom + eta - G.g, vA = vAt(A, dA), tA = tAt(A, dA);
+      for (var k = 0; k < us.length; k++) {
+        var u = us[k]; if (u > eta) break;
+        var dB = eta - u; if (vAt(B, dB) > vA + 1e-9) continue;
+        var val = tA - tAt(B, dB) + tAt(B, G.L - u + G.etaMid - G.g) - corrBase;
+        if (val < best) best = val;
+      }
+    }
+    C[a * P + b] = best;
+  }
+  return { P: P, C: C, first: first, last: last };
+}
+
+// 近似の合計（＋ルール違反の罰則）
+function approxEnergy(seq, M, minGap) {
+  var P = M.P, e = M.first[seq[0]] + M.last[seq[seq.length - 1]], pen = 0;
+  for (var k = 1; k < seq.length; k++) e += M.C[seq[k - 1] * P + seq[k]];
+  if (minGap >= 0) {
+    var lastPos = {};
+    for (k = 0; k < seq.length; k++) {
+      var id = seq[k];
+      if (lastPos[id] !== undefined) { var gap = k - lastPos[id] - 1; if (gap < minGap) pen += 3 * (minGap - gap + 1); }
+      lastPos[id] = k;
+    }
+  }
+  return e + pen;
+}
+function gapViolations(seq, minGap) {
+  var lastPos = {}, n = 0;
+  for (var k = 0; k < seq.length; k++) {
+    var id = seq[k];
+    if (lastPos[id] !== undefined && k - lastPos[id] - 1 < minGap) n++;
+    lastPos[id] = k;
+  }
+  return n;
+}
+
+function rng(seed) { var s = seed >>> 0 || 1; return function () { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
+function shuffle(a, rnd) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+// ctx: { N, pattern:[g or null], instances:[{id,g}], pins:{leg0:id}, minGap }
+// 区間ごとの「組」（入れ替えてよい区間のまとまり）を作る
+function slotPools(ctx) {
+  var pools = {};
+  for (var k = 0; k < ctx.N; k++) {
+    if (ctx.pins[k] !== undefined) continue;
+    var key = ctx.pattern ? ctx.pattern[k] : '*';
+    (pools[key] = pools[key] || []).push(k);
+  }
+  return pools;
+}
+function randomSeq(ctx, rnd) {
+  var seq = new Array(ctx.N), pools = slotPools(ctx), left = {};
+  var pinnedUse = {};
+  for (var k in ctx.pins) { seq[k] = ctx.pins[k]; pinnedUse[ctx.pins[k]] = (pinnedUse[ctx.pins[k]] || 0) + 1; }
+  ctx.instances.forEach(function (ins) {
+    if (pinnedUse[ins.id]) { pinnedUse[ins.id]--; return; }
+    var key = ctx.pattern ? ins.g : '*';
+    (left[key] = left[key] || []).push(ins.id);
+  });
+  for (var key in pools) {
+    var ids = shuffle((left[key] || []).slice(), rnd), slots = pools[key];
+    for (var i = 0; i < slots.length; i++) seq[slots[i]] = ids[i];
+  }
+  return seq;
+}
+function anneal(ctx, M, seed, iters) {
+  var rnd = rng(seed), seq = randomSeq(ctx, rnd), pools = slotPools(ctx);
+  var keys = Object.keys(pools).filter(function (k) { return pools[k].length > 1; });
+  if (!keys.length) return seq;
+  var weights = keys.map(function (k) { return pools[k].length; }), wsum = weights.reduce(function (a, b) { return a + b; }, 0);
+  var E = approxEnergy(seq, M, ctx.minGap), best = seq.slice(), bestE = E;
+  var T0 = 0.6, T1 = 0.002;
+  for (var it = 0; it < iters; it++) {
+    var T = T0 * Math.pow(T1 / T0, it / iters);
+    var r = rnd() * wsum, pi = 0; while (r > weights[pi]) { r -= weights[pi]; pi++; }
+    var pool = pools[keys[pi]];
+    var i = pool[Math.floor(rnd() * pool.length)], j = pool[Math.floor(rnd() * pool.length)];
+    if (i === j || seq[i] === seq[j]) continue;
+    var t = seq[i]; seq[i] = seq[j]; seq[j] = t;
+    var E2 = approxEnergy(seq, M, ctx.minGap);
+    if (E2 <= E || rnd() < Math.exp((E - E2) / T)) { E = E2; if (E < bestE) { bestE = E; best = seq.slice(); } }
+    else { t = seq[i]; seq[i] = seq[j]; seq[j] = t; }
+  }
+  return descend(best, ctx, M);
+}
+// 1回の入れ替えで良くなる限り入れ替える
+function descend(seq, ctx, M) {
+  seq = seq.slice();
+  var pools = slotPools(ctx), E = approxEnergy(seq, M, ctx.minGap), improved = true;
+  while (improved) {
+    improved = false;
+    for (var key in pools) {
+      var s = pools[key];
+      for (var a = 0; a < s.length; a++) for (var b = a + 1; b < s.length; b++) {
+        var i = s[a], j = s[b]; if (seq[i] === seq[j]) continue;
+        var t = seq[i]; seq[i] = seq[j]; seq[j] = t;
+        var E2 = approxEnergy(seq, M, ctx.minGap);
+        if (E2 < E - 1e-9) { E = E2; improved = true; } else { t = seq[i]; seq[i] = seq[j]; seq[j] = t; }
+      }
+    }
+  }
+  return seq;
+}
+// いまの走順から、1回ずつの入れ替えを良い順に提案
+function swapSteps(seq, ctx, M, maxSteps) {
+  seq = seq.slice();
+  var pools = slotPools(ctx), steps = [];
+  for (var s = 0; s < maxSteps; s++) {
+    var E = approxEnergy(seq, M, ctx.minGap), best = null;
+    for (var key in pools) {
+      var sl = pools[key];
+      for (var a = 0; a < sl.length; a++) for (var b = a + 1; b < sl.length; b++) {
+        var i = sl[a], j = sl[b]; if (seq[i] === seq[j]) continue;
+        var t = seq[i]; seq[i] = seq[j]; seq[j] = t;
+        var gain = E - approxEnergy(seq, M, ctx.minGap);
+        t = seq[i]; seq[i] = seq[j]; seq[j] = t;
+        if (!best || gain > best.gain) best = { i: i, j: j, gain: gain };
+      }
+    }
+    if (!best || best.gain < 0.02) break;
+    var t2 = seq[best.i]; seq[best.i] = seq[best.j]; seq[best.j] = t2;
+    steps.push({ i: best.i, j: best.j, seq: seq.slice() });
+  }
+  return steps;
+}
+// ===ENGINE-END===
+
+// ================= 画面 =================
+var APP_KEY = 'relayOrderApp.v1';
+var DEFAULTS = {
+  legs: '', legLen: 100, lastLen: '', timeDist: 50,
+  alternate: false, firstGender: 'auto', useGenderCounts: false, maleLegs: '', femaleLegs: '', minGap: 12,
+  zoneLen: 20, zoneBefore: 10, runup: 0, margin: 2,
+  gain: 1.0, footCm: 25, reactRecv: 0.15, safety: 0.1
+};
+var state = { settings: Object.assign({}, DEFAULTS), presets: [], roster: [], currentText: '', currentIds: null, bestIds: null, tab: 'rules' };
+var lastBest = null, lastCurrentEval = null;
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+function f2(x) { return (Math.round(x * 100) / 100).toFixed(2); }
+function sec(x) { return f1(x) + '秒'; }
+function norm(s) { return String(s || '').normalize('NFKC').replace(/[\s　]/g, ''); }
+function newId() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function msg(cls, html) { return '<div class="msg ' + cls + '">' + html + '</div>'; }
+function genderTag(g) { return g === '男' ? '<span class="tag m">男</span>' : g === '女' ? '<span class="tag f">女</span>' : '<span class="tag">？</span>'; }
+
+// ---------- 保存 ----------
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+var saveTimer = null;
+function save() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 800); }
+function snapshot() { return JSON.stringify({ settings: state.settings, presets: state.presets, roster: state.roster, currentText: state.currentText, currentIds: state.currentIds, bestIds: state.bestIds }); }
+function saveNow() {
+  var data = snapshot();
+  lsSet(APP_KEY + '.cur', data);
+  var gens = [];
+  try { gens = JSON.parse(lsGet(APP_KEY + '.gens') || '[]'); } catch (e) { gens = []; }
+  var now = Date.now();
+  if (gens.length && gens[0].data === data) return;
+  var entry = { t: now, data: data };
+  if (gens.length && now - gens[0].t < 60000) gens[0] = entry; else gens.unshift(entry);
+  gens = gens.slice(0, 10);
+  lsSet(APP_KEY + '.gens', JSON.stringify(gens));
+  if (state.tab === 'save') renderSave();
+}
+function applyData(d) {
+  state.settings = Object.assign({}, DEFAULTS, d.settings || {});
+  state.presets = d.presets || [];
+  state.roster = (d.roster || []).map(function (r) { return Object.assign({ id: newId(), name: '', gender: '', time: null, absent: false, repeat: 'auto', pin: '' }, r); });
+  state.currentText = d.currentText || '';
+  state.currentIds = d.currentIds || null;
+  state.bestIds = d.bestIds || null;
+  lastBest = null; lastCurrentEval = null;
+}
+function load() {
+  var raw = lsGet(APP_KEY + '.cur');
+  if (raw) { try { applyData(JSON.parse(raw)); } catch (e) { } }
+  try { var t = lsGet(APP_KEY + '.tab'); if (t) state.tab = t; } catch (e) { }
+  if (!raw) state.tab = 'rules';
+}
+
+// ---------- タブ ----------
+function showTab(t) {
+  state.tab = t; lsSet(APP_KEY + '.tab', t);
+  document.querySelectorAll('#nav button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === t); });
+  document.querySelectorAll('section.tab').forEach(function (s) { s.classList.toggle('on', s.id === 'tab-' + t); });
+  ({ rules: renderRules, roster: renderRoster, current: renderCurrent, best: renderBest, print: renderPrint, save: renderSave })[t]();
+}
+
+// ---------- ① ルール ----------
+function renderRules() {
+  document.querySelectorAll('[data-key]').forEach(function (el) {
+    var v = state.settings[el.dataset.key];
+    if (el.type === 'checkbox') el.checked = !!v; else el.value = v == null ? '' : v;
+  });
+  var sel = $('presetSel');
+  sel.innerHTML = state.presets.length ? state.presets.map(function (p, i) { return '<option value="' + i + '">' + esc(p.name) + '</option>'; }).join('') : '<option value="">（まだありません）</option>';
+  var ctx = buildContext();
+  var h = '';
+  ctx.errors.forEach(function (e) { h += msg('bad', esc(e)); });
+  ctx.warnings.forEach(function (e) { h += msg('warn', esc(e)); });
+  if (!ctx.errors.length && state.roster.length) h += msg('good', 'このルールで計算できます（' + ctx.N + '区間）。');
+  $('rulesMsg').innerHTML = h;
+}
+function onSettingChange(e) {
+  var el = e.target, k = el.dataset.key; if (!k) return;
+  var v;
+  if (el.type === 'checkbox') v = el.checked;
+  else if (el.type === 'number') v = el.value === '' ? '' : +el.value;
+  else v = el.value;
+  state.settings[k] = v; lastBest = null; lastCurrentEval = null; save(); renderRules();
+}
+
+// ---------- 名簿の読み取り ----------
+function parseTime(tok, dist) {
+  var s = String(tok).normalize('NFKC').trim(), m, v = null, scaled = false;
+  if ((m = s.match(/^(\d{1,2})\s*(?:秒|"|”|″|′′|'')\s*(\d{1,2})$/))) v = +(m[1] + '.' + m[2]);
+  else if ((m = s.match(/^(\d{1,2})\s*秒$/))) v = +m[1];
+  else if ((m = s.match(/^(\d{1,3})(?:\.(\d+))?$/))) {
+    v = +s;
+    if (!m[2] && v >= 40 && v < 200 && dist <= 60) { v = v / 10; scaled = true; }
+  }
+  if (v == null || !isFinite(v)) return null;
+  var lo = dist <= 60 ? 5 : 9, hi = dist <= 60 ? 16 : 30;
+  if (v < lo || v > hi) return null;
+  return { v: v, scaled: scaled };
+}
+function parseGender(tok) {
+  var s = String(tok).normalize('NFKC').trim();
+  if (/^(男|男子|M|m|♂|おとこ)$/.test(s)) return '男';
+  if (/^(女|女子|F|f|♀|おんな)$/.test(s)) return '女';
+  return null;
+}
+function isNoteLine(s) { return /[※＊*。]|注意|について|こと$/.test(s) || norm(s).length > 24; }
+function parseRoster(text) {
+  var dist = +state.settings.timeDist || 50, out = [], skipped = [], notes = [];
+  text.split(/\r?\n/).forEach(function (line) {
+    if (!line.trim()) return;
+    if (/名前|氏名|性別|番号/.test(line) && !/\d+\.\d/.test(line)) { skipped.push(line.trim()); return; }
+    var cells = line.split(/\t|,|，/).map(function (c) { return c.trim(); }).filter(Boolean);
+    if (cells.length === 1) cells = line.trim().split(/[ 　]+/);
+    var gender = '', time = null, scaled = false, nameParts = [];
+    // 後ろから：タイム → 男女
+    var rest = cells.slice();
+    for (var i = rest.length - 1; i >= 0; i--) {
+      var g = parseGender(rest[i]);
+      if (g && !gender) { gender = g; rest.splice(i, 1); continue; }
+      var t = (time == null && i > 0) ? parseTime(rest[i], dist) : null;
+      if (t) { time = t.v; scaled = t.scaled; rest.splice(i, 1); continue; }
+    }
+    // 先頭の出席番号
+    if (rest.length > 1 && /^\d{1,3}$/.test(norm(rest[0]))) rest.shift();
+    rest.forEach(function (c) { if (!/^\d+([.]\d+)?$/.test(norm(c))) nameParts.push(c); });
+    var name = nameParts.slice(0, 2).join(' ').trim();
+    if (!name) { skipped.push(line.trim()); return; }
+    if (isNoteLine(name)) { notes.push(line.trim()); return; }
+    out.push({ id: newId(), name: name, gender: gender, time: time, absent: false, repeat: 'auto', pin: '', _scaled: scaled });
+  });
+  return { rows: out, skipped: skipped, notes: notes };
+}
+
+// ---------- 計算の準備 ----------
+function median(a) { if (!a.length) return null; a = a.slice().sort(function (x, y) { return x - y; }); var m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; }
+function buildContext() {
+  var S = state.settings, errors = [], warnings = [];
+  var active = state.roster.filter(function (r) { return !r.absent && String(r.name).trim(); });
+  var dist = +S.timeDist || 50;
+  var allT = active.filter(function (r) { return r.time; }).map(function (r) { return r.time; });
+  var medAll = median(allT) || (dist <= 60 ? 8.3 : 15.5);
+  var medG = {
+    '男': median(active.filter(function (r) { return r.time && r.gender === '男'; }).map(function (r) { return r.time; })) || medAll,
+    '女': median(active.filter(function (r) { return r.time && r.gender === '女'; }).map(function (r) { return r.time; })) || medAll
+  };
+  var noTime = active.filter(function (r) { return !r.time; });
+  if (noTime.length) warnings.push('タイムのない人が' + noTime.length + '人います（' + noTime.map(function (r) { return r.name; }).join('、') + '）。同じ男女の真ん中のタイムとして計算します。');
+  var needGender = S.alternate || S.useGenderCounts;
+  var noG = active.filter(function (r) { return r.gender !== '男' && r.gender !== '女'; });
+  if (needGender && noG.length) errors.push('男女のきまりを使うには、全員の男女が必要です（未入力：' + noG.map(function (r) { return r.name; }).join('、') + '）。');
+
+  var N = +S.legs || active.length, M = null, F = null, pattern = null;
+  var nm = active.filter(function (r) { return r.gender === '男'; }).length, nf = active.filter(function (r) { return r.gender === '女'; }).length;
+  if (S.useGenderCounts) {
+    M = +S.maleLegs || 0; F = +S.femaleLegs || 0;
+    if (M + F === 0) errors.push('男子と女子の回数を入れてください。');
+    else if (+S.legs && +S.legs !== M + F) errors.push('走る回数（' + S.legs + '）と、男子' + M + '回＋女子' + F + '回＝' + (M + F) + '回が合いません。');
+    else N = M + F;
+  }
+  if (S.alternate && !errors.length) {
+    var start = S.firstGender;
+    if (S.useGenderCounts) {
+      if (Math.abs(M - F) > 1) errors.push('男女交互にするには、男子と女子の回数の差が1回以内である必要があります。');
+      if (M > F) { if (start === '女') errors.push('男子の回数が多いので、1走は男子になります。'); start = '男'; }
+      else if (F > M) { if (start === '男') errors.push('女子の回数が多いので、1走は女子になります。'); start = '女'; }
+    }
+    if (start === 'auto') start = nm >= nf ? '男' : '女';
+    pattern = [];
+    for (var k = 0; k < N; k++) pattern.push(k % 2 === 0 ? start : (start === '男' ? '女' : '男'));
+    M = pattern.filter(function (g) { return g === '男'; }).length; F = N - M;
+  }
+  if (N < 2) errors.push('走る人を2人以上にしてください。');
+
+  // 2回走る人
+  var runs = {};
+  active.forEach(function (r) { runs[r.id] = 1; });
+  function pickRepeaters(cands, need, label) {
+    if (need < 0) {
+      errors.push(label + 'の人数が、走る回数より' + (-need) + '人多いです。「走らない」に印をつけるか、ルールの回数を直してください。');
+      return;
+    }
+    var yes = cands.filter(function (r) { return r.repeat === 'yes'; });
+    if (yes.length > need) warnings.push(label + 'で「2回走る」にした人が' + yes.length + '人いますが、2回走るのは' + need + '人です。先に並んでいる人を選びます。');
+    var auto = cands.filter(function (r) { return r.repeat === 'auto'; }).sort(function (a, b) {
+      if (!a.time && !b.time) return 0; if (!a.time) return 1; if (!b.time) return -1; return a.time - b.time;
+    });
+    var pool = yes.concat(auto);
+    if (pool.length < need) { errors.push(label + 'で2回走る人が' + need + '人必要ですが、選べる人が' + pool.length + '人しかいません。'); return; }
+    pool.slice(0, need).forEach(function (r) { runs[r.id] = 2; });
+    if (need > active.length) errors.push('2回走っても回数が足りません。');
+  }
+  if (!errors.length) {
+    if (M != null) {
+      pickRepeaters(active.filter(function (r) { return r.gender === '男'; }), M - nm, '男子');
+      pickRepeaters(active.filter(function (r) { return r.gender === '女'; }), F - nf, '女子');
+    } else pickRepeaters(active, N - active.length, '全体');
+  }
+
+  // 区間の固定
+  var pins = {};
+  active.forEach(function (r) {
+    if (r.pin === '' || r.pin == null) return;
+    var p = +r.pin;
+    if (!(p >= 1 && p <= N && Math.floor(p) === p)) { errors.push(r.name + 'さんの固定区間（' + r.pin + '）が1〜' + N + 'の範囲にありません。'); return; }
+    if (pins[p - 1] !== undefined) { errors.push(p + '走に2人が固定されています。'); return; }
+    if (pattern && pattern[p - 1] !== r.gender) { errors.push(r.name + 'さんを' + p + '走に固定していますが、その区間は' + pattern[p - 1] + '子の区間です。'); return; }
+    pins[p - 1] = r.id;
+  });
+
+  var G = makeGeom(S, N);
+  checkGeom(G).forEach(function (e) { errors.push(e); });
+  var people = active, idx = {}, profs = [];
+  var maxD = Math.max(G.L, G.LN) + G.Z + G.R + 30;
+  if (!errors.length) {
+    people.forEach(function (r, i) {
+      idx[r.id] = i;
+      var t = r.time || medG[r.gender] || medAll;
+      var p = makeProfile(solveVm(t, dist), maxD); p.i = i; p.person = r; p.timeUsed = t;
+      profs.push(p);
+    });
+  }
+  var instances = [];
+  people.forEach(function (r) { for (var c = 0; c < (runs[r.id] || 0); c++) instances.push({ id: idx[r.id], g: r.gender }); });
+  var pinsIdx = {};
+  for (var pk in pins) pinsIdx[pk] = idx[pins[pk]];
+  var repeaters = people.filter(function (r) { return runs[r.id] === 2; });
+  var minGap = +S.minGap || 0;
+  if (repeaters.length && N < 2 * (minGap + 1) && !errors.length) warnings.push('区間の数が少ないため、2回走る人の間隔（' + minGap + '人）は守れません。');
+  return { errors: errors, warnings: warnings, N: N, M: M, F: F, pattern: pattern, people: people, profs: profs, idx: idx,
+           runs: runs, repeaters: repeaters, instances: instances, pins: pinsIdx, minGap: minGap, G: G, S: S };
+}
+
+// 走順（人の番号の並び）がルールに合っているか
+function checkRules(seq, ctx) {
+  var out = [], N = ctx.N;
+  if (seq.length !== N) out.push('区間の数が ' + seq.length + ' で、ルールの ' + N + ' と違います。');
+  if (ctx.pattern) {
+    var bad = [];
+    seq.forEach(function (id, k) { if (ctx.pattern[k] && ctx.people[id].gender !== ctx.pattern[k]) bad.push(k + 1); });
+    if (bad.length) out.push('男女交互になっていない区間：' + bad.slice(0, 10).join('、') + '走' + (bad.length > 10 ? 'ほか' : ''));
+  } else if (ctx.M != null) {
+    var m = seq.filter(function (id) { return ctx.people[id].gender === '男'; }).length;
+    if (m !== ctx.M || seq.length - m !== ctx.F) out.push('男子' + m + '回・女子' + (seq.length - m) + '回で、ルール（男子' + ctx.M + '回・女子' + ctx.F + '回）と違います。');
+  }
+  var cnt = {};
+  seq.forEach(function (id) { cnt[id] = (cnt[id] || 0) + 1; });
+  var miss = ctx.people.filter(function (r, i) { return !cnt[i]; });
+  if (miss.length) out.push('走順に入っていない人：' + miss.map(function (r) { return r.name; }).join('、'));
+  var three = ctx.people.filter(function (r, i) { return cnt[i] > 2; });
+  if (three.length) out.push('3回以上走る人：' + three.map(function (r) { return r.name; }).join('、'));
+  if (gapViolations(seq, ctx.minGap)) out.push('2回走る人の間隔が' + ctx.minGap + '人より短いところがあります。');
+  for (var k in ctx.pins) if (seq[k] !== ctx.pins[k]) out.push(ctx.people[ctx.pins[k]].name + 'さんが固定した' + (+k + 1) + '走にいません。');
+  return out;
+}
+
+// ---------- ② 名簿 ----------
+function renderRoster() {
+  var ctx = buildContext();
+  var R = state.roster;
+  var h = '<thead><tr><th>#</th><th>名前</th><th>男女</th><th class="num">タイム(秒)</th><th>走らない</th><th>2回走る</th><th>区間を固定</th><th></th></tr></thead><tbody>';
+  R.forEach(function (r, i) {
+    var auto = ctx.runs[r.id] === 2 && r.repeat === 'auto';
+    h += '<tr data-id="' + r.id + '">' +
+      '<td class="num muted">' + (i + 1) + '</td>' +
+      '<td><input type="text" data-f="name" value="' + esc(r.name) + '"></td>' +
+      '<td><select data-f="gender"><option value=""' + (r.gender ? '' : ' selected') + '>－</option><option' + (r.gender === '男' ? ' selected' : '') + '>男</option><option' + (r.gender === '女' ? ' selected' : '') + '>女</option></select></td>' +
+      '<td class="num"><input type="number" step="0.1" data-f="time" value="' + (r.time == null ? '' : r.time) + '"></td>' +
+      '<td><input type="checkbox" data-f="absent"' + (r.absent ? ' checked' : '') + '></td>' +
+      '<td><select data-f="repeat"><option value="auto"' + (r.repeat === 'auto' ? ' selected' : '') + '>自動</option><option value="yes"' + (r.repeat === 'yes' ? ' selected' : '') + '>2回走る</option><option value="no"' + (r.repeat === 'no' ? ' selected' : '') + '>1回だけ</option></select>' +
+      (ctx.runs[r.id] === 2 ? ' <span class="tag rep">' + (auto ? '自動で2回' : '2回') + '</span>' : '') + '</td>' +
+      '<td><input type="number" min="1" step="1" data-f="pin" value="' + esc(r.pin) + '" placeholder="－"></td>' +
+      '<td><button class="btn small" data-del="' + r.id + '" title="この行を消す">消す</button></td></tr>';
+  });
+  h += '</tbody>';
+  $('rosterTable').innerHTML = R.length ? h : '<tr><td class="muted">まだ名簿がありません。上に貼り付けてください。</td></tr>';
+  var act = ctx.people, nm = act.filter(function (r) { return r.gender === '男'; }).length, nf = act.filter(function (r) { return r.gender === '女'; }).length;
+  var s = '<p>走る人 <b>' + act.length + '人</b>（男子' + nm + '・女子' + nf + (act.length - nm - nf ? '・未入力' + (act.length - nm - nf) : '') + '）／ 区間 <b>' + ctx.N + '</b>';
+  if (ctx.repeaters.length) s += '／ 2回走る人：' + ctx.repeaters.map(function (r) { return esc(r.name); }).join('、');
+  s += '</p>';
+  ctx.errors.forEach(function (e) { s += msg('bad', esc(e)); });
+  ctx.warnings.forEach(function (e) { s += msg('warn', esc(e)); });
+  $('rosterSummary').innerHTML = s;
+}
+function onRosterInput(e) {
+  var el = e.target, f = el.dataset.f; if (!f) return;
+  var tr = el.closest('tr'), r = state.roster.find(function (x) { return x.id === tr.dataset.id; }); if (!r) return;
+  if (f === 'absent') r.absent = el.checked;
+  else if (f === 'time') { var t = el.value === '' ? null : parseTime(el.value, +state.settings.timeDist || 50); r.time = t ? t.v : null; if (el.value !== '' && !t) el.style.background = '#fdecea'; }
+  else if (f === 'pin') r.pin = el.value === '' ? '' : +el.value;
+  else r[f] = el.value;
+  lastBest = null; lastCurrentEval = null; save();
+  if (e.type === 'change') renderRoster();
+}
+
+// ---------- ③ いまの走順 ----------
+function matchName(tok, people) {
+  var n = norm(tok); if (!n) return null;
+  var exact = people.filter(function (r) { return norm(r.name) === n; });
+  if (exact.length === 1) return { r: exact[0], sure: true };
+  if (exact.length > 1) return { amb: true };
+  if (n.length < 2) return null;
+  var part = people.filter(function (r) { var m = norm(r.name); return m.indexOf(n) === 0 || n.indexOf(m) === 0; });
+  if (part.length === 1) return { r: part[0], sure: false };
+  if (part.length > 1) return { amb: true };
+  return null;
+}
+function parseOrder(text, people) {
+  var legs = {}, unknown = [], unsure = [], ignored = [], seqNext = 1, dup = [];
+  text.split(/\r?\n/).forEach(function (line) {
+    if (!line.trim()) return;
+    var cells = line.split('\t').map(function (c) { return c.trim(); }).filter(Boolean);
+    var tokens = cells.length > 1 ? cells : line.trim().split(/[ 　]+/);
+    var pending = null, found = false;
+    for (var i = 0; i < tokens.length; i++) {
+      var tk = tokens[i], nt = norm(tk);
+      if (/^\d{1,3}(走|番)?$/.test(nt)) { pending = parseInt(nt, 10); continue; }
+      if (parseGender(tk) || /^\d+([.]\d+)?(秒)?$/.test(nt)) continue;
+      var m = null, used = 1;
+      if (cells.length <= 1 && i + 1 < tokens.length && !/^\d/.test(norm(tokens[i + 1]))) {
+        m = matchName(tk + tokens[i + 1], people); if (m && m.r && m.sure) used = 2; else m = null;
+      }
+      if (!m) m = matchName(tk, people);
+      if (m && m.r) {
+        var leg = pending || seqNext;
+        if (legs[leg]) dup.push(leg + '走');
+        legs[leg] = m.r; if (!m.sure) unsure.push(leg + '走「' + tk + '」→' + m.r.name);
+        seqNext = Math.max(seqNext, leg + 1); pending = null; found = true; i += used - 1;
+      } else if (m && m.amb) { unknown.push('「' + tk + '」（同じような名前が複数あります）'); pending = null; }
+      else if (!isNoteLine(tk) && nt.length <= 12 && !/走順|名前|氏名|番号|男女/.test(nt)) { unknown.push('「' + tk + '」'); pending = null; }
+    }
+    if (!found && isNoteLine(line)) ignored.push(line.trim());
+  });
+  var max = 0; for (var k in legs) max = Math.max(max, +k);
+  var arr = [], missing = [];
+  for (var j = 1; j <= max; j++) { if (legs[j]) arr.push(legs[j].id); else { arr.push(null); missing.push(j + '走'); } }
+  return { ids: arr, unknown: unknown, unsure: unsure, ignored: ignored, missing: missing, dup: dup };
+}
+function idsToText(ids) {
+  var byId = {}; state.roster.forEach(function (r) { byId[r.id] = r; });
+  return ids.map(function (id, k) { return (k + 1) + '\t' + (byId[id] ? byId[id].name : ''); }).join('\n');
+}
+function renderCurrent() {
+  $('currentPaste').value = state.currentText || '';
+  var card = $('currentEvalCard');
+  if (!state.currentIds || !state.currentIds.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+  if (!lastCurrentEval) lastCurrentEval = evaluateCurrent();
+  $('currentEval').innerHTML = lastCurrentEval.html;
+}
+function evaluateCurrent() {
+  var ctx = buildContext(), h = '';
+  if (ctx.errors.length) return { html: ctx.errors.map(function (e) { return msg('bad', esc(e)); }).join('') + msg('info', '①ルールか②名簿を直すと評価できます。') };
+  var seq = [], lost = 0;
+  state.currentIds.forEach(function (id) { if (id != null && ctx.idx[id] !== undefined) seq.push(ctx.idx[id]); else lost++; });
+  if (lost) h += msg('warn', '名簿にいない人や空いている区間が' + lost + 'か所あるので、つめて評価しています。');
+  if (seq.length < 2) return { html: h + msg('bad', '評価できる人が足りません。') };
+  var viol = checkRules(seq, ctx);
+  viol.forEach(function (v) { h += msg('warn', 'ルールと違う点：' + esc(v)); });
+  var profs = seq.map(function (i) { return ctx.profs[i]; });
+  var G = makeGeom(ctx.S, seq.length);
+  var res = evaluate(profs, G);
+  var det = details(profs, G, res, ctx.S);
+  var cur = { seq: seq, total: res.total, res: res, det: det, G: G };
+  h += '<div class="stats"><div class="stat"><div class="k">いまの走順の予想タイム</div><div class="v">' + sec(res.total) + '</div>';
+  var bestTotal = lastBest && lastBest.sig === ctxSig() ? lastBest.total : null;
+  if (bestTotal != null) h += '<div class="d">④の最適案より <b>' + f1(res.total - bestTotal) + '秒</b> 遅い</div>';
+  h += '</div></div>';
+  // 入れ替えの提案（ルールに合う区間の長さのときだけ）
+  if (seq.length === ctx.N) {
+    var M = pairMatrix(ctx.profs, G);
+    var sctx = { N: ctx.N, pattern: ctx.pattern, pins: {}, minGap: ctx.minGap };
+    for (var k in ctx.pins) if (seq[k] === ctx.pins[k]) sctx.pins[k] = ctx.pins[k];
+    var steps = swapSteps(seq, sctx, M, 6), prevT = res.total, rows = '', any = false;
+    steps.forEach(function (st, n) {
+      var t = evaluate(st.seq.map(function (i) { return ctx.profs[i]; }), G).total;
+      if (prevT - t < 0.01) return;
+      any = true;
+      var a = ctx.people[seq[st.i]], b = ctx.people[seq[st.j]];
+      rows += '<tr><td class="num">' + (n + 1) + '</td><td>' + (st.i + 1) + '走 ' + esc(a.name) + ' ⇔ ' + (st.j + 1) + '走 ' + esc(b.name) + '</td><td class="num">' + f2(prevT - t) + '秒</td><td class="num">' + sec(t) + '</td>' +
+        '<td><button class="btn small" data-apply="' + n + '">ここまで入れ替える</button></td></tr>';
+      prevT = t;
+      seq = st.seq;
+    });
+    cur.steps = steps;
+    if (any) {
+      h += '<h3>少ない入れ替えで速くする案（上から順に効く）</h3><div class="tablewrap"><table><thead><tr><th>#</th><th>入れ替え</th><th class="num">縮む時間</th><th class="num">入れ替え後</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+      h += '<p class="hint">「ここまで入れ替える」を押すと、1番からその番号までの入れ替えをまとめて、いまの走順に反映します。</p>';
+    } else h += msg('good', '1回ずつの入れ替えでは、ほとんど縮みません。いまの走順でほぼ最適です。');
+  } else h += msg('info', '区間の数がルールと違うので、入れ替えの提案は出せません。');
+  h += '<h3>いまの走順での待つ位置と目印</h3>' + orderTable(cur, ctx, false);
+  lastCurrentEval = { html: h, cur: cur };
+  return lastCurrentEval;
+}
+
+// ---------- ④ 最適 ----------
+function ctxSig() { return JSON.stringify([state.settings, state.roster.map(function (r) { return [r.id, r.name, r.gender, r.time, r.absent, r.repeat, r.pin]; })]); }
+function runBest() {
+  var ctx = buildContext();
+  if (ctx.errors.length) { $('bestMsg').innerHTML = ctx.errors.map(function (e) { return msg('bad', esc(e)); }).join('') + msg('info', '①ルールか②名簿を直してください。'); $('bestOut').innerHTML = ''; return; }
+  $('busy').classList.add('on');
+  setTimeout(function () {
+    try {
+      var t0 = performance.now(), G = ctx.G, M = pairMatrix(ctx.profs, G);
+      var sctx = { N: ctx.N, pattern: ctx.pattern, instances: ctx.instances, pins: ctx.pins, minGap: ctx.minGap };
+      var cands = [], iters = 40000 + 3000 * ctx.N;
+      for (var r = 0; r < 8; r++) cands.push(anneal(sctx, M, 1234 + r * 7919, iters));
+      // いまの走順（ルールに合っていれば）も候補に入れる
+      if (state.currentIds) {
+        var cs = state.currentIds.map(function (id) { return ctx.idx[id]; });
+        if (cs.every(function (x) { return x !== undefined; }) && !checkRules(cs, ctx).length) cands.push(cs);
+      }
+      var best = null;
+      cands.forEach(function (seq) {
+        if (gapViolations(seq, ctx.minGap) && best && !best.gapBad) return;
+        var res = evaluate(seq.map(function (i) { return ctx.profs[i]; }), G);
+        var gapBad = gapViolations(seq, ctx.minGap) > 0;
+        if (!best || (best.gapBad && !gapBad) || (best.gapBad === gapBad && res.total < best.total)) best = { seq: seq, total: res.total, res: res, gapBad: gapBad };
+      });
+      // くじ引きの平均
+      var rnd = rng(99), rs = [];
+      for (var q = 0; q < 20; q++) {
+        var s = randomSeq(sctx, rnd), tries = 0;
+        while (gapViolations(s, ctx.minGap) && tries++ < 50) s = randomSeq(sctx, rnd);
+        rs.push(evaluate(s.map(function (i) { return ctx.profs[i]; }), G).total);
+      }
+      var randAvg = rs.reduce(function (a, b) { return a + b; }, 0) / rs.length;
+      // 速い順（2回走る人がいないときだけ）
+      var fast = null;
+      if (!ctx.repeaters.length && !Object.keys(ctx.pins).length) {
+        var fseq = fastOrder(ctx);
+        if (fseq) fast = evaluate(fseq.map(function (i) { return ctx.profs[i]; }), G).total;
+      }
+      var profs = best.seq.map(function (i) { return ctx.profs[i]; });
+      best.det = details(profs, G, best.res, ctx.S);
+      best.G = G; best.randAvg = randAvg; best.fast = fast; best.sig = ctxSig(); best.ms = performance.now() - t0;
+      lastBest = best;
+      state.bestIds = best.seq.map(function (i) { return ctx.people[i].id; });
+      lastCurrentEval = null;
+      save();
+      renderBest();
+    } finally { $('busy').classList.remove('on'); }
+  }, 30);
+}
+function fastOrder(ctx) {
+  var byT = function (a, b) { return ctx.profs[b].Vm - ctx.profs[a].Vm; };
+  var all = ctx.people.map(function (r, i) { return i; });
+  if (!ctx.pattern) return all.sort(byT);
+  var q = { '男': all.filter(function (i) { return ctx.people[i].gender === '男'; }).sort(byT), '女': all.filter(function (i) { return ctx.people[i].gender === '女'; }).sort(byT) };
+  var seq = ctx.pattern.map(function (g) { return q[g].shift(); });
+  return seq.every(function (x) { return x !== undefined; }) ? seq : null;
+}
+function renderBest() {
+  var ctx = buildContext(), h = '';
+  ctx.warnings.forEach(function (e) { h += msg('warn', esc(e)); });
+  $('bestMsg').innerHTML = h;
+  if (!lastBest || lastBest.sig !== ctxSig()) {
+    $('bestOut').innerHTML = state.bestIds ? msg('info', '前に計算した案があります。名簿やルールが変わった可能性があるので、「計算する」を押してください。') : '';
+    $('bestStatus').textContent = '';
+    return;
+  }
+  var b = lastBest, o = '';
+  $('bestStatus').textContent = '（計算 ' + (b.ms / 1000).toFixed(1) + '秒）';
+  if (b.gapBad) o += msg('warn', '2回走る人の間隔のきまりを守れる並べ方が見つかりませんでした。①の間隔を短くしてください。');
+  o += '<div class="stats">';
+  o += '<div class="stat"><div class="k">この走順の予想タイム</div><div class="v">' + sec(b.total) + '</div><div class="d muted">パスが理想どおりのとき</div></div>';
+  o += '<div class="stat"><div class="k">くじ引きで決めた場合（20回の平均）</div><div class="v">' + sec(b.randAvg) + '</div><div class="d ok">この案で約 <b>' + f1(b.randAvg - b.total) + '秒</b> 速い</div></div>';
+  if (b.fast != null) o += '<div class="stat"><div class="k">速い順に並べた場合</div><div class="v">' + sec(b.fast) + '</div><div class="d ok">この案で約 <b>' + f1(b.fast - b.total) + '秒</b> 速い</div></div>';
+  if (lastCurrentEval && lastCurrentEval.cur) o += '<div class="stat"><div class="k">いまの走順（③）</div><div class="v">' + sec(lastCurrentEval.cur.total) + '</div><div class="d ok">この案で約 <b>' + f1(lastCurrentEval.cur.total - b.total) + '秒</b> 速い</div></div>';
+  o += '</div>';
+  o += '<div class="row noprint"><button class="btn" id="copyBest">Excelに貼れる形でコピー</button><button class="btn" id="bestToCurrent">この案を③いまの走順に入れる</button><button class="btn" id="bestPrint">印刷へ</button><span id="copyMsg" class="hint"></span></div>';
+  o += '<div class="card"><h2>走順と、受け手の待つ位置・目印</h2>' + orderTable(b, ctx, true) + '</div>';
+  o += '<div class="card"><h2>この表の見かた</h2><ul class="hint">' +
+    '<li><b>待つ位置</b>：受け手が立って待つ場所。「入口」はバトンゾーンの入口（受け手から見て後ろ側）です。</li>' +
+    '<li><b>目印</b>：待つ位置から、走ってくる人の方へ何m（何足）のところに印をつけるか。渡す人がその印を越えたら走り出します。計算の値は長めに出やすいので、<b>練習は表の「はじめ」の距離から</b>始め、狙った場所で渡せるまで少しずつ延ばしてください。</li>' +
+    '<li><b>受け渡す場所</b>：目印どおりに出たとき、バトンが渡る場所の目安。</li>' +
+    '<li><b>早出しの余裕</b>：目印どおりより何秒早く出ても、まだゾーンの中で渡せるか。目印は①の「安全のため遅らせる時間」だけ近くしてあるので、ふつうはその秒数になります。赤字の組は余裕が足りないので、ていねいに練習してください。</li>' +
+    '<li>待つ位置がゾーンの中になる組があるのは、中学生は約20mで最高速になり、その後は少しずつ落ちるためです（助走が長すぎると、かえって後半が遅くなる）。ほとんど差がないときは入口で待つ形を選んでいます。</li>' +
+    '<li><span class="tag down">速→遅</span> 渡す人の方が速い組。早めに出て、出口近くで受け取ります。ゾーンからはみ出さないよう注意。</li>' +
+    '<li><span class="tag up">遅→速</span> 受ける人の方が速い組。早く出すぎると追いつけません。<b>迷ったら遅めに</b>出ます。</li>' +
+    '<li><b>運ぶ距離</b>：その人が実際にバトンを持って走る距離。速い人ほど長くなるのが良い並べ方です。</li></ul></div>';
+  $('bestOut').innerHTML = o;
+  $('copyBest').onclick = function () { copyText(tsvFor(b, ctx)); };
+  $('bestToCurrent').onclick = function () { state.currentIds = state.bestIds.slice(); state.currentText = idsToText(state.currentIds); lastCurrentEval = null; save(); showTab('current'); };
+  $('bestPrint').onclick = function () { showTab('print'); };
+}
+function kindTag(ratio) {
+  if (ratio > 1.03) return '<span class="tag up">遅→速</span>';
+  if (ratio < 0.97) return '<span class="tag down">速→遅</span>';
+  return '<span class="tag eq">同じくらい</span>';
+}
+function waitText(u) {
+  if (Math.abs(u) < 0.25) return '入口';
+  return u < 0 ? '入口の ' + f1(-u) + 'm 手前' : '入口から ' + f1(u) + 'm 先';
+}
+function orderTable(b, ctx, withCheck) {
+  var G = b.G, det = b.det, maxCarry = Math.max.apply(null, det.map(function (d) { return d.carry; })), foot = (+ctx.S.footCm || 25) / 100;
+  var h = '<div class="tablewrap"><table><thead><tr><th class="num">走</th><th>名前</th><th>男女</th><th class="num">タイム</th><th>運ぶ距離</th><th>組</th><th>待つ位置</th><th class="num">目印（計算）</th><th class="num">目印（はじめ）</th><th>受け渡す場所</th><th>注意</th></tr></thead><tbody>';
+  b.seq.forEach(function (id, k) {
+    var p = ctx.people[id], pr = ctx.profs[id], d = det[k], rc = d.recv;
+    var twice = ctx.runs[p.id] === 2 ? ' <span class="tag rep">2回目</span>' : '';
+    if (ctx.runs[p.id] === 2 && b.seq.indexOf(id) === k) twice = ' <span class="tag rep">1回目</span>';
+    h += '<tr><td class="num"><b>' + (k + 1) + '</b></td><td>' + esc(p.name) + twice + '</td><td>' + genderTag(p.gender) + '</td>' +
+      '<td class="num">' + (p.time ? f1(p.time) : '<span class="muted" title="タイムなし。真ん中の値で計算">(' + f1(pr.timeUsed) + ')</span>') + '</td>' +
+      '<td style="white-space:nowrap"><span class="bar" style="width:' + Math.max(4, 60 * d.carry / maxCarry) + 'px"></span> ' + f1(d.carry) + 'm</td>';
+    if (!rc) { h += '<td colspan="6" class="muted">スタート</td></tr>'; return; }
+    var note = [];
+    var tol = rc.earlyTol, what = rc.ratio > 1.03 ? '追いつけない' : 'ゾーン内で渡せない';
+    if (tol < (+ctx.S.safety || 0) - 0.01) note.push('<span class="ng">' + f2(tol) + '秒早く出ると' + what + '</span>');
+    else note.push('<span class="muted">早出しの余裕 ' + f2(tol) + '秒</span>');
+    if (rc.ratio > 1.03) note.push('迷ったら遅めに出る');
+    if (rc.etaPlan > G.Z - 1) note.push('<span class="cau">出口に近い</span>');
+    if (rc.eta - rc.u < 0.3) note.push('止まったまま受ける形');
+    var startMark = rc.mark * 0.7;
+    h += '<td>' + kindTag(rc.ratio) + '</td><td>' + waitText(rc.u) + '</td>' +
+      '<td class="num">' + f1(Math.max(0, rc.mark)) + 'm<br><span class="muted">' + Math.round(Math.max(0, rc.markFoot)) + '足</span></td>' +
+      '<td class="num">' + f1(Math.max(0, startMark)) + 'm<br><span class="muted">' + Math.round(Math.max(0, startMark / foot)) + '足</span></td>' +
+      '<td>入口から ' + f1(rc.etaPlan) + 'm<br><span class="muted">（出口の ' + f1(G.Z - rc.etaPlan) + 'm 手前）</span></td>' +
+      '<td>' + note.join('<br>') + '</td></tr>';
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+function tsvFor(b, ctx) {
+  var lines = ['走順\t名前\t男女\tタイム\t待つ位置\t目印(m)\t目印(足)\t目印はじめ(m)\t受け渡す場所(入口から m)\t組'];
+  var foot = (+ctx.S.footCm || 25) / 100;
+  b.seq.forEach(function (id, k) {
+    var p = ctx.people[id], rc = b.det[k].recv;
+    var row = [k + 1, p.name, p.gender, p.time || ''];
+    if (rc) row = row.concat([waitText(rc.u), f1(Math.max(0, rc.mark)), Math.round(Math.max(0, rc.markFoot)), f1(Math.max(0, rc.mark * 0.7)), f1(rc.etaPlan), rc.ratio > 1.03 ? '遅→速' : rc.ratio < 0.97 ? '速→遅' : '同じくらい']);
+    else row = row.concat(['スタート', '', '', '', '', '']);
+    lines.push(row.join('\t'));
+  });
+  return lines.join('\n');
+}
+function copyText(t) {
+  function done() { var m = $('copyMsg'); if (m) m.textContent = 'コピーしました。Excelに貼り付けてください。'; }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
+  function fallback() { var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); done(); } catch (e) { } ta.remove(); }
+}
+
+// ---------- ⑤ 印刷 ----------
+function renderPrint() {
+  var src = document.querySelector('input[name=printSrc]:checked').value, ctx = buildContext(), b = null;
+  if (src === 'best') { if (lastBest && lastBest.sig === ctxSig()) b = lastBest; }
+  else { if (!lastCurrentEval && state.currentIds) evaluateCurrent(); if (lastCurrentEval && lastCurrentEval.cur) b = lastCurrentEval.cur; }
+  if (!b) { $('printOut').innerHTML = msg('info', src === 'best' ? '先に④で「計算する」を押してください。' : '先に③でいまの走順を読み込んでください。'); return; }
+  var S = ctx.S, G = b.G;
+  var h = '<div class="card"><h2>リレー走順表</h2><p class="hint">1区間 ' + G.L + 'm' + (G.LN !== G.L ? '（アンカー ' + G.LN + 'm）' : '') + '・バトンゾーン ' + G.Z + 'm（区間の線の ' + G.zb + 'm 手前から）' + (G.R ? '・助走 ' + G.R + 'm' : '') + '／予想タイム ' + sec(b.total) + '（パスが理想どおりのとき）</p>' + orderTable(b, ctx, false) +
+    '<p class="hint">目印は「はじめ」の距離から練習し、狙った場所で渡せるまで少しずつ延ばす。遅→速の組は、迷ったら遅めに出る。</p></div>';
+  if ($('printPractice').checked) {
+    h += '<div class="card pagebreak"><h2>パス練習の記録</h2><p class="hint">ゾーンの1m手前からゾーンの出口まで、バトンが通る時間をストップウォッチで測って書きこみます。短いほど上手なパスです。</p>';
+    h += '<table><thead><tr><th>ゾーン</th><th>渡す人 → 受ける人</th><th>組</th><th>目印</th><th>1回目</th><th>2回目</th><th>3回目</th><th>直した目印</th></tr></thead><tbody>';
+    for (var k = 1; k < b.seq.length; k++) {
+      var a = ctx.people[b.seq[k - 1]], c = ctx.people[b.seq[k]], rc = b.det[k].recv;
+      h += '<tr><td class="num">' + k + '</td><td>' + esc(a.name) + ' → ' + esc(c.name) + '</td><td>' + kindTag(rc.ratio) + '</td><td class="num">' + Math.round(Math.max(0, rc.mark * 0.7) / ((+S.footCm || 25) / 100)) + '足</td><td style="width:11%"></td><td style="width:11%"></td><td style="width:11%"></td><td style="width:11%"></td></tr>';
+    }
+    h += '</tbody></table></div>';
+  }
+  $('printOut').innerHTML = h;
+}
+
+// ---------- ⑥ 保存 ----------
+function renderSave() {
+  var gens = [];
+  try { gens = JSON.parse(lsGet(APP_KEY + '.gens') || '[]'); } catch (e) { }
+  if (!gens.length) { $('genList').innerHTML = '<p class="muted">まだ控えはありません。</p>'; return; }
+  var h = '<table><thead><tr><th>日時</th><th>内容</th><th></th></tr></thead><tbody>';
+  gens.forEach(function (g, i) {
+    var d = {}; try { d = JSON.parse(g.data); } catch (e) { }
+    var n = (d.roster || []).length, dt = new Date(g.t);
+    h += '<tr><td>' + dt.getFullYear() + '/' + (dt.getMonth() + 1) + '/' + dt.getDate() + ' ' + dt.getHours() + ':' + String(dt.getMinutes()).padStart(2, '0') + '</td><td>名簿 ' + n + '人' + (d.currentIds ? '・いまの走順あり' : '') + (d.bestIds ? '・最適案あり' : '') + '</td><td><button class="btn small" data-gen="' + i + '">この控えに戻す</button></td></tr>';
+  });
+  $('genList').innerHTML = h + '</tbody></table>';
+}
+
+// ---------- イベント ----------
+function init() {
+  load();
+  $('nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+  $('tab-rules').addEventListener('change', onSettingChange);
+  $('presetSave').onclick = function () {
+    var name = prompt('ルールの名前（例：3年・的場祭）', ''); if (!name) return;
+    var i = state.presets.findIndex(function (p) { return p.name === name; });
+    var p = { name: name, settings: Object.assign({}, state.settings) };
+    if (i >= 0) state.presets[i] = p; else state.presets.push(p);
+    save(); renderRules();
+  };
+  $('presetLoad').onclick = function () {
+    var p = state.presets[+$('presetSel').value]; if (!p) return;
+    state.settings = Object.assign({}, DEFAULTS, p.settings); lastBest = null; lastCurrentEval = null; save(); renderRules();
+  };
+  $('presetDel').onclick = function () {
+    var i = +$('presetSel').value; if (!state.presets[i] || !confirm('「' + state.presets[i].name + '」を消しますか？')) return;
+    state.presets.splice(i, 1); save(); renderRules();
+  };
+  function doRoster(replace) {
+    var r = parseRoster($('rosterPaste').value), h = '';
+    if (!r.rows.length) { $('rosterParseMsg').innerHTML = msg('bad', '名前を読み取れませんでした。'); return; }
+    if (replace && state.roster.length && !confirm('いまの名簿（' + state.roster.length + '人）を置きかえますか？')) return;
+    state.roster = replace ? r.rows : state.roster.concat(r.rows);
+    h += msg('good', r.rows.length + '人を読み取りました。');
+    var scaled = r.rows.filter(function (x) { return x._scaled; });
+    if (scaled.length) h += msg('warn', '小数点のないタイムを10で割って読みました（例：76 → 7.6）：' + scaled.map(function (x) { return esc(x.name); }).join('、'));
+    var noT = r.rows.filter(function (x) { return x.time == null; });
+    if (noT.length) h += msg('warn', 'タイムが読み取れなかった人：' + noT.map(function (x) { return esc(x.name); }).join('、'));
+    var noG = r.rows.filter(function (x) { return !x.gender; });
+    if (noG.length) h += msg('warn', '男女が読み取れなかった人：' + noG.length + '人（表で選べます）');
+    if (r.notes.length) h += msg('info', '注意書きのような行は読み飛ばしました：' + r.notes.map(esc).join(' ／ '));
+    r.rows.forEach(function (x) { delete x._scaled; });
+    $('rosterParseMsg').innerHTML = h;
+    lastBest = null; lastCurrentEval = null; save(); renderRoster();
+  }
+  $('rosterReplace').onclick = function () { doRoster(true); };
+  $('rosterAppend').onclick = function () { doRoster(false); };
+  $('rosterTable').addEventListener('input', onRosterInput);
+  $('rosterTable').addEventListener('change', onRosterInput);
+  $('rosterTable').addEventListener('click', function (e) {
+    var id = e.target.dataset && e.target.dataset.del; if (!id) return;
+    state.roster = state.roster.filter(function (r) { return r.id !== id; }); lastBest = null; lastCurrentEval = null; save(); renderRoster();
+  });
+  $('rosterAdd').onclick = function () { state.roster.push({ id: newId(), name: '', gender: '', time: null, absent: false, repeat: 'auto', pin: '' }); save(); renderRoster(); };
+  $('rosterSortTime').onclick = function () { state.roster.sort(function (a, b) { return (a.time || 99) - (b.time || 99); }); save(); renderRoster(); };
+  $('rosterClear').onclick = function () { if (confirm('名簿をすべて消しますか？（⑥の控えから戻せます）')) { saveNow(); state.roster = []; lastBest = null; lastCurrentEval = null; save(); renderRoster(); } };
+
+  $('currentRead').onclick = function () {
+    var text = $('currentPaste').value; state.currentText = text;
+    var active = state.roster.filter(function (r) { return !r.absent; });
+    var p = parseOrder(text, active), h = '';
+    if (!p.ids.length) { $('currentParseMsg').innerHTML = msg('bad', '名簿の名前が見つかりませんでした。先に②で名簿を入れてください。'); return; }
+    h += msg('good', p.ids.filter(Boolean).length + '区間を読み取りました。');
+    if (p.unsure.length) h += msg('warn', '名前の一部だけで判断した区間（確かめてください）：' + p.unsure.map(esc).join('、'));
+    if (p.unknown.length) h += msg('warn', '名簿にない名前：' + p.unknown.map(esc).join('、'));
+    if (p.missing.length) h += msg('warn', '空いている区間：' + p.missing.join('、'));
+    if (p.dup.length) h += msg('warn', '番号が重なっている区間（あとの方を使いました）：' + p.dup.join('、'));
+    if (p.ignored.length) h += msg('info', '注意書きのような行は読み飛ばしました。');
+    $('currentParseMsg').innerHTML = h;
+    state.currentIds = p.ids; lastCurrentEval = null; save(); renderCurrent();
+  };
+  $('currentFromBest').onclick = function () {
+    if (!state.bestIds) { $('currentParseMsg').innerHTML = msg('info', '先に④で計算してください。'); return; }
+    state.currentIds = state.bestIds.slice(); state.currentText = idsToText(state.currentIds); lastCurrentEval = null; $('currentParseMsg').innerHTML = ''; save(); renderCurrent();
+  };
+  $('currentClear').onclick = function () { state.currentText = ''; state.currentIds = null; lastCurrentEval = null; $('currentParseMsg').innerHTML = ''; save(); renderCurrent(); };
+  $('currentEval').addEventListener('click', function (e) {
+    var n = e.target.dataset && e.target.dataset.apply; if (n == null || !lastCurrentEval || !lastCurrentEval.cur.steps) return;
+    var ctx = buildContext(), seq = lastCurrentEval.cur.steps[+n].seq;
+    state.currentIds = seq.map(function (i) { return ctx.people[i].id; }); state.currentText = idsToText(state.currentIds);
+    lastCurrentEval = null; save(); renderCurrent();
+  });
+  $('bestRun').onclick = runBest;
+  $('printGo').onclick = function () { renderPrint(); window.print(); };
+  document.querySelectorAll('input[name=printSrc], #printPractice').forEach(function (el) { el.addEventListener('change', renderPrint); });
+  $('genList').addEventListener('click', function (e) {
+    var i = e.target.dataset && e.target.dataset.gen; if (i == null) return;
+    var gens = JSON.parse(lsGet(APP_KEY + '.gens') || '[]'); if (!gens[+i]) return;
+    if (!confirm('この控えの内容に戻しますか？（いまの内容も控えに残ります）')) return;
+    saveNow(); applyData(JSON.parse(gens[+i].data)); lsSet(APP_KEY + '.cur', snapshot()); renderSave();
+    $('saveMsg').innerHTML = msg('good', '戻しました。');
+  });
+  $('exportBtn').onclick = function () {
+    var blob = new Blob([snapshot()], { type: 'application/json' }), a = document.createElement('a'), d = new Date();
+    a.href = URL.createObjectURL(blob); a.download = 'リレー走順_' + d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0') + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  $('importFile').onchange = function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () {
+      try { var d = JSON.parse(rd.result); if (!d.settings && !d.roster) throw 0; saveNow(); applyData(d); saveNow(); $('saveMsg').innerHTML = msg('good', '読み込みました。'); }
+      catch (err) { $('saveMsg').innerHTML = msg('bad', 'このアプリのファイルではないようです。'); }
+    };
+    rd.readAsText(f); e.target.value = '';
+  };
+  showTab(state.tab);
+}
+if (typeof document !== 'undefined' && document.getElementById('nav')) init();
+</script>
+</body>
+</html>
