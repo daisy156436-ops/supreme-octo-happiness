@@ -243,7 +243,7 @@ details summary{cursor:pointer;color:var(--accent)}
       <li><b>速い人ほど長くバトンを運ぶ並べ方が有利</b>：受け手の待つ位置を工夫して、速い子に長い距離を走らせる考え方（東京都小学校体育研究会 陸上運動領域部会 リレー資料）。</li>
       <li><b>パスの上手さがいちばん効く</b>：リオ五輪の日本男子リレーは、4人の100mベストの合計より2.76秒速かった（日本陸連『中学校部活動における陸上競技指導の手引き』）。</li>
       <li><b>安全の余裕</b>：2000〜2019年の世界大会でも、男子の21%・女子の17%のチームが失格か途中棄権（Zarębska ほか, 2021）。走り出しのばらつきが大きいほど余裕が必要（Karlsson &amp; Lunander, 2024）。そのため目印は少し近め（遅め）にしています。</li>
-      <li><b>目印の距離</b>：日本陸連の手引きの目安は「まず20足、15〜25足」。このアプリの計算値はそれより長く出やすいので、練習は7割の「はじめ」の距離から始めます。</li>
+      <li><b>目印の距離</b>：日本陸連の手引きの目安は、陸上部で「まず20足、15〜25足」（ゾーン30m）。同じ条件（50m走6.6〜7.0秒どうし）をこのアプリで計算すると30〜35足と長めに出ます。その7割は21〜24足で手引きの範囲に入るので、練習は7割の「はじめ」の距離から始め、ねらった場所で渡せるまで少しずつ延ばします。</li>
     </ul>
     <h3>計算の前提がずれていても大丈夫か（架空のクラス4組・34人で確認）</h3>
     <table>
@@ -263,14 +263,14 @@ details summary{cursor:pointer;color:var(--accent)}
     <table>
       <thead><tr><th>走り出しのばらつき</th><th class="num">全組を一律に遅らせる</th><th class="num">組ごとに決める（このアプリ）</th></tr></thead>
       <tbody>
-        <tr><td>±0.1秒</td><td class="num">500.9秒</td><td class="num"><b>500.5秒</b></td></tr>
-        <tr><td>±0.2秒</td><td class="num">504.2秒</td><td class="num"><b>503.9秒</b></td></tr>
-        <tr><td>±0.3秒</td><td class="num">507.5秒</td><td class="num"><b>507.2秒</b></td></tr>
+        <tr><td>±0.1秒</td><td class="num">500.9秒</td><td class="num"><b>500.7秒</b></td></tr>
+        <tr><td>±0.2秒</td><td class="num">504.2秒</td><td class="num"><b>504.0秒</b></td></tr>
+        <tr><td>±0.3秒</td><td class="num">507.5秒</td><td class="num"><b>507.4秒</b></td></tr>
       </tbody>
     </table>
     <ul class="hint">
       <li>どちらも、ばらつきの範囲ではゾーン外の受け渡しは0回です。反対に、ばらつき±0.2秒の組を±0.1秒用の目印で走らせると、1レースで約6回ゾーン外になりました（本番なら失格）。</li>
-      <li>もともと余裕のある速→遅の組は、近くする量を少なくできるので、組ごとに決めるほうが0.3〜0.4秒速くなります。</li>
+      <li>もともと余裕のある速→遅の組は、近くする量を少なくできるので、組ごとに決めるほうが0.1〜0.2秒速くなります（差は小さいですが、どの条件でも速くなりました）。</li>
       <li><b>走り出しのばらつきが±0.1秒増えるごとに、全体で約3.4秒遅くなります。</b>走順の工夫（約2秒）より大きいので、同じペアで何度も練習して走り出しをそろえることが大切です。</li>
       <li>ばらつきを考えて待つ位置まで変えても、縮むのは1回の受け渡しあたり0.03秒以下でした。</li>
       <li>目印どおりに出る計算でも、走順の良し悪しの順位（この案 ≒ 速・遅交互 ＞ くじ引き ＞ 速い順）は変わりませんでした。</li>
@@ -446,7 +446,9 @@ function details(seq, G, res, S) {
     rows[k - 1].carry = baton - prevBaton;
     // 理想どおりに出たときの「早く出てもよい余裕」。ばらつき J に足りない分だけ、出発を遅らせる（目印を近くする）
     var tol0 = earlyTolerance(A, sA, startAbsA, B, sB, startAbsB, zoneAbs, G);
-    var delay = Math.max(0, J - tol0 + (J > 0 ? 0.005 : 0));
+    var delay = Math.max(0, J - tol0) + 0.01;
+    // 理想の受け渡しは「速さがそろう瞬間」の境目にあるので、ばらつきの分だけ早く出ても渡せるかを実際に確かめる
+    while (delay < 0.8 && !(catchPos(A, sA, startAbsA, B, sB + delay - J, startAbsB, zoneAbs, G) <= G.Z)) delay += 0.01;
     var plan = sB + delay, tm = plan - rr, posA = startAbsA + dAtTime(A, tm - sA);
     var etaPlan = catchPos(A, sA, startAbsA, B, plan, startAbsB, zoneAbs, G);
     rows[k].recv = {
@@ -775,6 +777,9 @@ function buildContext() {
     '男': median(active.filter(function (r) { return r.time && r.gender === '男'; }).map(function (r) { return r.time; })) || medAll,
     '女': median(active.filter(function (r) { return r.time && r.gender === '女'; }).map(function (r) { return r.time; })) || medAll
   };
+  var lo = dist <= 60 ? 5 : 9, hi = dist <= 60 ? 16 : 30;
+  var odd = active.filter(function (r) { return r.time && (r.time < lo || r.time > hi); });
+  if (odd.length) errors.push(odd.length + '人のタイムが' + dist + 'm走のタイムとしては考えにくい値です（' + odd.slice(0, 5).map(function (r) { return r.name + ' ' + r.time + '秒'; }).join('、') + (odd.length > 5 ? 'ほか' : '') + '）。①の「名簿のタイムは何mのタイムか」か、②のタイムを確かめてください。');
   var noTime = active.filter(function (r) { return !r.time; });
   if (noTime.length) warnings.push('タイムのない人が' + noTime.length + '人います（' + noTime.map(function (r) { return r.name; }).join('、') + '）。同じ男女の真ん中のタイムとして計算します。');
   var needGender = S.alternate || S.useGenderCounts;
