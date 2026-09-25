@@ -279,7 +279,14 @@ details summary{cursor:pointer;color:var(--accent)}
   </div>
   <div class="card">
     <h2>このアプリの計算について</h2>
-    <p class="hint">1人ひとりのタイムから「加速して、後半に少しずつ落ちる」走り方を作り、受け渡しの位置によって各自がバトンを運ぶ距離が変わることを計算しています。速い人ほど長く運ぶように並べると、全体が速くなります。パスはいつも理想どおりに渡せたものとして計算しているので、秒数は目安です。実際にはパスの上手・下手のほうがずっと大きく効きます。</p>
+    <p class="hint">1人ひとりのタイムから「加速して、後半に少しずつ落ちる」走り方を作り、受け渡しの位置によって各自がバトンを運ぶ距離が変わることを計算しています。速い人ほど長く運ぶように並べると、全体が速くなります。予想タイムは「全員が目印どおりに走り出し、バトンを落とさずに渡せたとき」の値なので、目安として使ってください。</p>
+    <h3>計算に入っていないこと</h3>
+    <ul class="hint">
+      <li><b>バトンの落下や持ちかえ</b>：1回落とせば数秒失います。パスの上手・下手は、走順よりずっと大きく効きます。</li>
+      <li><b>追い抜き・混雑・カーブの外回り</b>：レーンのない走り方（オープンコース）では、先に前に出たチームが有利です。カーブで1m外を回ると、半周で約3m（約0.4秒）余計に走ります。気になるときは、スタートの得意な速い人を②で1走に固定してください。</li>
+      <li><b>その日の調子・体格・カーブの得意不得意</b>：タイムだけで計算しています。</li>
+      <li><b>気持ちの面</b>：アンカーを誰にするかなど、タイム以外の理由で決めたいところは、②の「区間を固定」を使ってください。固定しても、ほかの人の並びはその条件の中で最適にします。</li>
+    </ul>
   </div>
 </section>
 </main>
@@ -636,7 +643,7 @@ var DEFAULTS = {
   zoneLen: 20, zoneBefore: 10, runup: 0, margin: 2,
   gain: 1.0, footCm: 25, reactRecv: 0.15, jitter: 0.2
 };
-var state = { settings: Object.assign({}, DEFAULTS), presets: [], roster: [], currentText: '', currentIds: null, bestIds: null, tab: 'rules' };
+var state = { settings: Object.assign({}, DEFAULTS), presets: [], roster: [], currentText: '', currentIds: null, bestIds: null, bestSig: null, tab: 'rules' };
 var lastBest = null, lastCurrentEval = null;
 
 function $(id) { return document.getElementById(id); }
@@ -654,7 +661,7 @@ function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return n
 function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
 var saveTimer = null;
 function save() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 800); }
-function snapshot() { return JSON.stringify({ settings: state.settings, presets: state.presets, roster: state.roster, currentText: state.currentText, currentIds: state.currentIds, bestIds: state.bestIds }); }
+function snapshot() { return JSON.stringify({ settings: state.settings, presets: state.presets, roster: state.roster, currentText: state.currentText, currentIds: state.currentIds, bestIds: state.bestIds, bestSig: state.bestSig }); }
 function saveNow() {
   var data = snapshot();
   lsSet(APP_KEY + '.cur', data);
@@ -675,6 +682,7 @@ function applyData(d) {
   state.currentText = d.currentText || '';
   state.currentIds = d.currentIds || null;
   state.bestIds = d.bestIds || null;
+  state.bestSig = d.bestSig || null;
   lastBest = null; lastCurrentEval = null;
 }
 function load() {
@@ -1046,7 +1054,7 @@ function evaluateCurrent() {
 
 // ---------- ④ 最適 ----------
 function ctxSig() { return JSON.stringify([state.settings, state.roster.map(function (r) { return [r.id, r.name, r.gender, r.time, r.absent, r.repeat, r.pin]; })]); }
-function runBest() {
+function runBest(after) {
   var ctx = buildContext();
   if (ctx.errors.length) { $('bestMsg').innerHTML = ctx.errors.map(function (e) { return msg('bad', esc(e)); }).join('') + msg('info', '①ルールか②名簿を直してください。'); $('bestOut').innerHTML = ''; return; }
   $('busy').classList.add('on');
@@ -1089,9 +1097,11 @@ function runBest() {
       best.G = G; best.randAvg = randAvg; best.fast = fast; best.sig = ctxSig(); best.ms = performance.now() - t0;
       lastBest = best;
       state.bestIds = best.seq.map(function (i) { return ctx.people[i].id; });
+      state.bestSig = best.sig;
       lastCurrentEval = null;
       save();
       renderBest();
+      if (typeof after === 'function') after();
     } finally { $('busy').classList.remove('on'); }
   }, 30);
 }
@@ -1124,7 +1134,9 @@ function renderBest() {
   ctx.warnings.forEach(function (e) { h += msg('warn', esc(e)); });
   $('bestMsg').innerHTML = h;
   if (!lastBest || lastBest.sig !== ctxSig()) {
-    $('bestOut').innerHTML = state.bestIds ? msg('info', '前に計算した案があります。名簿やルールが変わった可能性があるので、「計算する」を押してください。') : '';
+    // 名簿とルールが前回の計算と同じなら、同じ結果になるので自動で計算し直して表示する
+    if (state.bestIds && state.bestSig === ctxSig() && !ctx.errors.length) { $('bestOut').innerHTML = ''; runBest(); return; }
+    $('bestOut').innerHTML = state.bestIds ? msg('info', '前に計算したあとで名簿かルールが変わりました。「計算する」を押してください。') : '';
     $('bestStatus').textContent = '';
     return;
   }
@@ -1211,7 +1223,10 @@ function copyText(t) {
 // ---------- ⑤ 印刷 ----------
 function renderPrint() {
   var src = document.querySelector('input[name=printSrc]:checked').value, ctx = buildContext(), b = null;
-  if (src === 'best') { if (lastBest && lastBest.sig === ctxSig()) b = lastBest; }
+  if (src === 'best') {
+    if (lastBest && lastBest.sig === ctxSig()) b = lastBest;
+    else if (state.bestIds && state.bestSig === ctxSig() && !ctx.errors.length) { runBest(renderPrint); return; }
+  }
   else { if (!lastCurrentEval && state.currentIds) evaluateCurrent(); if (lastCurrentEval && lastCurrentEval.cur) b = lastCurrentEval.cur; }
   if (!b) { $('printOut').innerHTML = msg('info', src === 'best' ? '先に④で「計算する」を押してください。' : '先に③でいまの走順を読み込んでください。'); return; }
   var S = ctx.S, G = b.G;

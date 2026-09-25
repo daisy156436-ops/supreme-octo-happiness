@@ -92,6 +92,13 @@ const results=[]; const ok=(name,cond,info='')=>{results.push([cond?'PASS':'FAIL
  await pg.reload(); await pg.waitForTimeout(300);
  await pg.click('button[data-tab=roster]');
  ok('persisted after reload', (await pg.$$eval('#rosterTable tbody tr',t=>t.length))===33);
+ await pg.click('button[data-tab=best]');
+ await pg.waitForSelector('#bestOut .tablewrap',{timeout:30000}).catch(()=>{});
+ ok('再読み込み後も④の案が自動で出る', (await pg.$$('#bestOut .tablewrap tbody tr')).length===34);
+ await pg.reload(); await pg.waitForTimeout(300);
+ await pg.click('button[data-tab=print]');
+ await pg.waitForSelector('#printOut table',{timeout:30000}).catch(()=>{});
+ ok('再読み込み直後の印刷でも④の案が出る', (await pg.$$('#printOut table')).length>=2);
  await pg.click('button[data-tab=save]');
  ok('generations listed', (await pg.$$('#genList button[data-gen]')).length>=1);
  // rule change later: zone 30, runup 10, recompute
