@@ -142,7 +142,7 @@ details summary{cursor:pointer;color:var(--accent)}
       <div class="field"><label>受け渡すときの2人の間隔（m）<br><span class="hint">利得距離。腕を伸ばして約1m</span></label><input type="number" data-key="gain" min="0" step="0.1"></div>
       <div class="field"><label>1足（足長）の長さ（cm）</label><input type="number" data-key="footCm" min="15" step="1"></div>
       <div class="field"><label>受け手が目印を見てから走り出すまで（秒）</label><input type="number" data-key="reactRecv" min="0" step="0.05"></div>
-      <div class="field"><label>安全のため、目印を近くして遅らせる時間（秒）<br><span class="hint">早く出すぎて追いつけない失敗を防ぐ</span></label><input type="number" data-key="safety" min="0" step="0.05"></div>
+      <div class="field"><label>受け手の走り出しのばらつき（±秒）<br><span class="hint">この範囲で早く出ても失格にならないよう、組ごとに目印を近くします。わからなければ 0.2。練習で毎回ねらった場所で渡せるようになったら 0.1</span></label><input type="number" data-key="jitter" min="0" max="0.5" step="0.05"></div>
     </div>
   </div>
   <div id="rulesMsg"></div>
@@ -258,6 +258,24 @@ details summary{cursor:pointer;color:var(--accent)}
       </tbody>
     </table>
     <p class="hint">数字は「くじ引きで決めた場合より何秒速いか」（1区間100m・ゾーン20m）。前提が変わっても、このアプリの案はその前提での最適にほぼ届いています。走順の結論は、細かな前提にほとんど左右されません。</p>
+    <h3>目印をどれだけ近くすればよいか（速・遅交互のクラス3組、各15回走らせた平均）</h3>
+    <p class="hint">受け手は、渡し手が目印を越えてから走り出します。走り出しの早さは毎回ばらつくので、早く出すぎても失格にならないように目印を近くします。</p>
+    <table>
+      <thead><tr><th>走り出しのばらつき</th><th class="num">全組を一律に遅らせる</th><th class="num">組ごとに決める（このアプリ）</th></tr></thead>
+      <tbody>
+        <tr><td>±0.1秒</td><td class="num">500.9秒</td><td class="num"><b>500.5秒</b></td></tr>
+        <tr><td>±0.2秒</td><td class="num">504.2秒</td><td class="num"><b>503.9秒</b></td></tr>
+        <tr><td>±0.3秒</td><td class="num">507.5秒</td><td class="num"><b>507.2秒</b></td></tr>
+      </tbody>
+    </table>
+    <ul class="hint">
+      <li>どちらも、ばらつきの範囲ではゾーン外の受け渡しは0回です。反対に、ばらつき±0.2秒の組を±0.1秒用の目印で走らせると、1レースで約6回ゾーン外になりました（本番なら失格）。</li>
+      <li>もともと余裕のある速→遅の組は、近くする量を少なくできるので、組ごとに決めるほうが0.3〜0.4秒速くなります。</li>
+      <li><b>走り出しのばらつきが±0.1秒増えるごとに、全体で約3.4秒遅くなります。</b>走順の工夫（約2秒）より大きいので、同じペアで何度も練習して走り出しをそろえることが大切です。</li>
+      <li>ばらつきを考えて待つ位置まで変えても、縮むのは1回の受け渡しあたり0.03秒以下でした。</li>
+      <li>目印どおりに出る計算でも、走順の良し悪しの順位（この案 ≒ 速・遅交互 ＞ くじ引き ＞ 速い順）は変わりませんでした。</li>
+      <li>考え方は、走り出しのばらつきが大きいほど余裕が必要だとする Karlsson &amp; Lunander（2024）の分析と同じです。</li>
+    </ul>
   </div>
   <div class="card">
     <h2>このアプリの計算について</h2>
@@ -388,43 +406,83 @@ function evaluate(seq, G) {
 
 // 受け手の出発時刻が start のとき、受け渡しの位置（ゾーンの入口から）を求める
 function catchPos(A, sA, startAbsA, B, start, startAbsB, zoneAbs, G) {
-  for (var t = start; t < start + 12; t += 0.005) {
-    var rPos = startAbsB + dAtTime(B, t - start), aPos = startAbsA + dAtTime(A, t - sA);
-    if (rPos - aPos <= G.g) return rPos - zoneAbs;
+  var prevGap = null, prevR = 0;
+  for (var t = start; t < start + 12; t += 0.01) {
+    var rPos = startAbsB + dAtTime(B, t - start), aPos = startAbsA + dAtTime(A, t - sA), gap = rPos - aPos;
+    if (gap <= G.g) {
+      if (prevGap === null) return rPos - zoneAbs;
+      var r = (prevGap - G.g) / (prevGap - gap);
+      return prevR + r * (rPos - prevR) - zoneAbs;
+    }
     if (rPos - zoneAbs > G.Z + 10) return Infinity;
+    prevGap = gap; prevR = rPos;
   }
   return Infinity;
 }
+// 早く出てもゾーン内で渡せる余裕（秒）。start は予定の出発時刻
+function earlyTolerance(A, sA, startAbsA, B, start, startAbsB, zoneAbs, G) {
+  var lo = 0, hi = 0.6;
+  if (!(catchPos(A, sA, startAbsA, B, start, startAbsB, zoneAbs, G) <= G.Z)) return 0;
+  if (catchPos(A, sA, startAbsA, B, start - hi, startAbsB, zoneAbs, G) <= G.Z) return hi;
+  for (var it = 0; it < 7; it++) {
+    var mid = (lo + hi) / 2;
+    if (catchPos(A, sA, startAbsA, B, start - mid, startAbsB, zoneAbs, G) <= G.Z) lo = mid; else hi = mid;
+  }
+  return lo;
+}
 
+function jitterOf(S) { var j = S.jitter; if (j === '' || j == null) j = 0.2; return Math.max(0, +j || 0); }
 // 表示用のくわしい情報
 function details(seq, G, res, S) {
   var N = seq.length, rows = [], sA = MODEL.react, startAbsA = 0, prevBaton = 0;
-  var rr = +S.reactRecv || 0, sd = +S.safety || 0, foot = (+S.footCm || 25) / 100;
+  var rr = +S.reactRecv || 0, J = jitterOf(S), foot = (+S.footCm || 25) / 100;
   for (var k = 0; k < N; k++) rows.push({ leg: k + 1 });
   for (k = 1; k < N; k++) {
     var A = seq[k - 1], B = seq[k], u = res.u[k], eta = res.eta[k];
     var zoneAbs = G.L * k - G.zb;
     var dA = zoneAbs + eta - G.g - startAbsA, tH = sA + tAt(A, dA);
     var dB = eta - u, sB = tH - tAt(B, dB), startAbsB = zoneAbs + u;
-    var tm = sB - rr + sd, posA = startAbsA + dAtTime(A, tm - sA);
     var baton = zoneAbs + eta - G.g / 2;
     rows[k - 1].carry = baton - prevBaton;
-    // 目印どおりに出たとき（安全のため sd 秒遅れ）の受け渡し位置と、早く出てもよい余裕
-    var plan = sB + sd, etaPlan = catchPos(A, sA, startAbsA, B, plan, startAbsB, zoneAbs, G);
-    var lo = 0, hi = 0.6;
-    if (catchPos(A, sA, startAbsA, B, plan - hi, startAbsB, zoneAbs, G) <= G.Z) lo = hi;
-    else for (var it = 0; it < 9; it++) {
-      var mid = (lo + hi) / 2;
-      if (catchPos(A, sA, startAbsA, B, plan - mid, startAbsB, zoneAbs, G) <= G.Z) lo = mid; else hi = mid;
-    }
+    // 理想どおりに出たときの「早く出てもよい余裕」。ばらつき J に足りない分だけ、出発を遅らせる（目印を近くする）
+    var tol0 = earlyTolerance(A, sA, startAbsA, B, sB, startAbsB, zoneAbs, G);
+    var delay = Math.max(0, J - tol0 + (J > 0 ? 0.005 : 0));
+    var plan = sB + delay, tm = plan - rr, posA = startAbsA + dAtTime(A, tm - sA);
+    var etaPlan = catchPos(A, sA, startAbsA, B, plan, startAbsB, zoneAbs, G);
     rows[k].recv = {
-      u: u, eta: eta, etaPlan: etaPlan, earlyTol: lo, mark: startAbsB - posA, markFoot: (startAbsB - posA) / foot,
+      u: u, eta: eta, etaPlan: etaPlan, earlyTol: tol0 + delay, delay: delay, mark: startAbsB - posA, markFoot: (startAbsB - posA) / foot,
       vA: vAt(A, dA), vB: vAt(B, dB), ratio: B.Vm / A.Vm, handTime: tH
     };
     prevBaton = baton; sA = sB; startAbsA = startAbsB;
   }
   rows[N - 1].carry = G.L * (N - 1) + G.LN - prevBaton;
   return rows;
+}
+
+// 目印どおりに走り出したときの全体タイム。受け手は、渡し手が目印を越えてから反応時間後に出る。
+// jitter を与えると、走り出しを ±jitter 秒の範囲でばらつかせる（ゾーン外になった回数を数える）
+function markRun(seq, G, S, res, det, jitter, rnd) {
+  var rr = +S.reactRecv || 0, N = seq.length, fails = 0, sA = MODEL.react, startA = 0;
+  for (var k = 1; k < N; k++) {
+    var A = seq[k - 1], B = seq[k], zone = G.L * k - G.zb, startB = zone + res.u[k];
+    var markPos = startB - det[k].recv.mark;
+    var lo = sA, hi = sA + 60;
+    for (var i = 0; i < 45; i++) { var m = (lo + hi) / 2; if (startA + dAtTime(A, m - sA) < markPos) lo = m; else hi = m; }
+    var sB = hi + rr + (jitter ? (rnd() * 2 - 1) * jitter : 0);
+    // 出遅れて、渡し手が先に来たときは、その場で受け取って走り出す
+    var tReach = sA + tAt(A, startB - G.g - startA);
+    if (sB > tReach) sB = tReach;
+    var eta = catchPos(A, sA, startA, B, sB, startB, zone, G);
+    if (!(eta <= G.Z)) {
+      // ゾーンの外になる失敗：計算上は、受け手が出口で止まって受けたとみなす
+      fails++;
+      var exitPos = zone + G.Z;
+      sA = sA + tAt(A, exitPos - G.g - startA); startA = exitPos;
+      continue;
+    }
+    sA = sB; startA = startB;
+  }
+  return { total: sA + tAt(seq[N - 1], G.L * (N - 1) + G.LN - startA), fails: fails };
 }
 
 // 並べ替えの探索に使う近似：隣り合う2人ごとのコスト表
@@ -574,7 +632,7 @@ var DEFAULTS = {
   legs: '', legLen: 100, lastLen: '', timeDist: 50,
   alternate: false, firstGender: 'auto', useGenderCounts: false, maleLegs: '', femaleLegs: '', minGap: 12,
   zoneLen: 20, zoneBefore: 10, runup: 0, margin: 2,
-  gain: 1.0, footCm: 25, reactRecv: 0.15, safety: 0.1
+  gain: 1.0, footCm: 25, reactRecv: 0.15, jitter: 0.2
 };
 var state = { settings: Object.assign({}, DEFAULTS), presets: [], roster: [], currentText: '', currentIds: null, bestIds: null, tab: 'rules' };
 var lastBest = null, lastCurrentEval = null;
@@ -949,19 +1007,19 @@ function evaluateCurrent() {
   var G = makeGeom(ctx.S, seq.length);
   var res = evaluate(profs, G);
   var det = details(profs, G, res, ctx.S);
-  var cur = { seq: seq, total: res.total, res: res, det: det, G: G };
-  h += '<div class="stats"><div class="stat"><div class="k">いまの走順の予想タイム</div><div class="v">' + sec(res.total) + '</div>';
-  var bestTotal = lastBest && lastBest.sig === ctxSig() ? lastBest.total : null;
-  if (bestTotal != null) h += '<div class="d">④の最適案より <b>' + f1(res.total - bestTotal) + '秒</b> 遅い</div>';
+  var cur = { seq: seq, total: res.total, res: res, det: det, G: G, mark: markRun(profs, G, ctx.S, res, det).total };
+  h += '<div class="stats"><div class="stat"><div class="k">いまの走順の予想タイム</div><div class="v">' + sec(cur.mark) + '</div><div class="d muted">全員が目印どおりに出たとき</div>';
+  var bestTotal = lastBest && lastBest.sig === ctxSig() ? lastBest.mark : null;
+  if (bestTotal != null) h += '<div class="d">④の最適案より <b>' + f1(cur.mark - bestTotal) + '秒</b> 遅い</div>';
   h += '</div></div>';
   // 入れ替えの提案（ルールに合う区間の長さのときだけ）
   if (seq.length === ctx.N) {
     var M = pairMatrix(ctx.profs, G);
     var sctx = { N: ctx.N, pattern: ctx.pattern, pins: {}, minGap: ctx.minGap };
     for (var k in ctx.pins) if (seq[k] === ctx.pins[k]) sctx.pins[k] = ctx.pins[k];
-    var steps = swapSteps(seq, sctx, M, 6), prevT = res.total, rows = '', any = false;
+    var steps = swapSteps(seq, sctx, M, 6), prevT = cur.mark, rows = '', any = false;
     steps.forEach(function (st, n) {
-      var t = evaluate(st.seq.map(function (i) { return ctx.profs[i]; }), G).total;
+      var t = markTotal(st.seq.map(function (i) { return ctx.profs[i]; }), G, ctx.S);
       if (prevT - t < 0.01) return;
       any = true;
       var a = ctx.people[seq[st.i]], b = ctx.people[seq[st.j]];
@@ -1010,17 +1068,19 @@ function runBest() {
       for (var q = 0; q < 20; q++) {
         var s = randomSeq(sctx, rnd), tries = 0;
         while (gapViolations(s, ctx.minGap) && tries++ < 50) s = randomSeq(sctx, rnd);
-        rs.push(evaluate(s.map(function (i) { return ctx.profs[i]; }), G).total);
+        rs.push(markTotal(s.map(function (i) { return ctx.profs[i]; }), G, ctx.S));
       }
       var randAvg = rs.reduce(function (a, b) { return a + b; }, 0) / rs.length;
       // 速い順（2回走る人がいないときだけ）
       var fast = null;
       if (!ctx.repeaters.length && !Object.keys(ctx.pins).length) {
         var fseq = fastOrder(ctx);
-        if (fseq) fast = evaluate(fseq.map(function (i) { return ctx.profs[i]; }), G).total;
+        if (fseq) fast = markTotal(fseq.map(function (i) { return ctx.profs[i]; }), G, ctx.S);
       }
       var profs = best.seq.map(function (i) { return ctx.profs[i]; });
       best.det = details(profs, G, best.res, ctx.S);
+      best.mark = markRun(profs, G, ctx.S, best.res, best.det).total;
+      best.risk = riskTable(profs, G, ctx.S, best.res, best.det);
       best.G = G; best.randAvg = randAvg; best.fast = fast; best.sig = ctxSig(); best.ms = performance.now() - t0;
       lastBest = best;
       state.bestIds = best.seq.map(function (i) { return ctx.people[i].id; });
@@ -1029,6 +1089,22 @@ function runBest() {
       renderBest();
     } finally { $('busy').classList.remove('on'); }
   }, 30);
+}
+function markTotal(profs, G, S) { var r = evaluate(profs, G); return markRun(profs, G, S, r, details(profs, G, r, S)).total; }
+// 走り出しのばらつきごとに、ゾーン外の受け渡しが1レースで何回起きるか（20回走らせた平均）
+function riskTable(profs, G, S, res, det) {
+  return [0.1, 0.2, 0.3].map(function (j) {
+    var r = rng(4242), f = 0, t = 0;
+    for (var q = 0; q < 20; q++) { var o = markRun(profs, G, S, res, det, j, r); f += o.fails; t += o.total; }
+    return { j: j, fails: f / 20, total: t / 20 };
+  });
+}
+function riskHtml(risk, S) {
+  var h = '<h3>走り出しがばらついたとき（①のばらつき ±' + f2(jitterOf(S)) + '秒 に合わせて目印を決めた場合）</h3><table><thead><tr><th>走り出しのばらつき</th><th class="num">ゾーン外になる受け渡し（1レースあたり）</th><th class="num">平均タイム</th></tr></thead><tbody>';
+  risk.forEach(function (r) {
+    h += '<tr><td>±' + f1(r.j) + '秒</td><td class="num ' + (r.fails >= 0.5 ? 'ng' : r.fails > 0 ? 'cau' : 'ok') + '">' + f1(r.fails) + '回</td><td class="num">' + sec(r.total) + '</td></tr>';
+  });
+  return h + '</tbody></table><p class="hint">ゾーンの外で渡すと、本番では失格です。実際のばらつきが①の値より大きいと、失敗が増えます。練習で、ねらった場所で渡せない組が多いときは、①の「走り出しのばらつき」を大きくしてください。</p>';
 }
 function fastOrder(ctx) {
   var byT = function (a, b) { return ctx.profs[b].Vm - ctx.profs[a].Vm; };
@@ -1051,18 +1127,18 @@ function renderBest() {
   $('bestStatus').textContent = '（計算 ' + (b.ms / 1000).toFixed(1) + '秒）';
   if (b.gapBad) o += msg('warn', '2回走る人の間隔のきまりを守れる並べ方が見つかりませんでした。①の間隔を短くしてください。');
   o += '<div class="stats">';
-  o += '<div class="stat"><div class="k">この走順の予想タイム</div><div class="v">' + sec(b.total) + '</div><div class="d muted">パスが理想どおりのとき</div></div>';
-  o += '<div class="stat"><div class="k">くじ引きで決めた場合（20回の平均）</div><div class="v">' + sec(b.randAvg) + '</div><div class="d ok">この案で約 <b>' + f1(b.randAvg - b.total) + '秒</b> 速い</div></div>';
-  if (b.fast != null) o += '<div class="stat"><div class="k">速い順に並べた場合</div><div class="v">' + sec(b.fast) + '</div><div class="d ok">この案で約 <b>' + f1(b.fast - b.total) + '秒</b> 速い</div></div>';
-  if (lastCurrentEval && lastCurrentEval.cur) o += '<div class="stat"><div class="k">いまの走順（③）</div><div class="v">' + sec(lastCurrentEval.cur.total) + '</div><div class="d ok">この案で約 <b>' + f1(lastCurrentEval.cur.total - b.total) + '秒</b> 速い</div></div>';
+  o += '<div class="stat"><div class="k">この走順の予想タイム</div><div class="v">' + sec(b.mark) + '</div><div class="d muted">全員が目印どおりに出たとき（理想のパスなら ' + sec(b.total) + '）</div></div>';
+  o += '<div class="stat"><div class="k">くじ引きで決めた場合（20回の平均）</div><div class="v">' + sec(b.randAvg) + '</div><div class="d ok">この案で約 <b>' + f1(b.randAvg - b.mark) + '秒</b> 速い</div></div>';
+  if (b.fast != null) o += '<div class="stat"><div class="k">速い順に並べた場合</div><div class="v">' + sec(b.fast) + '</div><div class="d ok">この案で約 <b>' + f1(b.fast - b.mark) + '秒</b> 速い</div></div>';
+  if (lastCurrentEval && lastCurrentEval.cur) o += '<div class="stat"><div class="k">いまの走順（③）</div><div class="v">' + sec(lastCurrentEval.cur.mark) + '</div><div class="d ok">この案で約 <b>' + f1(lastCurrentEval.cur.mark - b.mark) + '秒</b> 速い</div></div>';
   o += '</div>';
   o += '<div class="row noprint"><button class="btn" id="copyBest">Excelに貼れる形でコピー</button><button class="btn" id="bestToCurrent">この案を③いまの走順に入れる</button><button class="btn" id="bestPrint">印刷へ</button><span id="copyMsg" class="hint"></span></div>';
-  o += '<div class="card"><h2>走順と、受け手の待つ位置・目印</h2>' + orderTable(b, ctx, true) + '</div>';
+  o += '<div class="card"><h2>走順と、受け手の待つ位置・目印</h2>' + orderTable(b, ctx, true) + riskHtml(b.risk, ctx.S) + '</div>';
   o += '<div class="card"><h2>この表の見かた</h2><ul class="hint">' +
     '<li><b>待つ位置</b>：受け手が立って待つ場所。「入口」はバトンゾーンの入口（受け手から見て後ろ側）です。</li>' +
     '<li><b>目印</b>：待つ位置から、走ってくる人の方へ何m（何足）のところに印をつけるか。渡す人がその印を越えたら走り出します。計算の値は長めに出やすいので、<b>練習は表の「はじめ」の距離から</b>始め、狙った場所で渡せるまで少しずつ延ばしてください。</li>' +
     '<li><b>受け渡す場所</b>：目印どおりに出たとき、バトンが渡る場所の目安。</li>' +
-    '<li><b>早出しの余裕</b>：目印どおりより何秒早く出ても、まだゾーンの中で渡せるか。目印は①の「安全のため遅らせる時間」だけ近くしてあるので、ふつうはその秒数になります。赤字の組は余裕が足りないので、ていねいに練習してください。</li>' +
+    '<li><b>早出しの余裕</b>：目印どおりより何秒早く出ても、まだゾーンの中で渡せるか。①の「走り出しのばらつき」以上になるよう、組ごとに目印を近くしてあります（もともと余裕のある速→遅の組は、近くする量が少なくなります）。</li>' +
     '<li>待つ位置がゾーンの中になる組があるのは、中学生は約20mで最高速になり、その後は少しずつ落ちるためです（助走が長すぎると、かえって後半が遅くなる）。ほとんど差がないときは入口で待つ形を選んでいます。</li>' +
     '<li><span class="tag down">速→遅</span> 渡す人の方が速い組。早めに出て、出口近くで受け取ります。ゾーンからはみ出さないよう注意。</li>' +
     '<li><span class="tag up">遅→速</span> 受ける人の方が速い組。早く出すぎると追いつけません。<b>迷ったら遅めに</b>出ます。</li>' +
@@ -1094,11 +1170,11 @@ function orderTable(b, ctx, withCheck) {
     if (!rc) { h += '<td colspan="6" class="muted">スタート</td></tr>'; return; }
     var note = [];
     var tol = rc.earlyTol, what = rc.ratio > 1.03 ? '追いつけない' : 'ゾーン内で渡せない';
-    if (tol < (+ctx.S.safety || 0) - 0.01) note.push('<span class="ng">' + f2(tol) + '秒早く出ると' + what + '</span>');
+    if (tol < jitterOf(ctx.S) - 0.01) note.push('<span class="ng">' + f2(tol) + '秒早く出ると' + what + '</span>');
     else note.push('<span class="muted">早出しの余裕 ' + f2(tol) + '秒</span>');
     if (rc.ratio > 1.03) note.push('迷ったら遅めに出る');
     if (rc.etaPlan > G.Z - 1) note.push('<span class="cau">出口に近い</span>');
-    if (rc.eta - rc.u < 0.3) note.push('止まったまま受ける形');
+    if (rc.etaPlan - rc.u < 1) note.push('<span class="cau">ほぼ止まって受ける形</span>');
     var startMark = rc.mark * 0.7;
     h += '<td>' + kindTag(rc.ratio) + '</td><td>' + waitText(rc.u) + '</td>' +
       '<td class="num">' + f1(Math.max(0, rc.mark)) + 'm<br><span class="muted">' + Math.round(Math.max(0, rc.markFoot)) + '足</span></td>' +
@@ -1134,7 +1210,7 @@ function renderPrint() {
   else { if (!lastCurrentEval && state.currentIds) evaluateCurrent(); if (lastCurrentEval && lastCurrentEval.cur) b = lastCurrentEval.cur; }
   if (!b) { $('printOut').innerHTML = msg('info', src === 'best' ? '先に④で「計算する」を押してください。' : '先に③でいまの走順を読み込んでください。'); return; }
   var S = ctx.S, G = b.G;
-  var h = '<div class="card"><h2>リレー走順表</h2><p class="hint">1区間 ' + G.L + 'm' + (G.LN !== G.L ? '（アンカー ' + G.LN + 'm）' : '') + '・バトンゾーン ' + G.Z + 'm（区間の線の ' + G.zb + 'm 手前から）' + (G.R ? '・助走 ' + G.R + 'm' : '') + '／予想タイム ' + sec(b.total) + '（パスが理想どおりのとき）</p>' + orderTable(b, ctx, false) +
+  var h = '<div class="card"><h2>リレー走順表</h2><p class="hint">1区間 ' + G.L + 'm' + (G.LN !== G.L ? '（アンカー ' + G.LN + 'm）' : '') + '・バトンゾーン ' + G.Z + 'm（区間の線の ' + G.zb + 'm 手前から）' + (G.R ? '・助走 ' + G.R + 'm' : '') + '／予想タイム ' + sec(b.mark) + '（全員が目印どおりに出たとき）</p>' + orderTable(b, ctx, false) +
     '<p class="hint">目印は「はじめ」の距離から練習し、狙った場所で渡せるまで少しずつ延ばす。遅→速の組は、迷ったら遅めに出る。</p></div>';
   if ($('printPractice').checked) {
     h += '<div class="card pagebreak"><h2>パス練習の記録</h2><p class="hint">ゾーンの1m手前からゾーンの出口まで、バトンが通る時間をストップウォッチで測って書きこみます。短いほど上手なパスです。</p>';
