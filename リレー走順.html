@@ -863,7 +863,22 @@ function onRosterInput(e) {
   else if (f === 'pin') r.pin = el.value === '' ? '' : +el.value;
   else r[f] = el.value;
   lastBest = null; lastCurrentEval = null; save();
-  if (e.type === 'change') renderRoster();
+  if (e.type === 'change') rerenderRosterKeepFocus();
+}
+// 表を描き直しても、Tabキーで移った先の入力欄にそのまま入力を続けられるようにする
+var rosterRerender = null;
+function rerenderRosterKeepFocus() {
+  clearTimeout(rosterRerender);
+  rosterRerender = setTimeout(function () {
+    var a = document.activeElement, tr = a && a.closest ? a.closest('#rosterTable tr[data-id]') : null;
+    var id = tr && tr.dataset.id, f = a && a.dataset ? a.dataset.f : null;
+    var selStart = null; try { selStart = a.selectionStart; } catch (err) { }
+    renderRoster();
+    if (id && f) {
+      var el = document.querySelector('#rosterTable tr[data-id="' + id + '"] [data-f="' + f + '"]');
+      if (el) { el.focus(); try { if (selStart != null) el.setSelectionRange(el.value.length, el.value.length); } catch (err) { } }
+    }
+  }, 0);
 }
 
 // ---------- ③ いまの走順 ----------
