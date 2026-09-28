@@ -185,6 +185,14 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 .fb[aria-pressed="true"].like{background:var(--seed-weak);color:var(--ink);border-color:color-mix(in srgb,var(--seed) 60%,transparent);font-weight:700}
 .fb[aria-pressed="true"].nope{background:var(--surface-2);color:var(--ink);border-color:var(--line);font-weight:700}
 .topic.pending{justify-content:center;align-items:flex-start;min-height:180px;border-style:dashed;background:transparent}
+.similar{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:baseline;margin:0;font-size:12.5px;color:var(--sub)}
+.similar .sk{font-size:11px;letter-spacing:.06em;border:1px solid var(--line);border-radius:4px;padding:0 5px;line-height:1.6;color:var(--sub)}
+.similar .sm{background:var(--surface-2);border-radius:6px;padding:0 7px;color:var(--ink);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.promptbox{margin:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:7px 12px 8px;font-size:14px;user-select:text;overflow-wrap:anywhere}
+.promptbox .pk{display:block;font-size:11px;letter-spacing:.08em;color:var(--sub);line-height:1.6}
+.topic-foot .btn{padding:4px 12px;font-size:13.5px}
+a.btn{text-decoration:none;display:inline-block}
+.fbs{margin-left:auto;display:inline-flex;gap:2px}
 
 /* これまで */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
@@ -198,6 +206,16 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 .sources .st{font-size:13px;color:var(--sub);grid-column:1}
 .sources .act{grid-column:2;grid-row:1 / span 2}
 .sources .more{grid-column:1 / -1;font-size:13px;color:var(--sub)}
+.sources .act.row{grid-column:1 / -1;grid-row:auto;justify-content:flex-start;margin:4px 0 2px}
+.sources .full{grid-column:1 / -1}
+.pastebox{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.pastebox textarea.field{min-height:120px}
+.sources details{margin-top:4px}
+.sources summary{cursor:pointer;color:var(--accent);font-size:13.5px;width:fit-content}
+.titlelist{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tl{display:inline-flex;align-items:center;gap:2px;background:var(--surface-2);border-radius:8px;padding:1px 2px 1px 9px;font-size:13px;max-width:100%}
+.tl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tl .x{width:24px;height:24px;font-size:14px}
 .steps{margin:4px 0 0;padding-left:1.4em;font-size:13.5px;color:var(--ink)}
 .filepick{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
 .filepick input[type=file]{max-width:100%;font-size:13.5px}
@@ -285,11 +303,11 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
   <section id="p-topics" class="panel" role="tabpanel" aria-labelledby="tab-topics" hidden>
     <div class="pagehead">
       <h1>話題をさがす</h1>
-      <p class="lead">これまでのチャットから、あなたが好きそうなテーマを読み取り、そのテーマで話したら面白そうなことを Claude が6つ考えます。</p>
+      <p class="lead">これまで Claude に聞いてきたチャットから、あなたの興味の分野を読み取り、同じ系統のテーマや似たテーマを Claude が8つ選んで提案します。そのまま送れる最初の質問文つきです。</p>
     </div>
     <div class="tastebox" id="tasteBox">
       <div class="tastehead">
-        <h2>あなたが好きそうなテーマ</h2>
+        <h2>あなたの興味の分野</h2>
         <span id="tasteBasis" class="hint"></span>
         <button id="tasteRefresh" class="btn small" type="button">読み直す</button>
       </div>
@@ -307,17 +325,17 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
       </div>
       <input type="text" id="moodText" maxlength="200" placeholder="ほかに希望があれば（例：寝る前に5分で終わる話）" aria-label="話題の希望">
       <div class="row">
-        <button id="findBtn" class="btn primary" type="button">好きそうな話題を見つける</button>
+        <button id="findBtn" class="btn primary" type="button">テーマを提案してもらう</button>
         <button id="findStop" class="btn" type="button" hidden>止める</button>
         <span id="deckNote" class="note" aria-live="polite"></span>
       </div>
     </div>
     <div class="legend" aria-label="話題の種類">
-      <span><span class="kind" style="--k:var(--k-core)">ど真ん中</span>好きなテーマに新しい切り口で</span>
-      <span><span class="kind" style="--k:var(--k-link)">つなげる</span>好きなもの同士を結ぶ</span>
-      <span><span class="kind" style="--k:var(--k-cont)">続き</span>途中で終わった話</span>
-      <span><span class="kind" style="--k:var(--k-side)">寄り道</span>好きなテーマのすぐ隣</span>
-      <span><span class="kind" style="--k:var(--k-now)">いま</span>季節や時期と好きなテーマ</span>
+      <span><span class="kind" style="--k:var(--k-core)">似たテーマ</span>これまでのチャットと同じ分野</span>
+      <span><span class="kind" style="--k:var(--k-cont)">続き</span>作ったもの・調べたことの次の一歩</span>
+      <span><span class="kind" style="--k:var(--k-link)">組み合わせ</span>別々の分野を掛け合わせる</span>
+      <span><span class="kind" style="--k:var(--k-side)">広げる</span>すぐ隣の、まだ聞いていない分野</span>
+      <span><span class="kind" style="--k:var(--k-now)">季節</span>今の時期に合うテーマ</span>
     </div>
     <div class="deckhead"><h2 id="deckTitle">話題</h2><span id="deckSample" class="tag-sample" hidden>見本</span></div>
     <div id="deck" class="deck"></div>
@@ -327,7 +345,7 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
   <section id="p-history" class="panel" role="tabpanel" aria-labelledby="tab-history" hidden>
     <div class="card" id="sourcesCard">
       <h2>読み込んだチャット</h2>
-      <p class="hint">ここにあるものすべてから、好きそうなテーマを読み取ります。</p>
+      <p class="hint">ここにあるものすべてから、興味の分野を読み取ります。</p>
       <ul class="sources">
         <li>
           <span class="nm">このアプリでの会話</span>
@@ -340,12 +358,37 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
           <span class="act"><button id="ccRead" class="btn small" type="button">読み込む</button></span>
           <span class="more">Claude Code に頼んだ作業の題名・日付・結果のメモを読みます（やりとりの中身は読みません）。はじめて押すと、読んでよいかの確認が出ます。</span>
         </li>
+        <li id="titlesRow">
+          <span class="nm">claude.ai のチャット一覧（題名）</span>
+          <span class="st" id="srcTitles"></span>
+          <span class="act row">
+            <label class="btn small" for="shotFile" id="shotLabel">スクリーンショットを読む</label>
+            <button id="pasteToggle" class="btn small" type="button">題名を貼る</button>
+          </span>
+          <span class="more">いちばん手軽な方法です。claude.ai の左に出るチャット一覧を画面ごと撮って選ぶか、題名をコピーして貼り付けます。スクロールして何枚撮っても、あとから足しても大丈夫です。</span>
+          <input type="file" id="shotFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden>
+          <div id="pasteBox" class="pastebox full" hidden>
+            <textarea id="titlePaste" class="field" placeholder="1行に1つずつ、チャットの題名を貼り付け" aria-label="チャットの題名"></textarea>
+            <div class="row"><button id="titleAdd" class="btn primary small" type="button">題名を追加</button><button id="pasteClose" class="btn ghost small" type="button">閉じる</button></div>
+          </div>
+          <div id="shotProg" class="prog full" hidden>
+            <progress id="shotBar" max="1" value="0"></progress>
+            <span id="shotText"></span>
+            <button id="shotStop" class="btn small" type="button">止める</button>
+          </div>
+          <p id="titlesErr" class="note bad full" aria-live="polite"></p>
+          <details id="titlesDetails" class="full" hidden>
+            <summary id="titlesSummary">読み込んだ題名を見る</summary>
+            <div id="titlesList" class="titlelist"></div>
+            <span id="titlesClearWrap"></span>
+          </details>
+        </li>
         <li>
-          <span class="nm">claude.ai のチャット</span>
+          <span class="nm">claude.ai の書き出し（中身まで読む）</span>
           <span class="st" id="srcCAI"></span>
           <span class="act"><button id="caiGo" class="btn small" type="button">取り込む</button></span>
           <span class="more">
-            ページから直接は読めないため、書き出したファイルを使います。
+            題名だけでなく、やりとりの中身から興味を詳しく読み取ります。
             <ol class="steps">
               <li>claude.ai の［設定］→［プライバシー］で、データの書き出し（エクスポート）を押す</li>
               <li>メールで届くリンクから zip ファイルをダウンロードする</li>
@@ -359,7 +402,7 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 
     <div class="card" id="importCard">
       <h2>ファイルや文章を取り込む</h2>
-      <p class="hint">claude.ai の書き出し（zip または conversations.json）、ChatGPT の書き出し、LINE のトーク履歴（.txt）、コピーした文章などを読み込めます。会話が何百件あっても、全件の題名と書き出しから好きなテーマを読み取り、最近のものは中身まで読んで覚え書きにします。元の文章は保存しません。</p>
+      <p class="hint">claude.ai の書き出し（zip または conversations.json）、ChatGPT の書き出し、LINE のトーク履歴（.txt）、コピーした文章などを読み込めます。会話が何百件あっても、全件の題名と書き出しから興味の分野を読み取り、最近のものは中身まで読んで覚え書きにします。元の文章は保存しません。</p>
       <div class="filepick">
         <input type="file" id="impFile" accept=".zip,.json,.txt,.md,.csv,.log,application/zip,application/json,text/plain" aria-label="取り込むファイル">
         <span id="impFileInfo" class="hint"></span>
@@ -392,9 +435,9 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
   <section id="p-memo" class="panel" role="tabpanel" aria-labelledby="tab-memo" hidden>
     <div class="pagehead">
       <h1>覚え書き</h1>
-      <p class="lead">チャットから Claude が読み取った、あなたの好きなテーマと覚えていることです。返事や話題さがしのたびに読み返します。違っているものは消せます。</p>
+      <p class="lead">チャットから Claude が読み取った、あなたの興味の分野と覚えていることです。返事や話題さがしのたびに読み返します。違っているものは消せます。</p>
     </div>
-    <div class="subhead"><h2>好きなテーマ</h2><span id="memoTasteBasis" class="hint"></span></div>
+    <div class="subhead"><h2>興味の分野</h2><span id="memoTasteBasis" class="hint"></span></div>
     <p id="memoStyle" class="style-line"></p>
     <ul id="memoThemes" class="memo-list"></ul>
 
@@ -410,7 +453,7 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
     </form>
     <p id="memoPrivacy" class="privacy"></p>
     <div class="dangerzone">
-      <button id="memoClear" class="btn danger small" type="button">覚え書きと好きなテーマをすべて消す</button>
+      <button id="memoClear" class="btn danger small" type="button">覚え書きと興味の分野をすべて消す</button>
       <span class="hint">会話の記録は「これまで」から1つずつ消せます。</span>
     </div>
   </section>
@@ -424,7 +467,9 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 /* ---------- 定数 ---------- */
 const KINDS = ['関心', '途中の話', '覚えておくこと', '苦手'];
 const KIND_NOTE = { 関心: '好きなこと・気になっていること', 途中の話: '続きがありそうな話', 覚えておくこと: '話に出た具体的なこと', 苦手: 'あまり話したくなさそうなこと' };
-const TOPIC_KINDS = { ど真ん中: 'k-core', つなげる: 'k-link', 続き: 'k-cont', 寄り道: 'k-side', いま: 'k-now' };
+const TOPIC_KINDS = { 似たテーマ: 'k-core', 続き: 'k-cont', 組み合わせ: 'k-link', 広げる: 'k-side', 季節: 'k-now' };
+const OLD_KINDS = { ど真ん中: '似たテーマ', つなげる: '組み合わせ', 寄り道: '広げる', いま: '季節' };
+const UI_WORDS = /^(検索|新規|新しいチャット|チャット|最近|最近の項目|スター付き|プロジェクト|アーティファクト|new chat|search|chats?|recents?|starred|projects?|artifacts?)$/i;
 const MARK = '[[たね]]';
 const MARK_RE = /\[\[\s*たね\s*\]\]/;
 const LS_KEY = 'hanashi-no-tane:v1';
@@ -494,6 +539,8 @@ function errorCopy(e) {
     case 'refused': return 'この内容には返事ができませんでした。言い方や話題を変えてみてください。';
     case 'prompt_too_large': return '記録が長すぎて一度に読めませんでした。「これまで」で古い会話を消すと読めるようになります。';
     case 'empty_completion': case 'invalid_json': return 'うまく作れませんでした。もう一度試してください。';
+    case 'image_rejected': return '画像を読めませんでした。JPEG・PNG・WebP の画像で、もう一度試してください。';
+    case 'images_unavailable': return 'この画面では画像を読めません。題名をコピーして「題名を貼る」から追加してください。';
     case 'not_granted': case 'sampling_disabled': case 'not_declared': case 'capability_disabled': case 'capability_removed':
       return 'この画面から Claude を使うことが許可されていません。';
     default: return '通信が途切れました。もう一度試してください。';
@@ -517,7 +564,7 @@ function ccErrorCopy(e) {
 
 /* ---------- 状態 ---------- */
 function emptyHome() {
-  return { v: 2, memory: { items: [], updatedAt: 0 }, deck: null, recentTopics: [], taste: null, feedback: { likes: [], nopes: [] }, cc: null };
+  return { v: 2, memory: { items: [], updatedAt: 0 }, deck: null, recentTopics: [], taste: null, feedback: { likes: [], nopes: [] }, cc: null, titles: [], titlesAt: 0 };
 }
 const S = {
   ai: 'wait', sample: null, mcp: null, store: null, loaded: false, saveBroken: false,
@@ -527,6 +574,7 @@ const S = {
   tasteBusy: false, tasteCtl: null, tasteNote: '',
   digesting: 0, digestChain: Promise.resolve(), digestErr: '',
   ccBusy: false, ccErr: '',
+  shots: null, titlesErr: '',
   imp: null, impError: '',
   tab: 'talk', deep: lsGet(LS_DEEP) === '1',
 };
@@ -539,11 +587,16 @@ function normItem(i) {
 function normTopic(o) {
   if (!o || typeof o.title !== 'string' || !o.title.trim()) return null;
   return {
-    kind: TOPIC_KINDS[o.kind] ? o.kind : '寄り道',
+    kind: TOPIC_KINDS[o.kind] ? o.kind : (OLD_KINDS[o.kind] || '広げる'),
     theme: clip(o.theme, 30), fit: clampInt(o.fit, 0, 5, 0),
     title: clip(o.title, 40), hook: clip(o.hook, 220), why: clip(o.why, 180),
+    similar: Array.isArray(o.similar) ? o.similar.map((x) => clip(x, 40)).filter(Boolean).slice(0, 3) : [],
+    prompt: String(o.prompt || '').trim().slice(0, 500),
     opener: String(o.opener || '').trim().slice(0, 500),
   };
+}
+function cleanTitle(s) {
+  return String(s || '').replace(/^[\s○●◯・\-*•◦▪▸>]+/, '').replace(/\s+/g, ' ').trim().slice(0, 80);
 }
 function normTheme(t) {
   if (!t || typeof t.name !== 'string' || !t.name.trim()) return null;
@@ -575,6 +628,8 @@ function normHome(h) {
     x.cc = { at: +h.cc.at || 0, count: +h.cc.count || h.cc.items.length,
       items: h.cc.items.filter((i) => i && i.title).map((i) => ({ title: clip(i.title, 60), date: +i.date || 0, note: clip(i.note, 80) })).slice(0, 300) };
   }
+  if (Array.isArray(h.titles)) x.titles = h.titles.map((t) => ({ title: cleanTitle(t && t.title), at: +(t && t.at) || 0 })).filter((t) => t.title).slice(0, 600);
+  x.titlesAt = +h.titlesAt || 0;
   return x;
 }
 function normSeeds(a) {
@@ -718,8 +773,8 @@ function persistChat(c, bump = true) {
 function privacyText() {
   if (!S.store) return '';
   if (S.saveBroken) return '今は保存できない状態です。この画面を閉じると、会話と覚え書きは消えます。';
-  if (S.store.mode === 'db') return '会話・覚え書き・好きなテーマは、あなただけが読める場所に保存されます。このページを共有しても、ほかの人には見えません（その人にはその人の記録ができます）。';
-  if (S.store.mode === 'local') return '会話・覚え書き・好きなテーマは、この端末のブラウザにだけ保存されます。';
+  if (S.store.mode === 'db') return '会話・覚え書き・興味の分野は、あなただけが読める場所に保存されます。このページを共有しても、ほかの人には見えません（その人にはその人の記録ができます）。';
+  if (S.store.mode === 'local') return '会話・覚え書き・興味の分野は、この端末のブラウザにだけ保存されます。';
   return 'この画面では保存できません。閉じると会話と覚え書きは消えます。';
 }
 
@@ -743,6 +798,7 @@ function feedbackText() {
     f.nopes.length ? `いまいちと言った話題: ${f.nopes.slice(0, 20).map(fmt).join('、')}` : '',
   ].filter(Boolean).join('\n');
 }
+function titlesText(max) { return joinUpTo(S.home.titles.map((t) => `- ${t.title}`), max); }
 function userGist(c) { return clip(c.messages.filter((m) => m.r === 'u').map((m) => m.t).join(' / '), 110); }
 function historyText(max, excludeId) {
   const entries = [];
@@ -756,6 +812,7 @@ function historyText(max, excludeId) {
   }
   const cc = S.home.cc;
   if (cc && cc.items.length) entries.push({ at: cc.at, line: `- Claude Code で頼んだ作業（${cc.count}件）: ${cc.items.slice(0, 30).map((i) => i.title).join('、')}` });
+  if (S.home.titles.length) entries.push({ at: S.home.titlesAt, line: `- Claude とのチャットの題名（${S.home.titles.length}件）: ${S.home.titles.slice(0, 40).map((t) => t.title).join('、')}` });
   entries.sort((a, b) => b.at - a.at);
   return joinUpTo(entries.map((e) => clip(e.line, 900)), max);
 }
@@ -778,9 +835,10 @@ function chatRules(c) {
     taste ? `## この人が好きなテーマ（【】は好きそうな度合い 1〜5）\n${taste}` : '',
     `## この人について覚えていること\n${memoryText(3200) || '（まだありません）'}`,
     `## これまでの会話\n${historyText(4000, c.id) || '（まだありません）'}`,
-    c.topic ? `## この会話のきっかけ\nあなたが「${c.topic.title}」という話題を見つけて、最初のひとことを投げかけたところから始まっています。` : '',
+    c.topic ? `## この会話のきっかけ\nあなたが提案した「${c.topic.title}」というテーマから始まっています。` : '',
     `## 話し方
-- 日本語で、友だちのように気さくに話す。返事は短め（2〜6文）。詳しく聞かれたときだけ長くしてよい。
+- 日本語で、気さくに話す。雑談なら返事は短め（2〜6文）。
+- 具体的な相談・質問・作りたいもの（道具、アプリ、授業、撮影、観察の計画など）のときは、しっかり役に立つ答えを返す。長くなってもよく、手順は「1.」や「・」で書いてよい。
 - 覚えていることは、流れに合うときだけさりげなく使う（「前に〜って話してたよね」など）。全部を持ち出さない。
 - 記録にないことを覚えているふりをしない。わからないことは聞けばよい。
 - 質問は1回の返事で1つまで。質問攻めにせず、自分の考えや小ネタも出す。
@@ -791,7 +849,7 @@ ${MARK}
 - 話題名（15字以内）｜なぜ面白そうか（25字以内）
 - 話題名｜ひとこと
 - 話題名｜ひとこと
-3つには「いまの話の続き」「この人の好きなテーマにつながる話」「過去の会話とのつながりや少し意外な寄り道」を混ぜる。好きなテーマや過去の会話とつなげるときは、何とつながるのかがわかるように書く。`,
+3つには「いまの話の続き」「この人がこれまで Claude に聞いてきたテーマに近い話」「少し意外な広がり」を混ぜる。過去のチャットとつなげるときは、何とつながるのかがわかるように書く。`,
     '以下が、いまの会話です。',
   ].filter(Boolean).join('\n\n');
 }
@@ -827,46 +885,50 @@ function splitSeeds(text) {
   return { body: clean(text.slice(0, m.index)), seeds };
 }
 function topicPrompt(mood, focus) {
-  const taste = tasteText(3000);
+  const taste = tasteText(2500);
   const fb = feedbackText();
-  return `あなたは、会話の話題を考える名人です。ある人のおしゃべり相手として、この人が「それ話したい！」と思いそうな話題を6つ考えてください。いちばん大事なのは、この人の好きなテーマにぴったり合うことです。
+  return `あなたは、ある人が次に Claude に聞いてみたくなるテーマを選ぶ係です。この人がこれまで Claude に聞いてきたチャット（下の題名や記録）を読み、同じ系統のテーマや似たテーマ、そこから自然に広がるテーマを8つ提案してください。いちばん大事なのは、この人のこれまでのチャットの並びに入っていても違和感のない「この人らしい」テーマであることです。
 
 今日は${todayLong()}です。
-${focus ? `今回は「${focus}」のテーマに絞る。6つすべてをこのテーマに関係させ、切り口を変える。\n` : ''}${mood ? `この人の今の希望: ${mood}\n` : ''}
-## この人の好きなテーマ（【】は好きそうな度合い 1〜5、強い順）
+${focus ? `今回は「${focus}」の分野に絞る。8つすべてをこの分野に関係させ、切り口を変える。\n` : ''}${mood ? `この人の今の希望: ${mood}\n` : ''}
+## この人が Claude とチャットしてきた題名
+${titlesText(6000) || '（まだありません）'}
+
+## この人の興味の分野（【】は好きそうな度合い 1〜5、強い順）
 ${taste || '（まだ読み取れていません。下の記録から推し量る）'}
 
-## 話題への反応
+## 提案への反応
 ${fb || '（まだありません）'}
 
 ## この人について覚えていること
-${memoryText(3000) || '（まだほとんどありません）'}
+${memoryText(2500) || '（まだほとんどありません）'}
 
-## これまでの会話（新しい順）
-${historyText(4000) || '（まだほとんどありません）'}
+## そのほかの記録（新しい順）
+${historyText(3500) || '（まだほとんどありません）'}
 
-## 最近の会話の抜粋
-${recentExcerpt(3000) || '（なし）'}
-
-## 最近すでに出した話題（これらと同じものは避ける）
-${S.home.recentTopics.slice(0, 30).join('、') || '（なし）'}
+## 最近すでに提案したテーマ（これらと同じものは避ける）
+${S.home.recentTopics.slice(0, 40).join('、') || '（なし）'}
 
 ## 考え方
-- kind は5種類。6つの内訳は「ど真ん中」2、「つなげる」1、「続き」1、「寄り道」1、「いま」1。
-  - ど真ん中: 好きなテーマの上位に、まだ話していない新しい切り口で踏み込む。
-  - つなげる: 好きなテーマどうし、または好きなテーマと別の会話を結びつける。
-  - 続き: 途中で終わった話、その後どうなったか気になる話。
-  - 寄り道: 好きなテーマのすぐ隣にある、まだ話していないけれど好きそうなこと。
-  - いま: 今日の日付や季節・時期と、好きなテーマを絡めた話。
-- どの話題も、好きなテーマのどれにつながるかを theme に書く（テーマ名そのまま。2つなら「A×B」）。
-- fit は、この人が好きそうな度合いの見込み（1〜5）。根拠が薄い推測は低めにする。
-- 「好き」と言われた話題の方向は増やし、「いまいち」と言われた話題や「苦手」に近いものは避ける。
-- 好きなテーマがまだわからないとき（材料が少ないとき）は、覚え書きや会話から想像を広げてよい。ただし、記録にない事実をこの人のこととして断定しない。
-- ありきたりな話題より、具体的で「それ話したい」と思える切り口にする。
+- kind は5種類。8つの内訳は「似たテーマ」3、「続き」1、「組み合わせ」2、「広げる」1、「季節」1。
+  - 似たテーマ: これまでのチャットと同じ分野で、まだ聞いていない具体的なテーマ。
+  - 続き: これまでのチャットで作ったもの・調べたこと・計画したことの、次の一歩。
+  - 組み合わせ: 別々の分野のチャットを掛け合わせたテーマ（趣味の知識を仕事に生かす、など）。
+  - 広げる: これまでの分野のすぐ隣にある、まだ聞いていないけれど興味を持ちそうな分野。
+  - 季節: 今日の日付・季節・時期に合うテーマ（行事、生き物の季節、学期の区切りなど、この人の分野に合わせる）。
+- title は、チャットの題名のような短く具体的な名詞句（25字以内）。これまでの題名の雰囲気に合わせる。
+- theme は、つながる興味の分野の名前（2つなら「A×B」）。
+- similar は、似ている・もとになった過去のチャットの題名を1〜3個、上の題名そのままで書く。
+- hook は、なぜ面白そう・役に立ちそうかを1文で。
+- prompt は、この人が Claude に最初に送る質問文。この人の立場で、具体的に1〜3文（「〜したい。〜を教えて」など）。
+- fit は、この人が興味を持ちそうな度合いの見込み（1〜5）。根拠が薄い推測は低めにする。
+- 「好き」と言われた方向は増やし、「いまいち」と言われたものや「苦手」に近いものは避ける。
+- 記録にないことを事実として決めつけない（持っていない道具や、していない活動を前提にしない。記録に出てくるものは使ってよい）。
+- すでにある題名とほぼ同じものは出さない。ありきたりな一般論より、具体的で「それ聞いてみたい」と思えるものにする。
 
 ## 出力の形
-1行に1つ、次のキーを持つJSONオブジェクトを書く。全部で6行。前後に説明やコードブロックの記号は書かない。
-{"kind":"ど真ん中","theme":"好きなテーマ名","fit":5,"title":"20字以内の話題名","hook":"興味をそそる紹介（1〜2文）","why":"なぜこの人が好きそうか。どの会話や傾向から思いついたか（1文）","opener":"あなたがこの話を切り出す最初のひとこと（1〜3文、最後は答えやすい質問1つ）"}`;
+1行に1つ、次のキーを持つJSONオブジェクトを書く。全部で8行。前後に説明やコードブロックの記号は書かない。
+{"kind":"似たテーマ","theme":"分野名","fit":5,"title":"25字以内のテーマ名","hook":"なぜ面白そうか（1文）","similar":["過去のチャットの題名"],"prompt":"Claude に最初に送る質問文（1〜3文）"}`;
 }
 const DIGEST_RULES = `あなたは記録係です。ある人の「おしゃべり相手」が次からの会話で使う「覚え書き」を更新します。いまの覚え書きと新しい記録を読み、更新後の覚え書きをJSONで返してください。
 
@@ -903,7 +965,7 @@ const TASTE_RULES = `あなたは、ある人の「好きなテーマ」を読�
 
 読み取り方:
 - 何度も出てくること、長く続いた話、自分から深掘りしていることほど score（好きそうな度合い 1〜5）が高い。1回きりの用事（ちょっとした調べもの、事務的な作業）は低め。
-- テーマ名は具体的に、12字前後で（「趣味」ではなく「フィルムカメラ散歩」くらいの粒度）。
+- テーマ名は、この人が何の分野に興味を持って聞いているのかがわかる具体的な名前を12字前後で（「趣味」ではなく「フィルムカメラ散歩」くらいの粒度）。チャットの題名は、この人が自分から興味を持って聞いたことなので、特に重く見る。
 - why は根拠を1文で（どんな会話に、どのくらい出てくるか）。examples は根拠になった会話の題名などを最大3つ、記録の表現のまま。
 - 「好き」と言われた話題に近いテーマは score を上げ、「いまいち」と言われた話題に近いテーマは下げるか消す。
 - すでにあるテーマは、新しい材料で裏付けが増えれば score を上げ、変える理由がなければそのまま残す。似たテーマはまとめる。
@@ -924,6 +986,7 @@ function tasteBasisNow() {
     imports: S.imports.length,
     importConvs: S.imports.reduce((a, i) => a + (i.convCount || 0), 0),
     cc: S.home.cc ? S.home.cc.count : 0,
+    titles: S.home.titles.length,
   };
 }
 async function runTaste(label, body, signal) {
@@ -938,6 +1001,7 @@ async function runTaste(label, body, signal) {
 }
 function tasteMaterials(max) {
   const parts = [];
+  if (S.home.titles.length) parts.push(`### Claude とのチャットの題名（${S.home.titles.length}件。この人が興味を持って Claude に聞いてきたこと）\n${titlesText(9000)}`);
   const chats = S.chats.filter((c) => c.messages.some((m) => m.r === 'u'));
   if (chats.length) parts.push(`### このアプリでの会話（${chats.length}件、新しい順）\n` + joinUpTo(chats.map((c) => `- ${fmtDateLong(c.startedAt)}「${c.title || '無題'}」: ${c.summary || userGist(c)}`), 9000));
   if (S.home.memory.items.length) parts.push(`### 覚え書き\n${memoryText(4000)}`);
@@ -947,7 +1011,7 @@ function tasteMaterials(max) {
   return parts.join('\n\n').slice(0, max);
 }
 function hasTasteMaterial() {
-  return S.chats.some((c) => c.messages.some((m) => m.r === 'u')) || S.imports.length > 0 || !!(S.home.cc && S.home.cc.items.length) || S.home.memory.items.length > 0;
+  return S.chats.some((c) => c.messages.some((m) => m.r === 'u')) || S.imports.length > 0 || !!(S.home.cc && S.home.cc.items.length) || S.home.memory.items.length > 0 || S.home.titles.length > 0;
 }
 function tasteStale() {
   if (!hasTasteMaterial()) return false;
@@ -957,8 +1021,9 @@ function tasteStale() {
   const newChats = S.chats.filter((c) => c.digested > 0 && c.updatedAt > since).length;
   const newImps = S.imports.filter((i) => i.addedAt > since).length;
   const ccNew = !!(S.home.cc && S.home.cc.at > since);
+  const titlesNew = S.home.titlesAt > since;
   const fb = [...S.home.feedback.likes, ...S.home.feedback.nopes].filter((f) => f.at > since).length;
-  return newImps > 0 || ccNew || newChats >= 2 || fb >= 3;
+  return newImps > 0 || ccNew || titlesNew || newChats >= 2 || fb >= 3;
 }
 async function refreshTaste(signal) {
   const body = tasteMaterials(30000);
@@ -1039,13 +1104,18 @@ function openChat(id) {
 }
 function startTopic(t, isSample) {
   leaveCurrent();
-  if (isSample || !t.opener) {
+  if (!isSample && fbState(t.title) !== 'like') setFeedback(t, 'like', true);
+  if (isSample || t.prompt || !t.opener) {
     switchTab('talk');
+    if (!isSample && S.ai === 'ok') {
+      S.cur = newChat();
+      S.cur.title = t.title;
+      S.cur.topic = { kind: t.kind, title: t.title };
+    }
     renderTalk();
-    send(`「${t.title}」の話がしたい`);
+    send(!isSample && t.prompt ? t.prompt : `「${t.title}」の話がしたい`);
     return;
   }
-  if (fbState(t.title) !== 'like') setFeedback(t, 'like', true);
   const c = newChat();
   c.title = t.title;
   c.topic = { kind: t.kind, title: t.title };
@@ -1118,7 +1188,7 @@ async function refreshTasteNow() {
   renderTaste(); renderMemo();
   try {
     await refreshTaste(ctl.signal);
-    toast(`好きなテーマを読み直しました（${S.home.taste ? S.home.taste.themes.length : 0}件）。`);
+    toast(`興味の分野を読み直しました（${S.home.taste ? S.home.taste.themes.length : 0}件）。`);
   } catch (e) {
     if (!(e && e.code === 'cancelled')) { S.tasteNote = errorCopy(e); if (isFatal(e)) S.ai = 'off'; }
   } finally {
@@ -1138,14 +1208,14 @@ async function findTopics() {
   const got = [];
   try {
     if (tasteStale()) {
-      S.deckNote = 'まず、これまでの記録から好きなテーマを読み直しています（30秒ほど）';
+      S.deckNote = 'まず、これまでの記録から興味の分野を読み直しています（30秒ほど）';
       renderTopics();
       try { await refreshTaste(ctl.signal); }
       catch (e) { if (e && (e.code === 'cancelled' || isFatal(e))) throw e; /* 読み直せなくても、前のまとめで続ける */ }
       renderTaste();
     }
     S.liveDeck = [];
-    S.deckNote = focus ? `「${focus}」で話題を考えています（30秒〜1分ほど）` : '好きなテーマから話題を考えています（30秒〜1分ほど）';
+    S.deckNote = focus ? `「${focus}」でテーマを選んでいます（30秒〜1分ほど）` : 'これまでのチャットに近いテーマを選んでいます（30秒〜1分ほど）';
     renderTopics();
     let pending = '';
     const add = (line) => {
@@ -1162,14 +1232,14 @@ async function findTopics() {
       const t = res.text, a = t.indexOf('['), b = t.lastIndexOf(']');
       if (a >= 0 && b > a) { try { JSON.parse(t.slice(a, b + 1)).map(normTopic).filter(Boolean).forEach((x) => got.push(x)); } catch (e) { /* 形が違う */ } }
     }
-    S.deckNote = got.length ? '' : 'うまく話題が作れませんでした。もう一度押してください。';
+    S.deckNote = got.length ? '' : 'うまく提案を作れませんでした。もう一度押してください。';
     S.deckNoteBad = !got.length;
   } catch (e) {
     if (e && e.code === 'cancelled') S.deckNote = got.length ? '途中で止めました。' : '';
     else { S.deckNote = errorCopy(e); S.deckNoteBad = true; if (isFatal(e)) S.ai = 'off'; }
   } finally {
     if (got.length) {
-      const items = got.slice(0, 8).map((t, i) => ({ t, i })).sort((a, b) => (b.t.fit - a.t.fit) || (a.i - b.i)).map((x) => x.t);
+      const items = got.slice(0, 10).map((t, i) => ({ t, i })).sort((a, b) => (b.t.fit - a.t.fit) || (a.i - b.i)).map((x) => x.t);
       S.home.deck = { at: Date.now(), mood, focus, items };
       const seen = new Set();
       S.home.recentTopics = [...got.map((t) => t.title), ...S.home.recentTopics].filter((x) => !seen.has(x) && seen.add(x)).slice(0, 40);
@@ -1226,6 +1296,68 @@ async function readClaudeCode() {
     renderAll();
   }
   if (!S.ccErr && S.home.cc && S.home.cc.count && S.ai === 'ok') refreshTasteNow();
+}
+
+/* ---------- チャット一覧の題名 ---------- */
+const SHOT_PROMPT = `この画像は、チャットアプリ（Claude など）の会話一覧の画面です。見えている会話の題名を、上から順にすべて書き出してください。
+- 題名だけを書く。「検索」「新規」「最近」などのボタンや見出し、日付は書かない。
+- 途中で切れている題名は、見えている部分までをそのまま書く（推測で補わない）。
+- 画像が複数あるときは、1枚目から順に。
+返す形（JSONのみ）: ["題名1","題名2"]`;
+function addTitles(list) {
+  const have = new Set(S.home.titles.map((t) => t.title.toLowerCase()));
+  const now = Date.now();
+  let n = 0;
+  for (const raw of list) {
+    const t = cleanTitle(typeof raw === 'string' ? raw : raw && raw.title);
+    if (!t || t.length < 2 || UI_WORDS.test(t)) continue;
+    const k = t.toLowerCase();
+    if (have.has(k)) continue;
+    have.add(k);
+    S.home.titles.push({ title: t, at: now });
+    n++;
+  }
+  if (S.home.titles.length > 600) S.home.titles = S.home.titles.slice(0, 600);
+  if (n) { S.home.titlesAt = now; saveHome(); }
+  return n;
+}
+function afterTitlesAdded(n) {
+  toast(n ? `チャットの題名を ${n} 件追加しました（全部で ${S.home.titles.length} 件）。` : '新しい題名はありませんでした（すでに入っているものは足しません）。');
+  renderAll();
+  if (n && S.ai === 'ok') refreshTasteNow();
+}
+async function readShots(files) {
+  S.titlesErr = '';
+  if (S.ai !== 'ok') { S.titlesErr = 'Claude につながっていないため、画像を読めません。題名をコピーして「題名を貼る」から追加してください。'; renderSources(); return; }
+  if (S.shots) return;
+  let lim = null;
+  try { lim = await S.sample.limits(); } catch (e) { lim = null; }
+  if (!lim || !lim.images) { S.titlesErr = errorCopy({ code: 'images_unavailable' }); renderSources(); return; }
+  const types = lim.images.mediaTypes || [];
+  const ok = files.filter((f) => (!types.length || types.includes(f.type)) && (!lim.images.maxInputBytes || f.size <= lim.images.maxInputBytes)).slice(0, 12);
+  if (!ok.length) { S.titlesErr = 'JPEG・PNG・WebP のスクリーンショットを選んでください。'; renderSources(); return; }
+  const per = Math.max(1, lim.images.maxCount || 1);
+  const batches = [];
+  for (let i = 0; i < ok.length; i += per) batches.push(ok.slice(i, i + per));
+  S.shots = { done: 0, total: batches.length, stop: false, ctl: null };
+  renderSources();
+  const found = [];
+  for (const batch of batches) {
+    if (S.shots.stop) break;
+    S.shots.ctl = new AbortController();
+    try {
+      const r = await S.sample.json(SHOT_PROMPT, { images: batch, modelTier: 'default', cache: false, signal: S.shots.ctl.signal });
+      const arr = Array.isArray(r) ? r : (r && Array.isArray(r.titles) ? r.titles : []);
+      found.push(...arr);
+      S.shots.done++;
+    } catch (e) {
+      if (!(e && e.code === 'cancelled')) { S.titlesErr = errorCopy(e); if (isFatal(e)) S.ai = 'off'; }
+      break;
+    } finally { renderSources(); }
+  }
+  S.shots = null;
+  const n = addTitles(found);
+  if (found.length || !S.titlesErr) afterTitlesAdded(n); else renderAll();
 }
 
 /* ---------- 取り込み ---------- */
@@ -1395,7 +1527,7 @@ function planText(imp) {
     const k = KIND_LABEL[imp.parsed.kind] || '';
     const i = imp.info;
     const titled = i.titled >= i.total ? 'すべての' : `新しいほうから ${i.titled} 件の`;
-    return `「${imp.name}」: ${k} の会話が ${i.total} 件ありました。${titled}題名と書き出しから好きなテーマを読み取り、新しい ${i.detailed} 件は中身まで読んで覚え書きにします。${mem}${cost}`;
+    return `「${imp.name}」: ${k} の会話が ${i.total} 件ありました。${titled}題名と書き出しから興味の分野を読み取り、新しい ${i.detailed} 件は中身まで読んで覚え書きにします。${mem}${cost}`;
   }
   return `「${imp.name}」: ${imp.parsed.chars.toLocaleString()} 文字の記録です。` + (imp.info.cut ? `長いので、最後（新しいほう）の ${imp.info.used.toLocaleString()} 文字を読みます。` : '') + mem + cost;
 }
@@ -1408,7 +1540,7 @@ async function runImport() {
   for (let i = imp.done; i < imp.steps.length && !imp.stop; i++) {
     const step = imp.steps[i];
     imp.ctl = new AbortController();
-    imp.current = step.type === 'taste' ? '全体から好きなテーマを読み取っています' : '中身を読んで覚え書きにしています';
+    imp.current = step.type === 'taste' ? '全体から興味の分野を読み取っています' : '中身を読んで覚え書きにしています';
     renderImport();
     try {
       if (step.type === 'taste') await runTaste(`取り込んだ記録「${imp.name}」: ${step.label}`, step.body, imp.ctl.signal);
@@ -1429,12 +1561,12 @@ async function runImport() {
       summary: clip(imp.summaries.join(' '), 400),
       titles: titledConvs.map((c) => clip(c.title || '無題', 30)).slice(0, 80), partial: imp.done < imp.steps.length,
     };
-    if (!doc.summary && titledConvs.length) doc.summary = `会話の題名 ${titledConvs.length} 件から好きなテーマを読み取りました。`;
+    if (!doc.summary && titledConvs.length) doc.summary = `会話の題名 ${titledConvs.length} 件から興味の分野を読み取りました。`;
     const id = newId('i');
     S.imports.unshift(Object.assign({ id }, doc));
     if (S.store) S.store.saveImport(id, doc);
     if (imp.done === imp.steps.length || imp.stop) {
-      toast(`「${imp.name}」を取り込みました。好きなテーマ ${S.home.taste ? S.home.taste.themes.length : 0} 件・覚え書き ${S.home.memory.items.length} 件になりました。`);
+      toast(`「${imp.name}」を取り込みました。興味の分野 ${S.home.taste ? S.home.taste.themes.length : 0} 件・覚え書き ${S.home.memory.items.length} 件になりました。`);
       S.imp = null;
       $('impFile').value = ''; $('impText').value = ''; $('impName').value = ''; $('impWho').value = ''; $('impFileInfo').textContent = '';
     } else {
@@ -1450,9 +1582,9 @@ function examples() {
   const d = new Date(), m = d.getMonth() + 1;
   const season = m >= 3 && m <= 5 ? '春' : m >= 6 && m <= 8 ? '夏' : m >= 9 && m <= 11 ? '秋' : '冬';
   return [
-    { kind: 'いま', title: `この${season}に一つだけやるなら`, hook: `${m}月も${d.getDate() <= 10 ? 'はじまったばかり' : d.getDate() <= 20 ? 'なかば' : '終わりが近い'}。今年の${season}のうちに叶えたい小さな計画を一つ決めてみる話。` },
-    { kind: 'つなげる', title: '子どものころの好きと、いまの好き', hook: '昔夢中だったものと、いまハマっているもの。意外なところで一本の線につながっているかもしれません。' },
-    { kind: '寄り道', title: '一日だけ別の仕事をするなら', hook: '憧れの仕事、向いていそうな仕事、絶対にやりたくない仕事。選び方にその人らしさが出ます。' },
+    { kind: '季節', title: `この${season}に始める小さな計画`, hook: `${m}月も${d.getDate() <= 10 ? 'はじまったばかり' : d.getDate() <= 20 ? 'なかば' : '終わりが近い'}。今年の${season}のうちにやってみたいことを、手順まで落とし込む。` },
+    { kind: '組み合わせ', title: '趣味の知識を仕事に生かす', hook: '好きで詳しくなったことが、仕事の道具や教材になるかもしれません。' },
+    { kind: '広げる', title: '気になっていた道具の選び方', hook: '買う前に比べておきたい点を、自分の使い方に合わせて整理する。' },
   ];
 }
 function topicCard(t, opt = {}) {
@@ -1460,21 +1592,41 @@ function topicCard(t, opt = {}) {
   const card = el('article', { class: `topic ${TOPIC_KINDS[t.kind] || 'k-side'}${opt.compact ? ' compact' : ''}${st === 'nope' ? ' dim' : ''}${st === 'like' ? ' liked' : ''}` },
     el('div', { class: 'topic-top' },
       el('span', { class: 'kind', text: t.kind }),
-      t.theme ? el('span', { class: 'topic-theme', title: 'つながる好きなテーマ', text: t.theme }) : null,
+      t.theme ? el('span', { class: 'topic-theme', title: 'つながる興味の分野', text: t.theme }) : null,
       opt.sample ? el('span', { class: 'tag-sample', text: '見本' }) : null,
       !opt.sample && t.fit ? el('span', { class: 'fit' }, '好きそう度', dots(t.fit, `好きそう度 5段階の${t.fit}`)) : null),
     el('h3', { class: 'topic-title', text: t.title }),
     t.hook ? el('p', { class: 'topic-hook', text: t.hook }) : null,
-    !opt.compact && t.why ? el('p', { class: 'topic-why' }, el('span', { class: 'why-k', text: '好きそうな理由' }), el('span', { text: t.why })) : null,
+    !opt.compact && t.similar && t.similar.length ? el('p', { class: 'similar' }, el('span', { class: 'sk', text: '似ているチャット' }), t.similar.map((x) => el('span', { class: 'sm', title: x, text: x }))) : null,
+    !opt.compact && !(t.similar && t.similar.length) && t.why ? el('p', { class: 'topic-why' }, el('span', { class: 'why-k', text: '好きそうな理由' }), el('span', { text: t.why })) : null,
   );
-  const foot = el('div', { class: 'topic-foot' }, el('button', { class: 'topic-go', type: 'button', onclick: () => startTopic(t, !!opt.sample) }, 'この話をする →'));
-  if (!opt.sample && !opt.compact) {
+  const ptext = t.prompt ? el('span', { class: 'ptext', text: t.prompt }) : null;
+  if (!opt.compact && ptext) card.append(el('p', { class: 'promptbox' }, el('span', { class: 'pk', text: '最初に聞くこと' }), ptext));
+  const foot = el('div', { class: 'topic-foot' });
+  if (opt.compact || opt.sample || !t.prompt) {
+    foot.append(el('button', { class: 'topic-go', type: 'button', onclick: () => startTopic(t, !!opt.sample) }, 'この話をする →'));
+  } else {
     foot.append(
+      el('a', { class: 'btn primary', href: 'https://claude.ai/new?q=' + encodeURIComponent(t.prompt), target: '_blank', rel: 'noopener',
+        onclick: () => { copyPrompt(t.prompt, ptext); if (fbState(t.title) !== 'like') setFeedback(t, 'like', true); } }, 'コピーして claude.ai で聞く'),
+      el('button', { class: 'btn', type: 'button', onclick: () => startTopic(t, false) }, 'ここで話す'));
+  }
+  if (!opt.sample && !opt.compact) {
+    foot.append(el('span', { class: 'fbs' },
       el('button', { class: 'fb like', type: 'button', 'aria-pressed': String(st === 'like'), onclick: () => setFeedback(t, 'like') }, '好き'),
-      el('button', { class: 'fb nope', type: 'button', 'aria-pressed': String(st === 'nope'), onclick: () => setFeedback(t, 'nope') }, 'いまいち'));
+      el('button', { class: 'fb nope', type: 'button', 'aria-pressed': String(st === 'nope'), onclick: () => setFeedback(t, 'nope') }, 'いまいち')));
   }
   card.append(foot);
   return card;
+}
+function copyPrompt(text, node) {
+  const fallback = () => {
+    try { const r = document.createRange(); r.selectNodeContents(node); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (e) { /* 選べなくても続ける */ }
+    toast('質問文を選択しました。コピーして claude.ai に貼り付けてください。');
+  };
+  try {
+    navigator.clipboard.writeText(text).then(() => toast('質問文をコピーしました。claude.ai に貼り付けて送ってください。'), fallback);
+  } catch (e) { fallback(); }
 }
 function thinkingNode(label) {
   return el('span', { class: 'thinking' }, el('i'), el('i'), el('i'), el('span', { text: label }));
@@ -1484,6 +1636,7 @@ function basisText() {
   if (!t) return '';
   const b = t.basis || {};
   const parts = [];
+  if (b.titles) parts.push(`チャットの題名 ${b.titles}件`);
   if (b.chats) parts.push(`このアプリの会話 ${b.chats}件`);
   if (b.importConvs) parts.push(`取り込んだ会話 ${b.importConvs}件`);
   else if (b.imports) parts.push(`取り込み ${b.imports}件`);
@@ -1514,7 +1667,7 @@ function renderWelcome() {
   const w = $('welcome');
   w.replaceChildren();
   w.append(el('h1', { text: '何の話をしよう？' }));
-  w.append(el('p', { class: 'lead', text: '話しかけると、これまでのチャットから読み取ったあなたの好きなテーマを踏まえて返事をし、次に広げられそうな話題を3つ添えます。' }));
+  w.append(el('p', { class: 'lead', text: 'これまで Claude に聞いてきたチャットから、あなたの興味を読み取っています。話しかけると、それを踏まえて返事をし、次に聞いてみたくなるテーマを3つ添えます。' }));
   if (S.loaded && S.ai === 'off') w.append(el('div', { class: 'offnote', text: 'いまは Claude につながっていません。このページを claude.ai で開くと、話したり話題を見つけたりできます。記録を見ることはできます。' }));
   const last = S.chats.find((c) => c.messages.length);
   if (last) {
@@ -1523,20 +1676,20 @@ function renderWelcome() {
   }
   const themes = S.home.taste ? S.home.taste.themes.slice(0, 6) : [];
   if (themes.length) {
-    w.append(el('div', { class: 'wsub' }, el('h2', { text: 'あなたが好きそうなテーマ' })));
+    w.append(el('div', { class: 'wsub' }, el('h2', { text: 'あなたの興味の分野' })));
     w.append(el('div', { class: 'themechips' }, themes.map((th) => el('button', { class: 'tchip', type: 'button', title: `「${th.name}」で話題を見つける`,
       onclick: () => { S.focus = th.name; switchTab('topics'); renderTopics(); if (S.ai === 'ok') findTopics(); } },
       el('span', { class: 'nm', text: th.name }), dots(th.score, `好きそうな度合い 5段階の${th.score}`)))));
   }
   const deck = S.home.deck && S.home.deck.items.length ? S.home.deck.items.filter((t) => fbState(t.title) !== 'nope').slice(0, 3) : null;
   const useDeck = deck && deck.length ? deck : null;
-  w.append(el('div', { class: 'wsub' }, el('h2', { text: useDeck ? '前に見つけた話のたね' : 'たとえばこんな話から' }), useDeck ? null : el('span', { class: 'tag-sample', text: '見本' })));
+  w.append(el('div', { class: 'wsub' }, el('h2', { text: useDeck ? '前に提案したテーマ' : 'たとえばこんなテーマから' }), useDeck ? null : el('span', { class: 'tag-sample', text: '見本' })));
   const grid = el('div', { class: 'deck compact' });
   (useDeck || examples()).forEach((t) => grid.append(topicCard(t, { compact: true, sample: !useDeck })));
   w.append(grid);
-  const hasSources = S.imports.length || (S.home.cc && S.home.cc.count);
+  const hasSources = S.imports.length || (S.home.cc && S.home.cc.count) || S.home.titles.length;
   w.append(el('div', { class: 'row' },
-    el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('topics'); if (S.ai === 'ok' && !S.findBusy) findTopics(); } }, '好きそうな話題をさがしてもらう'),
+    el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('topics'); if (S.ai === 'ok' && !S.findBusy) findTopics(); } }, '興味のありそうなテーマを提案してもらう'),
     hasSources ? null : el('button', { class: 'btn ghost', type: 'button', onclick: () => switchTab('history') }, 'これまでのチャットを読み込む')));
 }
 function renderWelcomeIfShown() { if (!$('welcome').hidden) renderWelcome(); }
@@ -1614,7 +1767,7 @@ function renderTaste() {
   $('tasteStyle').hidden = !(has && t.style);
   const basis = $('tasteBasis');
   basis.replaceChildren();
-  if (S.tasteBusy) basis.append(thinkingNode('好きなテーマを読み直しています'));
+  if (S.tasteBusy) basis.append(thinkingNode('興味の分野を読み直しています'));
   else if (S.tasteNote) { basis.textContent = S.tasteNote; }
   else basis.textContent = basisText();
   const rb = $('tasteRefresh');
@@ -1626,11 +1779,13 @@ function renderTaste() {
   empty.hidden = has;
   if (!has) {
     empty.append(el('p', { text: hasTasteMaterial()
-      ? 'まだ好きなテーマを読み取っていません。「読み取る」を押すか、話題を見つけるときに自動で読み取ります。チャットをもっと読み込むほど正確になります。'
-      : 'まだ好きなテーマがわかりません。これまでのチャットを読み込むと、ここにテーマが並び、話題がそのテーマに合わせたものになります。' }));
+      ? 'まだ興味の分野を読み取っていません。「読み取る」を押すか、テーマを提案してもらうときに自動で読み取ります。チャットの題名をたくさん読み込むほど正確になります。'
+      : 'まだ興味の分野がわかりません。claude.ai のチャット一覧を読み込むと、ここに分野が並び、提案がそれに合わせたものになります。一覧の画面を撮ったスクリーンショットを選ぶのがいちばん手軽です。' }));
     const row = el('div', { class: 'row' });
+    if (S.ai === 'ok') row.append(el('label', { class: 'btn primary', for: 'shotFile' }, 'チャット一覧のスクリーンショットを読む'));
+    row.append(el('button', { class: 'btn', type: 'button', onclick: () => openPaste() }, '題名を貼る'));
     if (S.mcp) row.append(el('button', { class: 'btn', type: 'button', disabled: S.ccBusy, onclick: () => readClaudeCode() }, 'Claude Code の履歴を読む'));
-    row.append(el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('history'); } }, 'claude.ai のチャットを取り込む'));
+    row.append(el('button', { class: 'btn ghost', type: 'button', onclick: () => { switchTab('history'); } }, 'ほかの読み込み方'));
     empty.append(row);
   }
 }
@@ -1643,17 +1798,17 @@ function renderDeck() {
   else if (S.home.deck && S.home.deck.items.length) items = S.home.deck.items;
   else { items = examples(); sample = true; }
   items.forEach((t) => box.append(topicCard(t, { sample })));
-  if (live) for (let i = live.length; i < 6; i++) box.append(el('div', { class: 'topic pending' }, i === live.length ? thinkingNode('考えています') : null));
+  if (live) for (let i = live.length; i < 8; i++) box.append(el('div', { class: 'topic pending' }, i === live.length ? thinkingNode('考えています') : null));
   $('deckSample').hidden = !sample;
   const d = S.home.deck;
-  $('deckTitle').textContent = live ? '見つけている話題' : sample ? '話題の見本' : `${fmtWhen(d.at)}に見つけた話題${d.focus ? `（${d.focus}）` : ''}${d.mood ? `（${d.mood}）` : ''}`;
+  $('deckTitle').textContent = live ? '選んでいるテーマ' : sample ? '提案の見本' : `${fmtWhen(d.at)}の提案${d.focus ? `（${d.focus}）` : ''}${d.mood ? `（${d.mood}）` : ''}`;
 }
 function renderTopics() {
   renderTaste();
   const fb = $('findBtn');
   fb.hidden = S.findBusy;
   fb.disabled = S.ai !== 'ok' || S.tasteBusy;
-  fb.textContent = S.focus ? `「${S.focus}」で話題を見つける` : S.home.deck ? '別の好きそうな話題を見つける' : '好きそうな話題を見つける';
+  fb.textContent = S.focus ? `「${S.focus}」でテーマを提案してもらう` : S.home.deck ? '別のテーマを提案してもらう' : 'テーマを提案してもらう';
   $('findStop').hidden = !S.findBusy;
   const note = $('deckNote');
   note.replaceChildren();
@@ -1687,6 +1842,31 @@ function renderSources() {
   btn.disabled = S.ccBusy;
   btn.textContent = S.ccBusy ? '読んでいます…' : cc ? '読み直す' : '読み込む';
   $('ccErr').textContent = S.ccErr;
+  // チャット一覧の題名
+  const tl = S.home.titles;
+  $('srcTitles').textContent = tl.length ? `${tl.length}件（${fmtWhen(S.home.titlesAt)}に追加）` : 'まだありません';
+  const busy = !!S.shots;
+  $('shotLabel').hidden = !S.loaded || S.ai !== 'ok' || busy;
+  $('shotProg').hidden = !busy;
+  if (busy) {
+    $('shotBar').max = S.shots.total; $('shotBar').value = S.shots.done;
+    const t = $('shotText'); t.replaceChildren(thinkingNode(`画像から題名を読んでいます（${S.shots.done}/${S.shots.total}）`));
+  }
+  $('titlesErr').textContent = S.titlesErr;
+  const det = $('titlesDetails');
+  det.hidden = !tl.length;
+  $('titlesSummary').textContent = `読み込んだ題名を見る（${tl.length}件）`;
+  const list = $('titlesList');
+  list.replaceChildren();
+  if (det.open) {
+    tl.forEach((t) => list.append(el('span', { class: 'tl' }, el('span', { title: t.title, text: t.title }),
+      el('button', { class: 'x', type: 'button', title: '消す', 'aria-label': `題名「${t.title}」を消す`, onclick: () => {
+        S.home.titles = S.home.titles.filter((x) => x !== t); S.home.titlesAt = Date.now(); saveHome(); renderSources(); renderTaste(); renderStatus();
+      } }, '×'))));
+  }
+  const cw = $('titlesClearWrap');
+  cw.replaceChildren();
+  if (tl.length) cw.append(confirmButton('題名をすべて消す', () => { S.home.titles = []; S.home.titlesAt = Date.now(); saveHome(); toast('チャットの題名を消しました。'); renderAll(); }));
   const cai = S.imports.filter((i) => i.kind === 'claude');
   const n = cai.reduce((a, i) => a + (i.convCount || 0), 0);
   $('srcCAI').textContent = cai.length ? `会話 ${n}件（${fmtWhen(cai[0].addedAt)}に取り込み）` : 'まだ取り込んでいません';
@@ -1733,7 +1913,7 @@ function deleteChat(c) {
 function deleteImport(i) {
   S.imports = S.imports.filter((x) => x !== i);
   if (S.store) S.store.deleteImport(i.id);
-  toast('取り込んだ記録を消しました。覚え書きや好きなテーマに残ったことは「覚え書き」から消せます。');
+  toast('取り込んだ記録を消しました。覚え書きや興味の分野に残ったことは「覚え書き」から消せます。');
   renderAll();
 }
 function renderImport() {
@@ -1828,6 +2008,31 @@ $('findStop').addEventListener('click', () => { if (S.findCtl) S.findCtl.abort()
 $('tasteRefresh').addEventListener('click', () => { if (S.tasteBusy) { if (S.tasteCtl) S.tasteCtl.abort(); } else refreshTasteNow(); });
 $('moods').addEventListener('click', (e) => { const b = e.target.closest('button[data-mood]'); if (!b) return; S.mood = b.dataset.mood; renderTopics(); });
 $('ccRead').addEventListener('click', readClaudeCode);
+function openPaste() {
+  switchTab('history');
+  $('pasteBox').hidden = false;
+  try { $('titlePaste').focus(); } catch (e) { /* 無視 */ }
+}
+$('pasteToggle').addEventListener('click', () => { if ($('pasteBox').hidden) openPaste(); else $('pasteBox').hidden = true; });
+$('pasteClose').addEventListener('click', () => { $('pasteBox').hidden = true; });
+$('titleAdd').addEventListener('click', () => {
+  const lines = $('titlePaste').value.split(/\r?\n/);
+  if (!lines.some((l) => l.trim())) { S.titlesErr = '題名を貼り付けてから押してください。'; renderSources(); return; }
+  S.titlesErr = '';
+  const n = addTitles(lines);
+  $('titlePaste').value = '';
+  $('pasteBox').hidden = true;
+  afterTitlesAdded(n);
+});
+$('shotFile').addEventListener('change', () => {
+  const files = Array.from($('shotFile').files || []);
+  $('shotFile').value = '';
+  if (!files.length) return;
+  switchTab('history');
+  readShots(files);
+});
+$('shotStop').addEventListener('click', () => { if (S.shots) { S.shots.stop = true; if (S.shots.ctl) S.shots.ctl.abort(); } });
+$('titlesDetails').addEventListener('toggle', () => renderSources());
 $('caiGo').addEventListener('click', () => { $('importCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); try { $('impFile').focus({ preventScroll: true }); } catch (e) { /* 無視 */ } });
 $('impFile').addEventListener('change', () => {
   const f = $('impFile').files && $('impFile').files[0];
@@ -1850,7 +2055,7 @@ $('memoAdd').addEventListener('submit', (e) => {
 });
 (() => {
   const b = $('memoClear');
-  const label = '覚え書きと好きなテーマをすべて消す';
+  const label = '覚え書きと興味の分野をすべて消す';
   let armed = false, timer = null;
   b.addEventListener('click', () => {
     if (!armed) {
@@ -1862,7 +2067,7 @@ $('memoAdd').addEventListener('submit', (e) => {
     S.home.memory = { items: [], updatedAt: Date.now() };
     S.home.taste = null;
     S.home.feedback = { likes: [], nopes: [] };
-    saveHome(); renderAll(); toast('覚え書きと好きなテーマを消しました。');
+    saveHome(); renderAll(); toast('覚え書きと興味の分野を消しました。');
   });
 })();
 
