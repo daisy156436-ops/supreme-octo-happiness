@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>陣取りクイズ</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#1d2330; --sub:#5b6475; --line:#d9dde5;
+  --accent:#1f6feb; --accent-weak:#e7f0ff; --good:#16803c; --good-weak:#e6f6ec;
+  --warn:#9a5b00; --warn-weak:#fff4e0; --bad:#b42318; --bad-weak:#fdecea;
+  --neutral:#dfe4ec; --stage:#f3f5fa;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:15px;line-height:1.6}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:20px}
+#ver{font-size:12px;color:var(--sub);white-space:nowrap}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 20px 0;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{border:1px solid var(--line);border-bottom:none;background:var(--bg);padding:8px 14px;border-radius:8px 8px 0 0;font:inherit;cursor:pointer;color:var(--sub)}
+nav button.on{background:var(--card);color:var(--ink);font-weight:bold;border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:16px 20px 60px}
+section.tab{display:none}
+section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 14px}
+.card h2{margin:0 0 8px;font-size:17px}
+.card h3{margin:12px 0 6px;font-size:15px}
+.card p{margin:6px 0}
+.card ul,.card ol{margin:6px 0;padding-left:1.4em}
+.hint{color:var(--sub);font-size:13px}
+.field{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.field input[type=number],.field input[type=text],.field select{width:90px;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.field select{width:auto}
+textarea{width:100%;min-height:110px;font:13px/1.5 ui-monospace,Consolas,monospace;padding:8px;border:1px solid var(--line);border-radius:8px}
+button.btn{font:inherit;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+button.btn:hover{border-color:var(--accent)}
+button.btn:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:bold}
+button.primary:hover{filter:brightness(1.08)}
+button.small{padding:2px 8px;font-size:13px}
+button.big{font-size:18px;padding:12px 22px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
+.msg{padding:8px 12px;border-radius:8px;margin:6px 0;font-size:14px}
+.msg.good{background:var(--good-weak);color:var(--good)}
+.msg.warn{background:var(--warn-weak);color:var(--warn)}
+.msg.bad{background:var(--bad-weak);color:var(--bad)}
+.msg.info{background:var(--accent-weak);color:#174ea6}
+.muted{color:var(--sub)}
+details summary{cursor:pointer;color:var(--accent)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.timeline td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums;width:7em}
+
+/* チーム */
+.teamlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 12px;margin:8px 0}
+.teamrow{display:flex;align-items:center;gap:6px}
+.teamrow input{flex:1;min-width:0;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.sw{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;border-radius:6px;font-weight:bold;font-size:14px;padding:0 4px;border:1px solid rgba(0,0,0,.15)}
+.seatgrid{display:grid;gap:4px;max-width:520px;margin:6px 0}
+.seatgrid .sw{height:30px;font-size:13px}
+#boardPreview{width:100%;max-width:420px;height:auto;display:block;margin:6px 0;background:var(--stage);border-radius:8px}
+
+/* 問題 */
+.qcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 10px;background:#fff}
+.qcard.practice{background:#f8f9fb}
+.qhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px}
+.qno{font-size:16px;min-width:4.5em}
+.qhead select,.qhead input{font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
+.qhead input[type=number]{width:4.5em}
+.grow{flex:1}
+.qcard textarea{min-height:52px;font:15px/1.5 inherit;font-family:inherit}
+.qchoices{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 10px;margin:6px 0}
+.qch{display:flex;align-items:center;gap:6px}
+.qch input[type=text]{flex:1;min-width:0;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.qch input[type=radio]{width:18px;height:18px;margin:0}
+.chip{display:inline-flex;align-items:center;justify-content:center;gap:2px;width:44px;height:28px;border-radius:6px;font-weight:bold;flex:none}
+.chip svg{width:14px;height:14px}
+.qcard .line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:4px 0}
+.qcard .line input{flex:1;min-width:180px;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.qwarn{font-size:13px;color:var(--bad)}
+.qwarn:empty{display:none}
+
+/* 印刷プレビュー */
+#printPreview{zoom:.32;background:#dfe3ea;padding:30px;border-radius:10px;display:flex;flex-wrap:wrap;gap:30px}
+.page{width:210mm;height:297mm;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;position:relative;padding:12mm}
+.page.flow{height:auto;min-height:297mm}
+.pcard{display:flex;flex-direction:column;align-items:center;justify-content:center;border:5mm solid;border-radius:10mm;height:100%;gap:4mm}
+.pcard svg{width:95mm;height:95mm}
+.pcard .big{font-size:150mm;line-height:1;font-weight:900;font-family:Arial,"Hiragino Sans",sans-serif}
+.pcard .sm{font-size:9mm;color:#555}
+.pteam{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8mm}
+.pteam .num{width:170mm;height:170mm;border-radius:14mm;display:flex;align-items:center;justify-content:center;font-size:120mm;font-weight:900;font-family:Arial,sans-serif;line-height:1;border:1mm solid rgba(0,0,0,.25)}
+.pteam .name{font-size:24mm;font-weight:bold;text-align:center}
+.pscript h1{font-size:7mm;margin:0 0 3mm}
+.pscript table{font-size:3.3mm;line-height:1.45}
+.pscript th,.pscript td{border:0.3mm solid #999;padding:1.2mm 1.6mm}
+.pscript td.ans{font-weight:bold;white-space:nowrap}
+
+/* 本番（投影画面） */
+body.staging{overflow:hidden}
+body.staging > header,body.staging > nav,body.staging > main{display:none}
+#stage{position:fixed;inset:0;background:var(--stage);display:none;flex-direction:column;z-index:20;font-size:1.6vh;color:var(--ink)}
+body.staging #stage{display:flex}
+.st-top{display:flex;align-items:center;gap:1.2vw;padding:1vh 1.4vw;background:#fff;border-bottom:1px solid var(--line);min-height:8vh}
+#stTitle{font-size:3.6vh;font-weight:bold;white-space:nowrap}
+#stTitle small{font-size:2.3vh;color:var(--sub);font-weight:normal}
+.badge{display:inline-block;font-size:2.3vh;padding:.2vh 1vh;border-radius:1vh;vertical-align:middle;margin-left:.6vw;color:#fff;font-weight:bold}
+.badge.b2{background:#e07b00}.badge.b3{background:#c8102e}.badge.bp{background:#6b7280}
+#stTimer{margin:0 auto;font-size:5.4vh;font-weight:900;font-variant-numeric:tabular-nums;min-width:12vh;text-align:center;padding:0 2vh;border-radius:1.2vh}
+#stTimer.low{color:#fff;background:#c8102e}
+#stTimer.paused{color:var(--sub);background:#eef0f4}
+.st-right{display:flex;align-items:center;gap:.8vw;font-size:2vh;color:var(--sub);white-space:nowrap}
+.st-right button{font:inherit;font-size:1.8vh;padding:.5vh 1vh;border:1px solid var(--line);background:#fff;border-radius:.8vh;cursor:pointer;color:var(--ink)}
+.st-main{flex:1;display:grid;grid-template-columns:38fr 42fr 20fr;grid-template-rows:minmax(0,1fr);gap:1.2vw;padding:1.4vh 1.4vw;min-height:0;transition:grid-template-columns .5s}
+.st-main.wide-map{grid-template-columns:28fr 52fr 20fr}
+.st-main.final{grid-template-columns:62fr 38fr 0fr}
+.st-main.intro{grid-template-columns:56fr 44fr 0fr}
+.st-main.intro #stRank{display:none}
+.st-main.final #stRank{display:none}
+#stLeft{display:flex;flex-direction:column;gap:1.4vh;min-height:0;overflow:hidden;padding:1.2vh;margin:-1.2vh}
+.st-mapwrap{display:flex;align-items:center;justify-content:center;min-height:0;min-width:0}
+#map{width:100%;height:100%;display:block}
+#stRank{display:flex;flex-direction:column;gap:.35vh;min-height:0;overflow:hidden}
+.st-bar{display:flex;align-items:center;gap:1vw;padding:1vh 1.4vw;background:#fff;border-top:1px solid var(--line);min-height:9vh}
+.st-bar button{font:inherit;font-size:2vh;padding:.9vh 1.4vh;border-radius:1vh;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink);white-space:nowrap}
+.st-bar button:disabled{opacity:.4;cursor:default}
+.st-bar .sp{flex:1}
+.st-bar .keyhint{font-size:1.6vh;color:var(--sub)}
+#stPrimary{font-size:3vh;font-weight:bold;padding:1.2vh 3vh;background:var(--accent);color:#fff;border-color:var(--accent);border-radius:1.4vh}
+#stPrimary.go{background:#16803c;border-color:#16803c}
+
+.qtext{font-weight:bold;line-height:1.35;background:#fff;border-radius:1.4vh;padding:1.6vh 1.8vh;border:1px solid var(--line)}
+.qtext.l1{font-size:4.6vh}.qtext.l2{font-size:3.8vh}.qtext.l3{font-size:3.1vh}.qtext.l4{font-size:2.6vh}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:1.2vh}
+.choice{display:flex;align-items:center;gap:1.2vh;border-radius:1.4vh;padding:1.4vh 1.6vh;font-weight:bold;min-height:10vh;transition:opacity .3s,transform .3s,box-shadow .3s}
+.choice .mk{display:flex;flex-direction:column;align-items:center;flex:none;width:6vh}
+.choice .mk svg{width:4.2vh;height:4.2vh}
+.choice .mk b{font-size:3.2vh;line-height:1.1;font-family:Arial,sans-serif}
+.choice .tx{font-size:3.2vh;line-height:1.25}
+.choice.small .tx{font-size:2.5vh}
+.choice.mb{justify-content:center}
+.choice.mb .ox{font-size:11vh;line-height:1;font-weight:900}
+.choices.dim .choice{opacity:.28}
+.choices.dim .choice.ok{opacity:1;box-shadow:0 0 0 .5vh #fff,0 0 0 1.1vh #16803c}
+.free{font-size:3vh;text-align:center;padding:2vh;border:.4vh dashed var(--line);border-radius:1.4vh;color:var(--sub);background:#fff}
+.answerbox{font-size:4.2vh;font-weight:900;text-align:center;padding:1.4vh;border-radius:1.4vh;background:#16803c;color:#fff}
+.note{font-size:2.5vh;background:#fffbe6;border:1px solid #f1d78a;border-radius:1.2vh;padding:1.2vh 1.6vh;line-height:1.45}
+.banner{font-size:7vh;font-weight:900;text-align:center;color:#c8102e;padding:1vh;animation:bounce .8s ease-in-out infinite alternate}
+.banner small{display:block;font-size:2.8vh;color:var(--ink);font-weight:bold}
+@keyframes bounce{from{transform:scale(1)}to{transform:scale(1.06)}}
+.toggles-head{display:flex;align-items:center;gap:1vh;font-size:2.4vh;font-weight:bold}
+.toggles-head button{font:inherit;font-size:1.9vh;font-weight:normal;padding:.5vh 1.2vh;border:1px solid var(--line);border-radius:.8vh;background:#fff;cursor:pointer}
+.toggles{display:grid;gap:.8vh;min-height:0}
+.tg{display:flex;align-items:center;justify-content:center;gap:1vh;border-radius:1vh;border:.4vh solid;background:#fff;font:inherit;font-weight:bold;padding:.6vh .4vh;cursor:pointer;min-height:6vh;color:var(--ink)}
+.tg .sw{min-width:4.8vh;height:4.4vh;font-size:2.8vh;border-radius:.8vh}
+.tg .ox{font-size:3.6vh;min-width:3.6vh;line-height:1}
+.tg[aria-pressed=false]{border-style:dashed;background:#f7f8fa}
+.tg[aria-pressed=false] .sw{opacity:.55}
+.tg[aria-pressed=true]{background:var(--tc);color:var(--tci)}
+.result h3{margin:0;font-size:3vh}
+.result .line{font-size:2.5vh;margin:.4vh 0}
+.result ul{margin:.6vh 0;padding-left:2.4vh;font-size:2.3vh;line-height:1.5}
+.rules{background:#fff;border-radius:1.4vh;border:1px solid var(--line);padding:2vh 2.4vh;overflow:hidden}
+.rules h2{margin:0 0 1vh;font-size:4.2vh}
+.rules ol{margin:0;padding-left:3.6vh;font-size:2.9vh;line-height:1.45}
+.rules .s{display:block;font-size:.78em;color:var(--sub)}
+.rules li{margin:.5vh 0}
+.rules .win{font-size:3.2vh;font-weight:bold;margin-top:1.2vh}
+.rules .tiny{font-size:2vh;color:var(--sub);margin-top:.8vh}
+
+.rk{display:flex;align-items:center;gap:.7vh;background:#fff;border-radius:.8vh;padding:0 .8vh;border:1px solid var(--line);flex:1;min-height:0;max-height:6vh;font-size:2.2vh;position:relative}
+.rk .no{width:3.2vh;text-align:right;font-weight:bold;color:var(--sub);font-variant-numeric:tabular-nums}
+.rk .sw{min-width:3.6vh;height:3.2vh;font-size:1.9vh;border-radius:.6vh}
+.rk .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rk .ct{font-weight:900;font-variant-numeric:tabular-nums;font-size:2.6vh}
+.rk .dl{font-size:1.9vh;font-weight:bold;min-width:3.8vh;text-align:right}
+.rk .dl.up{color:#16803c}.rk .dl.down{color:#c8102e}
+.rk.top{border-color:#e0b100;box-shadow:inset .6vh 0 0 #e0b100}
+
+.hexmap .cell polygon{stroke:var(--stage);stroke-width:1.4;transition:fill .35s}
+.hexmap .cell text{text-anchor:middle;dominant-baseline:central;font-weight:bold;pointer-events:none;font-family:Arial,"Hiragino Sans",sans-serif}
+.hexmap .cell.pop{animation:pop .75s ease-out}
+.hexmap .cell.stolen polygon{animation:flash .75s ease-out}
+.hexmap .cell{transform-box:fill-box;transform-origin:center}
+@keyframes pop{0%{transform:scale(1.45)}60%{transform:scale(.92)}100%{transform:scale(1)}}
+@keyframes flash{0%{stroke:#fff;stroke-width:5}100%{stroke-width:1.4}}
+
+.final-wrap{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:1.6vh;min-height:0;height:100%}
+.final-wrap h2{margin:0;font-size:5vh;text-align:center}
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:1.4vw;align-items:end;min-height:0}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1vh;height:100%;min-height:0}
+.pod .teams{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end;gap:1vh 1.6vh}
+.pod.multi .tm .sw{min-width:6vh;height:6vh;font-size:3.4vh}
+.pod.multi .tm .nm{font-size:2.3vh}
+.pod.multi .tm .ct{font-size:2vh}
+.pod .tm{display:flex;flex-direction:column;align-items:center;gap:.4vh;animation:rise .6s ease-out}
+.pod .tm .sw{min-width:9vh;height:9vh;font-size:5vh;border-radius:1.4vh}
+.pod .tm .nm{font-size:3.2vh;font-weight:bold;text-align:center}
+.pod .tm .ct{font-size:2.6vh;color:var(--sub)}
+.pod .q{font-size:9vh;font-weight:900;color:#c3c9d4}
+.pod .step{width:100%;border-radius:1.2vh 1.2vh 0 0;display:flex;align-items:flex-start;justify-content:center;font-size:5vh;font-weight:900;color:#fff;padding-top:1vh}
+.pod.r1 .step{height:22vh;background:#e0b100}.pod.r2 .step{height:15vh;background:#9aa3b2}.pod.r3 .step{height:10vh;background:#c07a3c}
+@keyframes rise{from{transform:translateY(4vh);opacity:0}to{transform:none;opacity:1}}
+.others{display:flex;flex-wrap:wrap;gap:.8vh 1.6vh;font-size:2.2vh;justify-content:center}
+.others span{display:inline-flex;align-items:center;gap:.6vh}
+.others .sw{min-width:3.4vh;height:3vh;font-size:1.8vh}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+@media (max-aspect-ratio:1/1){
+  #stage{font-size:1.2vh}
+  .st-main,.st-main.wide-map,.st-main.final{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
+  #stRank{flex-direction:row;flex-wrap:wrap}
+  .rk{flex:0 0 calc(50% - .5vh);max-height:none;min-height:3.4vh}
+}
+
+@media print{
+  body{background:#fff}
+  header,nav,.noprint,#stage{display:none!important}
+  main{padding:0;max-width:none}
+  section.tab{display:none!important}
+  section#tab-print{display:block!important}
+  #printPreview{zoom:1;background:none;padding:0;display:block}
+  .page{box-shadow:none;break-after:page;margin:0;height:296mm}
+  .page.flow{height:auto;min-height:0}
+  .page:last-child{break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@page{size:A4 portrait;margin:0}
+</style>
+</head>
+<body>
+<header>
+  <h1>陣取りクイズ</h1>
+  <span id="ver">版 2026-09-28</span>
+</header>
+<nav class="noprint" id="nav">
+  <button data-tab="guide">① 遊び方</button>
+  <button data-tab="teams">② チーム</button>
+  <button data-tab="questions">③ 問題</button>
+  <button data-tab="play">④ 本番</button>
+  <button data-tab="print">⑤ 印刷</button>
+  <button data-tab="save">⑥ 保存</button>
+</nav>
+<main>
+
+<!-- ① 遊び方 -->
+<section class="tab" id="tab-guide">
+  <div class="card">
+    <h2>どんなゲーム？</h2>
+    <p>生徒を5〜7人のチーム（100人なら16チームくらい）に分け、クイズに答えながら、スクリーンに映した地図の陣地を広げていくチーム対抗戦です。1問ごとに<b>全チームがいっせいに答える</b>ので、待っているだけの生徒が出ません。後半は空きマスがなくなり、<b>まちがえたチームから陣地をうばい合う</b>ので、最後まで逆転があります。</p>
+    <ul>
+      <li>時間：40〜50分（ルール説明・練習1問・本番20問・結果発表）</li>
+      <li>場所：体育館や多目的室など、全員がスクリーンを見られる場所</li>
+      <li>タブレット：<b>なくてもできます</b>（印刷したカードか、指の本数で答える）。使うときは <b>回答カード.html</b> を開くと、答えを画面いっぱいに出せます</li>
+      <li>インターネット：いりません。このファイルをパソコンで開くだけで動きます</li>
+    </ul>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h2>用意するもの</h2>
+      <ul>
+        <li>プロジェクターか大型テレビ ＋ このファイルを開いたパソコン</li>
+        <li>答え方をどれか1つ（まぜてもOK）
+          <ul>
+            <li>⑤印刷の「回答カード」（A・B・C・D・○・×の6枚）を1チーム1組</li>
+            <li>タブレットで「回答カード.html」</li>
+            <li>何もなし：指で A＝1本、B＝2本、C＝3本、D＝4本。○×は腕で</li>
+          </ul>
+        </li>
+        <li>スピーカー（あれば）：タイマーの音が鳴ります</li>
+        <li>チーム分け（名簿で前もって決めておくと当日が楽です）</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>時間の目安（45分）</h2>
+      <table class="timeline">
+        <tr><td>0〜5分</td><td>集合、チームごとに番号順で座る、ルール説明（④本番のはじめにルール画面が出ます）</td></tr>
+        <tr><td>5〜8分</td><td>練習問題1問（陣地は変わりません）</td></tr>
+        <tr><td>8〜38分</td><td>本番20問（1問およそ1分半）</td></tr>
+        <tr><td>38〜42分</td><td>結果発表（3位→2位→1位の順に発表）</td></tr>
+        <tr><td>42〜45分</td><td>ふりかえり・片付け</td></tr>
+      </table>
+      <p class="hint">時間が足りなくなったら、本番画面の「最終問題へ」で最後の逆転チャンス問題にとべます。</p>
+    </div>
+  </div>
+  <div class="card">
+    <h2>ルール（生徒への説明）</h2>
+    <ol>
+      <li>チームで相談して答えを決める（考える時間は20秒。問題ごとに変えられます）</li>
+      <li>「せーの！」でいっせいに答えを上げる。上げたあとに変えるのはなし</li>
+      <li>正解したチームは、自分の陣地のとなりの空きマスを1つとる。<b>ボーナス問題は2マス、最後の逆転チャンスは3マス</b></li>
+      <li>となりに空きマスがないときは、となりの<b>まちがえたチーム</b>のマスをうばう。マスをたくさん持っているチームからねらわれる</li>
+      <li>★（本拠地）と、3マス以下のチームのマスはうばわれない</li>
+      <li>最後にマスがいちばん多いチームの優勝</li>
+    </ol>
+    <details>
+      <summary>くわしい決まり（先生向け）</summary>
+      <ul>
+        <li>どのマスをとるかはアプリが自動で決めます。陣地が少ないチームから順に1マスずつ選び、ボーナス問題ではそれを2周、逆転チャンスは3周します</li>
+        <li>1問でうばわれるのは、1チーム最大2マス（ボーナス問題は4マス、逆転チャンスは6マス）。一度のまちがいで大きく減りすぎないようにしています</li>
+        <li>となりにとれるマスがないときは、いちばん近くのとれるマスをとります（飛び地）。それもないときは増えません</li>
+        <li>②チームの「うばい合い」を切ると、空きマスがなくなったあとは増えなくなります</li>
+        <li>この決まりは、16チーム・20問の対戦を何十回も試して決めました。いちばん少ないチームでも最後に3マス以上残り、15問目で1位のチームが最後に入れかわることが半分以上あります</li>
+      </ul>
+    </details>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h2>先生の進め方</h2>
+      <ol>
+        <li>②でチームの数と名前、③で問題を用意します（サンプル問題20問＋練習1問入り）</li>
+        <li>⑤で回答カードを印刷します（タブレットや指で答えるなら不要）</li>
+        <li>④で「はじめる」→ ルール画面が出ます。地図の★の番号が各チームのスタート地点です</li>
+        <li><b>スペースキー</b>（か右下の大きいボタン）で進みます：<br>問題を出す → 読み上げて「スタート」 → 時間切れで「せーの！」 → 「正解発表」 → 正解チームをタップ → 「陣地を広げる」</li>
+        <li>タップをまちがえたら「1問もどす」でやり直せます</li>
+      </ol>
+      <p class="hint">パソコンの画面をそのまま映します。正解は「正解発表」を押すまで出ません。途中でページを閉じても、開き直すと続きからできます。</p>
+    </div>
+    <div class="card">
+      <h2>盛り上げるコツ</h2>
+      <ul>
+        <li><b>学校オリジナル問題</b>を混ぜると大盛り上がりします。例：「◯◯先生の好きな食べ物は？」「この学校ができたのは何年？」「校歌の2番の最初のことばは？」</li>
+        <li>チームは番号順に並んで座ると、正解チームをすばやくタップできます（②の「並び方」を体育館の並びと同じにする）</li>
+        <li>手伝いの先生が1人いると、カードの確認が速くなります</li>
+        <li>選択肢を空にした問題は「ニアピン問題」（いちばん近い答えのチームが正解）にできます。紙かミニホワイトボード、またはタブレットの文字入力で答えます</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card">
+    <h2>タブレットを使うとき</h2>
+    <ul>
+      <li><b>回答カード.html</b> を生徒のタブレットに配ります（Google Classroom や Teams、共有フォルダなど）。インターネットはいりません</li>
+      <li>チームの番号を選んでから、A〜D・○×をタップすると画面いっぱいに表示されます。「せーの！」で画面を前に向けます。文字や数字の答えも大きく出せます</li>
+      <li><b>このファイル（陣取りクイズ.html）は生徒に配らないでください。</b>問題と正解が入っています</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ② チーム -->
+<section class="tab" id="tab-teams">
+  <div id="teamsGameMsg"></div>
+  <div class="card">
+    <h2>チームの数</h2>
+    <div class="field">
+      <label>生徒の人数 <input type="number" id="tPeople" min="2" max="1000"> 人</label>
+      <label>チームの数 <input type="number" id="tCount" min="2" max="20"> チーム</label>
+      <span id="tPer" class="muted"></span>
+    </div>
+    <p class="hint">1チーム5〜7人がおすすめです（みんなが相談に入れる人数）。チームは2〜20まで。</p>
+    <h3>名前のつけ方</h3>
+    <div class="row">
+      <button class="btn" id="nameNum">1班、2班…</button>
+      <button class="btn" id="nameColor">赤、青、緑…</button>
+      <span class="muted">または</span>
+      <input type="number" id="nClass" min="1" max="10" value="4" style="width:4em"> クラス ×
+      <input type="number" id="nPerClass" min="1" max="10" value="4" style="width:4em"> 班
+      <button class="btn" id="nameClass">1組1班、1組2班…</button>
+    </div>
+    <div class="teamlist" id="teamList"></div>
+    <p class="hint">名前は自由に書きかえられます。地図には番号が出ます。</p>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h2>並び方</h2>
+      <div class="field"><label>体育館で横に <input type="number" id="tCols" min="1" max="20"> チームずつ並ぶ</label></div>
+      <div class="seatgrid" id="seatGrid"></div>
+      <p class="hint">正解チームをタップするボタンが、この並びで出ます。体育館でもこの図と同じ順（1班から横に並べる）で座ってもらうと、カードを見ながらすばやく押せます。</p>
+    </div>
+    <div class="card">
+      <h2>地図の広さ</h2>
+      <div class="field">
+        <select id="tSize">
+          <option value="small">せまい（1チーム7マス・早くからうばい合い）</option>
+          <option value="normal">ふつう（1チーム10マス・おすすめ）</option>
+          <option value="large">ひろい（1チーム13マス・うばい合いは最後だけ）</option>
+        </select>
+      </div>
+      <div class="field"><label><input type="checkbox" id="tSteal"> うばい合いあり（おすすめ）</label></div>
+      <svg id="boardPreview" class="hexmap"></svg>
+      <p class="hint" id="boardInfo"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ③ 問題 -->
+<section class="tab" id="tab-questions">
+  <div id="qGameMsg"></div>
+  <div class="card">
+    <h2>問題の設定</h2>
+    <div class="field"><label>考える時間（ふつう） <input type="number" id="qSec" min="5" max="300"> 秒</label><span class="hint">問題ごとに変えることもできます</span></div>
+    <div id="qSummary"></div>
+  </div>
+  <div class="card">
+    <h2>問題リスト</h2>
+    <p class="hint">A〜Dの左の丸をクリックすると正解になります。○×問題は、Aに「○」、Bに「×」と書きます。選択肢をすべて空にすると、ニアピン問題（いちばん近いチームが正解）や自由回答の問題になります。</p>
+    <div id="qList"></div>
+    <div class="row">
+      <button class="btn primary" id="qAdd">＋ 問題を追加</button>
+      <button class="btn" id="qSample">サンプル問題にもどす</button>
+      <button class="btn" id="qClear">全部消す</button>
+    </div>
+  </div>
+  <div class="card">
+    <details id="pasteBox">
+      <summary>Excel・スプレッドシートからまとめて貼り付ける</summary>
+      <p class="hint">1行に1問。列の順番：<b>問題 ／ A ／ B ／ C ／ D ／ 正解 ／ 種類 ／ 秒 ／ 解説</b>（種類・秒・解説はなくてもOK）。<br>
+      正解は A〜D、1〜4、ア〜エ、選択肢の文字そのもの、のどれでも読みとります。種類は「1」「2（ボーナス）」「3（逆転）」「練習」。Excel以外では「|」で区切っても大丈夫です。</p>
+      <textarea id="qPaste" placeholder="日本でいちばん長い川は？	利根川	石狩川	北上川	信濃川	D	1	20	信濃川は約367km"></textarea>
+      <div class="row">
+        <button class="btn" id="qPasteAdd">下に追加する</button>
+        <button class="btn" id="qPasteReplace">今の問題と置きかえる</button>
+      </div>
+      <div id="qPasteMsg"></div>
+    </details>
+  </div>
+</section>
+
+<!-- ④ 本番 -->
+<section class="tab" id="tab-play">
+  <div class="card">
+    <h2>本番</h2>
+    <div id="playStatus"></div>
+    <div class="row">
+      <button class="btn primary big" id="playResume">続きから</button>
+      <button class="btn big" id="playNew">はじめから始める</button>
+    </div>
+    <div class="row" id="playSyncRow">
+      <button class="btn small" id="playSync">問題とチーム名の変更を本番に反映する（陣地はそのまま）</button>
+    </div>
+    <div id="playCheck"></div>
+  </div>
+  <div class="card">
+    <h2>本番画面の操作</h2>
+    <table>
+      <tr><th>スペース・Enter・→</th><td>次へ進む（右下の大きいボタンと同じ）</td></tr>
+      <tr><th>正解チームのボタン</th><td>正解発表のあと、正解したチームをタップ（もう一度押すと取り消し）。「全チーム○」でまとめて○にしてから、まちがえたチームだけ外すこともできます</td></tr>
+      <tr><th>1問もどす</th><td>直前の「陣地を広げる」を取り消して、正解チームを選び直せます</td></tr>
+      <tr><th>最終問題へ</th><td>時間がないときに、残りをとばして最後の問題へ</td></tr>
+      <tr><th>全画面</th><td>画面いっぱいに表示（Escで戻る）</td></tr>
+    </table>
+    <p class="hint">画面は、横長のプロジェクターでも、縦長のタブレットでも見やすく並びかわります。</p>
+  </div>
+</section>
+
+<!-- ⑤ 印刷 -->
+<section class="tab" id="tab-print">
+  <div class="card noprint">
+    <h2>印刷</h2>
+    <div class="row">
+      <label><input type="radio" name="pKind" value="cards" checked> 回答カード（A・B・C・D・○・×の6枚）</label>
+      <label><input type="radio" name="pKind" value="teams"> チーム札（1チーム1枚）</label>
+      <label><input type="radio" name="pKind" value="script"> 先生用の台本（問題と正解）</label>
+    </div>
+    <div class="row"><button class="btn primary" id="pPrint">印刷する</button><span class="hint" id="pHint"></span></div>
+  </div>
+  <div id="printPreview"></div>
+</section>
+
+<!-- ⑥ 保存 -->
+<section class="tab" id="tab-save">
+  <div class="card">
+    <h2>ファイルに保存・読み込み</h2>
+    <p>チーム・問題・設定は、このパソコンのブラウザに自動で保存されています。別のパソコンで使うときや、来年また使うときは、ファイルに書き出しておきます。</p>
+    <div class="row">
+      <button class="btn primary" id="sExport">ファイルに書き出す</button>
+      <label class="btn" style="display:inline-block">ファイルから読み込む<input type="file" id="sImport" accept=".json,application/json" hidden></label>
+    </div>
+    <div id="sMsg"></div>
+  </div>
+  <div class="card">
+    <h2>最初の状態にもどす</h2>
+    <p class="hint">チーム・問題・設定・本番の途中経過をすべて消して、最初の状態（サンプル問題入り）にもどします。</p>
+    <button class="btn" id="sReset">すべて消す</button>
+  </div>
+</section>
+</main>
+
+<!-- 投影画面 -->
+<div id="stage" aria-live="polite">
+  <div class="st-top">
+    <div id="stTitle"></div>
+    <div id="stTimer"></div>
+    <div class="st-right">
+      <span id="stClock"></span>
+      <button id="stSound" title="音のON/OFF"></button>
+      <button id="stFull">全画面</button>
+      <button id="stClose">✕ 閉じる</button>
+    </div>
+  </div>
+  <div class="st-main" id="stMain">
+    <div id="stLeft"></div>
+    <div class="st-mapwrap"><svg id="map" class="hexmap" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div id="stRank"></div>
+  </div>
+  <div class="st-bar">
+    <button id="stUndo">↶ 1問もどす</button>
+    <button id="stSkip">この問題をとばす</button>
+    <button id="stLast">最終問題へ</button>
+    <button id="stShuffle">スタート地点を変える</button>
+    <span class="sp"></span>
+    <button id="stPause">一時停止</button>
+    <button id="stPlus">＋10秒</button>
+    <span class="keyhint">スペースキーでも進みます</span>
+    <button id="stPrimary"></button>
+  </div>
+</div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+// ===ENGINE-START===
+const SIZE_PER = { small: 7, normal: 10, large: 13 };
+const LOSS_CAP = 2;   // 1問でうばわれる上限（×倍率）
+const PROTECT = 3;    // このマス数以下のチームはうばわれない
+
+function rng(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function hexDist(a, b) { return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y), Math.abs(a.z - b.z)); }
+
+// 六角形（とがった頂点が上）の盤。奇数行を半マス右にずらす。
+function makeBoard(nTeams, per, seed) {
+  const C = Math.max(nTeams * per, nTeams * 3);
+  const rows = Math.max(3, Math.round(Math.sqrt(C / (0.866 * 0.9))));
+  const cols = Math.max(3, Math.ceil(C / rows));
+  const cells = [], at = {};
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const x = c - (r - (r & 1)) / 2;
+    at[c + ',' + r] = cells.length;
+    cells.push({ c, r, x, y: r, z: -x - r, edge: r === 0 || c === 0 || r === rows - 1 || c === cols - 1 });
+  }
+  const D = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
+  const key = {};
+  cells.forEach((k, i) => { key[k.x + ',' + k.y] = i; });
+  const nbr = cells.map(k => D.map(d => key[(k.x + d[0]) + ',' + (k.y + d[1])]).filter(v => v !== undefined));
+  // スタート地点：なるべく離す（端はさける）
+  const R = rng(seed ^ 0x9e3779b9);
+  const jit = cells.map(() => R());
+  const homes = [at[Math.min(1, cols - 1) + ',' + Math.min(1, rows - 1)]];
+  const md = cells.map(k => hexDist(k, cells[homes[0]]));
+  while (homes.length < nTeams) {
+    let best = -1, bs = -1e9;
+    for (let i = 0; i < cells.length; i++) {
+      if (md[i] === 0) continue;
+      const s = md[i] * 10 - (cells[i].edge ? 4 : 0) + jit[i];
+      if (s > bs) { bs = s; best = i; }
+    }
+    homes.push(best);
+    for (let i = 0; i < cells.length; i++) md[i] = Math.min(md[i], hexDist(cells[i], cells[best]));
+  }
+  // 上の段から左→右の順に1班、2班…
+  const band = Math.max(1, Math.round(rows / Math.ceil(Math.sqrt(nTeams))));
+  homes.sort((a, b) => {
+    const A = cells[a], B = cells[b];
+    return Math.floor(A.r / band) - Math.floor(B.r / band) || A.c - B.c || A.r - B.r;
+  });
+  return { cols, rows, cells, nbr, homes };
+}
+function initOwners(board) {
+  const o = board.cells.map(() => -1);
+  board.homes.forEach((h, t) => { o[h] = t; });
+  return o;
+}
+function counts(owners, n) {
+  const a = new Array(n).fill(0);
+  owners.forEach(o => { if (o >= 0) a[o]++; });
+  return a;
+}
+function ranksOf(cnt) { return cnt.map(c => 1 + cnt.filter(d => d > c).length); }
+
+// 正解チームが陣地を広げる。correct: 正解したチーム番号の配列、mult: 1チームがとるマス数
+function resolveRound(board, owners0, correct, mult, opts, seed) {
+  opts = opts || {};
+  const owners = owners0.slice(), n = board.homes.length, R = rng(seed);
+  const isHome = new Set(board.homes), ok = new Set(correct);
+  const cap = opts.cap == null ? LOSS_CAP : opts.cap, protect = opts.protect == null ? PROTECT : opts.protect;
+  const cnt = counts(owners, n), lost = new Array(n).fill(0);
+  const order = correct.map(t => [t, cnt[t], R()]).sort((a, b) => a[1] - b[1] || a[2] - b[2]).map(a => a[0]);
+  const canSteal = i => {
+    const v = owners[i];
+    if (opts.steal === false || v < 0 || ok.has(v) || isHome.has(i)) return false;
+    if (cap && lost[v] >= cap * mult) return false;
+    if (cnt[v] <= protect) return false;
+    return true;
+  };
+  const nb = (i, t) => board.nbr[i].filter(j => owners[j] === t).length;
+  function pick(t) {
+    const mine = [];
+    owners.forEach((o, i) => { if (o === t) mine.push(i); });
+    const home = board.cells[board.homes[t]];
+    const fr = new Set();
+    mine.forEach(i => board.nbr[i].forEach(j => { if (owners[j] !== t) fr.add(j); }));
+    const F = [...fr];
+    const neu = F.filter(i => owners[i] === -1);
+    if (neu.length) {
+      let b = -1, bs = -1e9;
+      for (const i of neu) { const s = nb(i, t) * 10 - hexDist(board.cells[i], home) + R() * 3; if (s > bs) { bs = s; b = i; } }
+      return b;
+    }
+    const en = F.filter(canSteal);
+    if (en.length) {
+      let b = -1, bs = -1e9;
+      for (const i of en) { const s = cnt[owners[i]] * 5 + nb(i, t) * 3 + R() * 2; if (s > bs) { bs = s; b = i; } }
+      return b;
+    }
+    for (const f of [i => owners[i] === -1, canSteal]) {   // 飛び地
+      let b = -1, bd = 1e9;
+      board.cells.forEach((k, i) => {
+        if (!f(i)) return;
+        let d = 1e9;
+        for (const m of mine) d = Math.min(d, hexDist(k, board.cells[m]));
+        d += R() * 0.5;
+        if (d < bd) { bd = d; b = i; }
+      });
+      if (b >= 0) return b;
+    }
+    return -1;
+  }
+  const changes = [], missed = [];
+  for (let k = 0; k < mult; k++) for (const t of order) {
+    const i = pick(t);
+    if (i < 0) { missed.push(t); continue; }
+    const from = owners[i];
+    if (from >= 0) { lost[from]++; cnt[from]--; }
+    cnt[t]++;
+    owners[i] = t;
+    changes.push({ cell: i, from, to: t, step: k });
+  }
+  return { owners, changes, missed: [...new Set(missed)] };
+}
+// ===ENGINE-END===
+
+// ---------- 定数 ----------
+const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
+  '#000075', '#469990', '#800000', '#808000', '#fabed4', '#dcbeff', '#aaffc3', '#ffd8b1', '#222222', '#8c8c8c'];
+const TEAM_COLOR_NAMES = ['赤', '青', '緑', '黄', 'オレンジ', '紫', '水色', 'ピンク', '黄緑', '茶', '紺', '青緑', 'えんじ', 'オリーブ', 'うすピンク', 'ラベンダー', 'ミント', 'あんず', '黒', '灰'];
+const MAX_TEAMS = 20;
+const CH = [
+  { k: 'A', color: '#e21b3c', ink: '#fff', shape: 'tri' },
+  { k: 'B', color: '#1368ce', ink: '#fff', shape: 'circle' },
+  { k: 'C', color: '#f2b705', ink: '#1d2330', shape: 'square' },
+  { k: 'D', color: '#26890c', ink: '#fff', shape: 'star' },
+];
+const KIND_LABEL = { '1': 'ふつう（1マス）', '2': 'ボーナス（2マス）', '3': '逆転チャンス（3マス）', p: '練習（陣地は変わらない）' };
+const LS_KEY = 'jintori-quiz-v1';
+
+function inkOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const L = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  const lum = 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2];
+  return lum > 0.36 ? '#1d2330' : '#ffffff';
+}
+function starPath(cx, cy, R, r) {
+  let d = '';
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R;
+    d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a)).toFixed(1);
+  }
+  return d + 'Z';
+}
+function shapeSvg(shape, fill) {
+  const body = {
+    tri: `<path d="M50 8 L95 90 L5 90 Z" fill="${fill}"/>`,
+    circle: `<circle cx="50" cy="50" r="44" fill="${fill}"/>`,
+    square: `<rect x="8" y="8" width="84" height="84" rx="4" fill="${fill}"/>`,
+    star: `<path d="${starPath(50, 53, 48, 20)}" fill="${fill}"/>`,
+  }[shape];
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${body}</svg>`;
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function swHtml(t, label) {
+  const c = TEAM_COLORS[t % TEAM_COLORS.length];
+  return `<span class="sw" style="background:${c};color:${inkOn(c)}">${esc(label == null ? t + 1 : label)}</span>`;
+}
+
+// ---------- 問題 ----------
+function blankQ() { return { text: '', choices: ['', '', '', ''], answer: '', answerText: '', kind: '1', sec: '', note: '' }; }
+function mq(text, choices, answer, kind, note, sec) {
+  return { text, choices: choices.concat(['', '', '', '']).slice(0, 4), answer, answerText: '', kind: kind || '1', sec: sec || '', note: note || '' };
+}
+function sampleQuestions() {
+  return [
+    mq('パンダのしっぽは何色？', ['白', '黒', '茶色', 'しっぽはない'], 'A', 'p', 'ジャイアントパンダのしっぽは白。イラストやぬいぐるみでは黒くかかれることもあります。'),
+    mq('日本でいちばん長い川は？', ['利根川', '石狩川', '北上川', '信濃川'], 'D', '1', '信濃川は約367km。2位は利根川（約322km）です。'),
+    mq('タコの心臓はいくつ？', ['1つ', '2つ', '3つ', '4つ'], 'C', '1', '全身に血を送る心臓が1つと、えらに血を送る心臓が2つあります。'),
+    mq('海に面していない都道府県はいくつ？', ['6', '8', '10', '12'], 'B', '1', '栃木・群馬・埼玉・山梨・長野・岐阜・滋賀・奈良の8県です。'),
+    mq('オリンピックの五輪マークに使われていない色は？', ['紫', '青', '黒', '赤'], 'A', '1', '輪の色は青・黄・黒・緑・赤の5色です。'),
+    mq('1日は何秒？', ['3,600秒', '8,640秒', '86,400秒', '864,000秒'], 'C', '2', '60秒 × 60分 × 24時間 ＝ 86,400秒です。'),
+    mq('1円玉の重さは？', ['0.5g', '1g', '2g', '3g'], 'B', '1', 'ちょうど1g。アルミニウムでできています。'),
+    mq('日本の国鳥は？', ['キジ', 'ツル', 'トキ', 'ハト'], 'A', '1', '1947年に日本鳥学会がキジを国鳥に選びました。'),
+    mq('元素記号「Fe」は何？', ['金', '銀', '銅', '鉄'], 'D', '1', '金はAu、銀はAg、銅はCuです。'),
+    mq('世界でいちばん面積が大きい国は？', ['カナダ', 'ロシア', '中国', 'アメリカ'], 'B', '1', 'ロシアの面積は日本の約45倍です。'),
+    mq('キリンの首の骨はいくつ？', ['7個', '14個', '21個', '30個'], 'A', '2', '人間と同じ7個。1つ1つの骨がとても長いのです。'),
+    mq('富士山の高さは？', ['3,376m', '3,576m', '3,776m', '3,976m'], 'C', '1', '3,776m。「みななろう」と覚えます。'),
+    mq('野生のペンギンがすんでいないのは？', ['北極', '南極', '南アメリカ', 'オーストラリア'], 'A', '1', 'ペンギンは南半球の生き物。北極にはいません。'),
+    mq('月の重力は、地球のおよそ何分の1？', ['2分の1', '3分の1', '6分の1', '10分の1'], 'C', '1', '体重60kgの人は、月では10kgぶんの重さに感じます。'),
+    mq('将棋で、はじめに1人が並べる駒は何枚？', ['14枚', '16枚', '18枚', '20枚'], 'D', '1', '歩9・香2・桂2・銀2・金2・角1・飛1・玉1 ＝ 20枚です。'),
+    mq('光は1秒間に地球を何周する？', ['約半周', '約1周', '約3周', '約7周半'], 'D', '2', '光の速さは秒速約30万km。地球1周は約4万kmです。'),
+    mq('東京スカイツリーの高さは？', ['333m', '634m', '834m', '1,034m'], 'B', '1', '634（むさし）m。333mは東京タワーの高さです。'),
+    mq('イカの血は何色？', ['赤', '緑', '黄', '青'], 'D', '1', '酸素を運ぶ成分に銅がふくまれていて、青っぽい色になります。'),
+    mq('大人の人間の骨は、およそ何本？', ['約106本', '約206本', '約306本', '約406本'], 'B', '1', '赤ちゃんのときは約300本。成長とともにくっついて減ります。'),
+    mq('シマウマの毛をそると、はだの色は黒い。○か×か？', ['○', '×'], 'A', '2', 'シマウマのはだは黒っぽい色をしています。', '15'),
+    mq('世界でいちばん人口が多い国は？（2023年の国連の推計）', ['中国', 'インド', 'アメリカ', 'インドネシア'], 'B', '3', '2023年にインドが中国をぬいて世界一になりました。'),
+  ];
+}
+function qChoices(q) { return q.choices.map((c, i) => ({ i, text: (c || '').trim() })).filter(c => c.text); }
+function isMaruBatsu(q) {
+  const c = qChoices(q);
+  return c.length === 2 && c[0].i === 0 && c[1].i === 1 && /^[○〇◯oO]$/.test(c[0].text) && /^[×xX✕✖]$/.test(c[1].text);
+}
+function qMult(q) { return q.kind === 'p' ? 0 : (+q.kind || 1); }
+function qSec(q, def) { const s = parseInt(q.sec, 10); return s > 0 ? s : def; }
+function qProblems(q) {
+  const w = [];
+  if (!q.text.trim()) w.push('問題文がありません');
+  const ch = qChoices(q);
+  if (ch.length === 1) w.push('選択肢が1つだけです');
+  if (ch.length >= 2) {
+    const last = ch[ch.length - 1].i;
+    for (let i = 0; i < last; i++) if (!(q.choices[i] || '').trim()) w.push(`${CH[i].k}が空です（${CH[last].k}より前をうめてください）`);
+    if (!q.answer) w.push('正解が選ばれていません');
+    else if (!(q.choices['ABCD'.indexOf(q.answer)] || '').trim()) w.push(`正解の${q.answer}が空です`);
+  }
+  return w;
+}
+function normAnswer(ans, choices) {
+  ans = (ans || '').trim();
+  if (!ans) return { letter: '', text: '' };
+  const z = ans.normalize('NFKC').toUpperCase();
+  const map = { A: 0, B: 1, C: 2, D: 3, '1': 0, '2': 1, '3': 2, '4': 3, 'ア': 0, 'イ': 1, 'ウ': 2, 'エ': 3 };
+  let idx = map[z];
+  if (idx === undefined) idx = choices.findIndex(c => c && c.normalize('NFKC') === ans.normalize('NFKC'));
+  if (idx >= 0 && choices[idx]) return { letter: 'ABCD'[idx], text: '' };
+  if (!choices.some(Boolean)) return { letter: '', text: ans };
+  return null;
+}
+function normKind(k) {
+  k = (k || '').normalize('NFKC').trim();
+  if (!k || k === '1' || /ふつう|普通/.test(k)) return '1';
+  if (k === '2' || /ボーナス|bonus/i.test(k)) return '2';
+  if (k === '3' || /逆転|チャンス/.test(k)) return '3';
+  if (/練習|れんしゅう|^p$/i.test(k)) return 'p';
+  return null;
+}
+function parsePaste(text) {
+  const lines = text.replace(/\r/g, '').split('\n').filter(l => l.trim());
+  const qs = [], notes = [];
+  lines.forEach((line, li) => {
+    const cols = (line.includes('\t') ? line.split('\t') : line.split(/[|｜]/)).map(c => c.trim());
+    if (li === 0 && /問題|question/i.test(cols[0]) && cols.length > 1 && !/[？?]/.test(cols[0])) { notes.push('1行目は見出しとしてとばしました'); return; }
+    const [text, a, b, c, d, ans, kind, sec, note] = cols;
+    if (!text) { notes.push(`${li + 1}行目：問題文がないのでとばしました`); return; }
+    const q = blankQ();
+    q.text = text;
+    q.choices = [a, b, c, d].map(x => x || '');
+    const na = normAnswer(ans, q.choices);
+    if (na) { q.answer = na.letter; q.answerText = na.text; }
+    else notes.push(`${li + 1}行目：正解「${ans}」が選択肢と合いません（あとで選んでください）`);
+    const k = normKind(kind);
+    q.kind = k || '1';
+    if (k === null) notes.push(`${li + 1}行目：種類「${kind}」が読めないので「ふつう」にしました`);
+    const s = parseInt((sec || '').normalize('NFKC'), 10);
+    if (s > 0) q.sec = String(s);
+    q.note = note || '';
+    qs.push(q);
+  });
+  return { qs, notes };
+}
+
+// ---------- 保存 ----------
+function defaultNames(n, scheme) {
+  const a = [];
+  for (let i = 0; i < n; i++) a.push(scheme === 'color' ? TEAM_COLOR_NAMES[i] : `${i + 1}班`);
+  return a;
+}
+function defaultState() {
+  return {
+    teams: { people: 100, count: 16, names: defaultNames(MAX_TEAMS, 'num'), cols: 4 },
+    opts: { sec: 20, size: 'normal', steal: true, sound: true },
+    questions: sampleQuestions(),
+    game: null,
+  };
+}
+function normalizeState(s) {
+  const d = defaultState();
+  if (!s || typeof s !== 'object') return d;
+  const t = Object.assign({}, d.teams, s.teams || {});
+  t.count = Math.min(MAX_TEAMS, Math.max(2, parseInt(t.count, 10) || 16));
+  t.names = Array.isArray(t.names) ? t.names.map(String) : [];
+  for (let i = t.names.length; i < MAX_TEAMS; i++) t.names.push(`${i + 1}班`);
+  t.cols = Math.max(1, parseInt(t.cols, 10) || 4);
+  const o = Object.assign({}, d.opts, s.opts || {});
+  const qs = Array.isArray(s.questions) ? s.questions.map(q => Object.assign(blankQ(), q, { choices: ((q && q.choices) || []).concat(['', '', '', '']).slice(0, 4).map(c => String(c || '')) })) : d.questions;
+  return { teams: t, opts: o, questions: qs, game: s.game || null };
+}
+let S = (() => { try { return normalizeState(JSON.parse(lsGet(LS_KEY))); } catch (e) { return defaultState(); } })();
+let saveTimer = null;
+function saveNow() { clearTimeout(saveTimer); saveTimer = null; lsSet(LS_KEY, JSON.stringify(S)); }
+function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 300); }
+window.addEventListener('beforeunload', () => { if (saveTimer) saveNow(); });
+
+// ---------- タブ ----------
+function showTab(name) {
+  $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  $$('section.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + name));
+  lsSet('jintori-quiz-tab', name);
+  if (name === 'teams') renderTeams();
+  if (name === 'questions') renderQuestions();
+  if (name === 'play') renderPlayTab();
+  if (name === 'print') renderPrint();
+}
+$('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
+
+function gameNotice() {
+  const g = S.game;
+  if (!g || g.phase === 'final') return '';
+  return '<div class="msg warn">本番の途中です。ここで変えたことは、④本番の「反映する」か「はじめから」で本番に入ります。</div>';
+}
+
+// ---------- ② チーム ----------
+function renderTeams() {
+  const t = S.teams;
+  $('#teamsGameMsg').innerHTML = gameNotice();
+  $('#tPeople').value = t.people;
+  $('#tCount').value = t.count;
+  $('#tCols').value = t.cols;
+  $('#tSize').value = S.opts.size;
+  $('#tSteal').checked = S.opts.steal !== false;
+  const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count);
+  $('#tPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : '';
+  $('#teamList').innerHTML = t.names.slice(0, t.count).map((nm, i) =>
+    `<div class="teamrow">${swHtml(i)}<input type="text" data-i="${i}" value="${esc(nm)}" aria-label="${i + 1}番のチーム名"></div>`).join('');
+  renderSeat();
+  renderBoardPreview();
+}
+function renderSeat() {
+  const t = S.teams;
+  const g = $('#seatGrid');
+  g.style.gridTemplateColumns = `repeat(${Math.min(t.cols, t.count)},1fr)`;
+  g.innerHTML = t.names.slice(0, t.count).map((nm, i) => swHtml(i, `${i + 1} ${nm}`)).join('');
+}
+function renderBoardPreview() {
+  const b = makeBoard(S.teams.count, SIZE_PER[S.opts.size] || 10, 12345);
+  drawMap($('#boardPreview'), b, initOwners(b), { labels: true });
+  const per = SIZE_PER[S.opts.size] || 10;
+  $('#boardInfo').textContent = `${b.cols}×${b.rows}＝${b.cells.length}マス（${S.teams.count}チーム）。★がスタート地点です。本番では毎回スタート地点の配置が変わります。` +
+    (S.opts.steal === false ? ' うばい合いなし：空きマスがなくなると増えなくなります。' : '') +
+    (per === 7 ? ' せまい：10問目ごろから、うばい合いが始まります。' : per === 13 ? ' ひろい：うばい合いは最後の数問だけです。' : ' ふつう：15問目ごろから、うばい合いが始まります。');
+}
+$('#tPeople').addEventListener('input', e => { S.teams.people = Math.max(0, parseInt(e.target.value, 10) || 0); saveSoon(); const t = S.teams; const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count); $('#tPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : ''; });
+$('#tCount').addEventListener('change', e => {
+  const n = Math.min(MAX_TEAMS, Math.max(2, parseInt(e.target.value, 10) || 2));
+  const autoCols = S.teams.cols === Math.ceil(Math.sqrt(S.teams.count));
+  S.teams.count = n;
+  if (autoCols) S.teams.cols = Math.ceil(Math.sqrt(n));
+  saveSoon(); renderTeams();
+});
+$('#tCols').addEventListener('change', e => { S.teams.cols = Math.min(MAX_TEAMS, Math.max(1, parseInt(e.target.value, 10) || 1)); saveSoon(); renderTeams(); });
+$('#tSize').addEventListener('change', e => { S.opts.size = e.target.value; saveSoon(); renderBoardPreview(); });
+$('#tSteal').addEventListener('change', e => { S.opts.steal = e.target.checked; saveSoon(); renderBoardPreview(); });
+$('#teamList').addEventListener('input', e => {
+  const i = +e.target.dataset.i;
+  if (!isNaN(i)) { S.teams.names[i] = e.target.value; saveSoon(); renderSeat(); }
+});
+$('#nameNum').addEventListener('click', () => { S.teams.names = defaultNames(MAX_TEAMS, 'num'); saveSoon(); renderTeams(); });
+$('#nameColor').addEventListener('click', () => { S.teams.names = defaultNames(MAX_TEAMS, 'color'); saveSoon(); renderTeams(); });
+$('#nameClass').addEventListener('click', () => {
+  const c = Math.max(1, parseInt($('#nClass').value, 10) || 1), p = Math.max(1, parseInt($('#nPerClass').value, 10) || 1);
+  const n = Math.min(MAX_TEAMS, Math.max(2, c * p));
+  const names = [];
+  for (let i = 0; i < MAX_TEAMS; i++) names.push(i < c * p ? `${Math.floor(i / p) + 1}組${(i % p) + 1}班` : `${i + 1}班`);
+  S.teams.names = names;
+  S.teams.count = n;
+  S.teams.cols = p <= 6 ? p : Math.ceil(Math.sqrt(n));
+  saveSoon(); renderTeams();
+  if (c * p > MAX_TEAMS) alert(`チームは${MAX_TEAMS}までです。はじめの${MAX_TEAMS}チームにしました。`);
+});
+
+// ---------- 地図の描画 ----------
+const HEX_R = 10, HEX_W = Math.sqrt(3) * HEX_R;
+function cellXY(k) { return [HEX_W * (k.c + 0.5 * (k.r & 1)) + HEX_W / 2, 1.5 * HEX_R * k.r + HEX_R]; }
+function drawMap(svg, board, owners, opt) {
+  opt = opt || {};
+  const W = HEX_W * (board.cols + 0.5), H = 1.5 * HEX_R * (board.rows - 1) + 2 * HEX_R;
+  svg.setAttribute('viewBox', `-1 -1 ${(W + 2).toFixed(1)} ${(H + 2).toFixed(1)}`);
+  const homes = new Set(board.homes);
+  let html = '';
+  board.cells.forEach((k, i) => {
+    const [cx, cy] = cellXY(k);
+    let pts = '';
+    for (let j = 0; j < 6; j++) {
+      const a = Math.PI / 180 * (60 * j - 30);
+      pts += (cx + HEX_R * Math.cos(a)).toFixed(2) + ',' + (cy + HEX_R * Math.sin(a)).toFixed(2) + ' ';
+    }
+    const home = homes.has(i);
+    html += `<g class="cell${home ? ' home' : ''}" data-i="${i}"><polygon points="${pts.trim()}"/>` +
+      (home ? `<text x="${cx.toFixed(2)}" y="${(cy - 4.3).toFixed(2)}" font-size="4.6">★</text><text x="${cx.toFixed(2)}" y="${(cy + 2.4).toFixed(2)}" font-size="7.4" class="n"></text>`
+            : `<text x="${cx.toFixed(2)}" y="${cy.toFixed(2)}" font-size="5.6" class="n"></text>`) + '</g>';
+  });
+  svg.innerHTML = html;
+  svg._cells = $$('g.cell', svg);
+  paintMap(svg, owners, opt);
+}
+function paintCell(g, o, labels) {
+  const fill = o < 0 ? 'var(--neutral)' : TEAM_COLORS[o % TEAM_COLORS.length];
+  const ink = o < 0 ? '#9aa3b2' : inkOn(TEAM_COLORS[o % TEAM_COLORS.length]);
+  g.querySelector('polygon').style.fill = fill;
+  g.querySelectorAll('text').forEach(t => { t.style.fill = ink; });
+  const n = g.querySelector('text.n');
+  if (n) n.textContent = o >= 0 && labels !== false ? String(o + 1) : '';
+  g.style.opacity = '';
+}
+function paintMap(svg, owners, opt) {
+  opt = opt || {};
+  svg._cells.forEach((g, i) => paintCell(g, owners[i], opt.labels));
+}
+function popCell(svg, i, stolen) {
+  const g = svg._cells[i];
+  if (!g) return;
+  g.parentNode.appendChild(g);
+  g.classList.remove('pop', 'stolen');
+  void g.getBBox();
+  g.classList.add('pop');
+  if (stolen) g.classList.add('stolen');
+  setTimeout(() => g.classList.remove('pop', 'stolen'), 800);
+}
+
+// ---------- ③ 問題 ----------
+function renderQuestions() {
+  $('#qGameMsg').innerHTML = gameNotice();
+  $('#qSec').value = S.opts.sec;
+  let no = 0;
+  $('#qList').innerHTML = S.questions.map((q, i) => {
+    const label = q.kind === 'p' ? '練習' : `第${++no}問`;
+    return `<div class="qcard${q.kind === 'p' ? ' practice' : ''}" data-i="${i}">
+      <div class="qhead"><b class="qno">${label}</b>
+        <select data-f="kind" aria-label="種類">${Object.entries(KIND_LABEL).map(([v, l]) => `<option value="${v}"${q.kind === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
+        <label>考える時間 <input type="number" min="5" max="300" data-f="sec" value="${esc(q.sec)}" placeholder="${S.opts.sec}"> 秒</label>
+        <span class="grow"></span>
+        <button class="btn small" data-act="up" ${i === 0 ? 'disabled' : ''} title="上へ">↑</button>
+        <button class="btn small" data-act="down" ${i === S.questions.length - 1 ? 'disabled' : ''} title="下へ">↓</button>
+        <button class="btn small" data-act="del">削除</button>
+      </div>
+      <textarea data-f="text" rows="2" placeholder="問題文">${esc(q.text)}</textarea>
+      <div class="qchoices">${CH.map((c, j) => `<label class="qch"><input type="radio" name="ans${i}" value="${c.k}" data-f="answer" ${q.answer === c.k ? 'checked' : ''} title="${c.k}を正解にする"><span class="chip" style="background:${c.color};color:${c.ink}">${shapeSvg(c.shape, c.ink)}${c.k}</span><input type="text" data-f="c${j}" value="${esc(q.choices[j])}" placeholder="選択肢${c.k}"></label>`).join('')}</div>
+      <div class="line qfree" ${qChoices(q).length ? 'hidden' : ''}>正解（選択肢なしの問題） <input type="text" data-f="answerText" value="${esc(q.answerText)}" placeholder="例：333m（いちばん近いチームが正解）"></div>
+      <div class="line">解説 <input type="text" data-f="note" value="${esc(q.note)}" placeholder="正解発表のときに出る一言（なくてもOK）"></div>
+      <div class="qwarn">${esc(qProblems(q).join('／'))}</div>
+    </div>`;
+  }).join('') || '<p class="muted">問題がありません。「＋ 問題を追加」か、下の貼り付けで入れてください。</p>';
+  renderQSummary();
+}
+function renderQSummary() {
+  const qs = S.questions;
+  const main = qs.filter(q => q.kind !== 'p');
+  const pr = qs.length - main.length;
+  const b2 = main.filter(q => q.kind === '2').length, b3 = main.filter(q => q.kind === '3').length;
+  const sec = qs.reduce((s, q) => s + qSec(q, S.opts.sec) + 60, 0);
+  const total = Math.round(sec / 60) + 10;
+  const bad = qs.map((q, i) => qProblems(q).length ? i : -1).filter(i => i >= 0);
+  let cls = 'info', extra = '';
+  if (total > 50) { cls = 'warn'; extra = ' 50分をこえそうです。問題をへらすか、考える時間を短くしてください。'; }
+  if (total < 30) { cls = 'warn'; extra = ' 時間があまりそうです。問題をふやすと、うばい合いまでたどりつきます。'; }
+  const last = main[main.length - 1];
+  const tip = last && last.kind !== '3' ? ' 最後の問題を「逆転チャンス（3マス）」にすると最後まで盛り上がります。' : '';
+  $('#qSummary').innerHTML = `<div class="msg ${cls}">本番 ${main.length}問（ボーナス${b2}・逆転チャンス${b3}）＋ 練習${pr}問 → 問題だけで約${Math.round(sec / 60)}分、ルール説明と結果発表を入れて<b>約${total}分</b>。${extra}${tip}</div>` +
+    (bad.length ? `<div class="msg bad">直すところがある問題が${bad.length}問あります（赤い字）。</div>` : '');
+}
+$('#qSec').addEventListener('change', e => { S.opts.sec = Math.min(300, Math.max(5, parseInt(e.target.value, 10) || 20)); e.target.value = S.opts.sec; saveSoon(); renderQuestions(); });
+$('#qList').addEventListener('input', e => {
+  const card = e.target.closest('.qcard'), f = e.target.dataset.f;
+  if (!card || !f) return;
+  const q = S.questions[+card.dataset.i];
+  if (/^c[0-3]$/.test(f)) q.choices[+f[1]] = e.target.value;
+  else if (f === 'answer') q.answer = e.target.value;
+  else if (f === 'kind') { q.kind = e.target.value; saveSoon(); renderQuestions(); return; }
+  else q[f] = e.target.value;
+  card.querySelector('.qfree').hidden = qChoices(q).length > 0;
+  card.querySelector('.qwarn').textContent = qProblems(q).join('／');
+  saveSoon();
+  renderQSummary();
+});
+$('#qList').addEventListener('change', e => { if (e.target.dataset.f === 'kind') return; saveSoon(); if (e.target.dataset.f === 'sec') renderQSummary(); });
+$('#qList').addEventListener('click', e => {
+  const b = e.target.closest('button[data-act]');
+  if (!b) return;
+  const i = +b.closest('.qcard').dataset.i, qs = S.questions;
+  if (b.dataset.act === 'up' && i > 0) [qs[i - 1], qs[i]] = [qs[i], qs[i - 1]];
+  if (b.dataset.act === 'down' && i < qs.length - 1) [qs[i + 1], qs[i]] = [qs[i], qs[i + 1]];
+  if (b.dataset.act === 'del') { if (!confirm('この問題を消しますか？')) return; qs.splice(i, 1); }
+  saveSoon(); renderQuestions();
+});
+$('#qAdd').addEventListener('click', () => {
+  // 最後が逆転チャンスなら、その前に入れる
+  const qs = S.questions, i = qs.length && qs[qs.length - 1].kind === '3' ? qs.length - 1 : qs.length;
+  qs.splice(i, 0, blankQ());
+  saveSoon(); renderQuestions();
+  const card = $(`.qcard[data-i="${i}"] textarea`);
+  if (card) { card.scrollIntoView({ block: 'center' }); card.focus(); }
+});
+$('#qSample').addEventListener('click', () => { if (!confirm('今の問題を消して、サンプル問題にもどしますか？')) return; S.questions = sampleQuestions(); saveSoon(); renderQuestions(); });
+$('#qClear').addEventListener('click', () => { if (!confirm('問題を全部消しますか？')) return; S.questions = []; saveSoon(); renderQuestions(); });
+function doPaste(replace) {
+  const { qs, notes } = parsePaste($('#qPaste').value);
+  if (!qs.length) { $('#qPasteMsg').innerHTML = '<div class="msg bad">問題を読みとれませんでした。1行に1問、タブか「|」で区切ってください。</div>'; return; }
+  if (replace && !confirm(`今の問題${S.questions.length}問を消して、貼り付けた${qs.length}問にしますか？`)) return;
+  S.questions = replace ? qs : S.questions.concat(qs);
+  saveSoon(); renderQuestions();
+  $('#qPasteMsg').innerHTML = `<div class="msg good">${qs.length}問を${replace ? '読みこみました' : '追加しました'}。</div>` + (notes.length ? `<div class="msg warn">${notes.map(esc).join('<br>')}</div>` : '');
+}
+$('#qPasteAdd').addEventListener('click', () => doPaste(false));
+$('#qPasteReplace').addEventListener('click', () => doPaste(true));
+
+// ---------- ④ 本番 ----------
+let BOARD = null;
+function ensureBoard() {
+  const g = S.game;
+  if (!g) return null;
+  if (!BOARD || BOARD._key !== g.n + '/' + g.per + '/' + g.seed) {
+    BOARD = makeBoard(g.n, g.per, g.seed);
+    BOARD._key = g.n + '/' + g.per + '/' + g.seed;
+  }
+  if (!Array.isArray(g.owners) || g.owners.length !== BOARD.cells.length) g.owners = initOwners(BOARD);
+  return BOARD;
+}
+function playableQuestions() { return S.questions.filter(q => q.text.trim()).map(q => JSON.parse(JSON.stringify(q))); }
+function phaseText(g) {
+  if (g.phase === 'intro') return 'ルール説明の画面';
+  if (g.phase === 'final') return '結果発表';
+  const q = g.qs[g.qi];
+  const lab = q && q.kind === 'p' ? '練習問題' : `第${mainNo(g, g.qi)}問`;
+  return lab + '・' + ({ show: '問題を出したところ', think: '考える時間', up: '「せーの！」のところ', reveal: '正解発表のところ', result: '陣地を広げたあと' }[g.phase] || '');
+}
+function renderPlayTab() {
+  const g = S.game;
+  const qs = playableQuestions();
+  const bad = S.questions.filter(q => qProblems(q).length).length;
+  $('#playResume').hidden = !g;
+  $('#playSyncRow').hidden = !g || g.phase === 'final';
+  $('#playNew').classList.toggle('primary', !g);
+  $('#playStatus').innerHTML = g
+    ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.qs.length}問）。「続きから」で戻れます。</div>`
+    : '<p>「はじめから始める」を押すと、ルール説明の画面が出ます。プロジェクターに映してから押してください。</p>';
+  const warn = [];
+  if (!qs.length) warn.push('<div class="msg bad">問題がありません。③で問題を入れてください。</div>');
+  if (bad) warn.push(`<div class="msg warn">③に直すところがある問題が${bad}問あります。</div>`);
+  warn.push(`<p class="hint">チーム ${S.teams.count}（②）・問題 ${qs.filter(q => q.kind !== 'p').length}問＋練習${qs.filter(q => q.kind === 'p').length}問（③）・地図 ${({ small: 'せまい', normal: 'ふつう', large: 'ひろい' })[S.opts.size]}</p>`);
+  $('#playCheck').innerHTML = warn.join('');
+  $('#playNew').disabled = !qs.length;
+}
+function newGame() {
+  const n = S.teams.count;
+  S.game = {
+    v: 1, n, per: SIZE_PER[S.opts.size] || 10, seed: (Math.random() * 4294967296) >>> 0,
+    names: S.teams.names.slice(0, n), cols: Math.min(S.teams.cols, n), steal: S.opts.steal !== false, sec: S.opts.sec,
+    qs: playableQuestions(), qi: -1, phase: 'intro', owners: null, correct: new Array(n).fill(false),
+    timer: null, startedAt: null, history: [], last: null, finalStep: 0,
+  };
+  BOARD = null;
+  ensureBoard();
+  saveNow();
+}
+$('#playNew').addEventListener('click', () => {
+  if (S.game && S.game.phase !== 'final' && !confirm('本番の途中です。陣地をリセットして、はじめから始めますか？')) return;
+  newGame(); openStage();
+});
+$('#playResume').addEventListener('click', () => { if (S.game) openStage(); });
+$('#playSync').addEventListener('click', () => {
+  const g = S.game;
+  if (!g) return;
+  const qs = playableQuestions();
+  if (!qs.length) { alert('問題がありません。'); return; }
+  g.qs = qs;
+  if (g.qi >= qs.length) { g.qi = qs.length - 1; g.phase = 'result'; }
+  g.names = S.teams.names.slice(0, g.n);
+  saveNow(); renderPlayTab();
+  alert('反映しました。' + (S.teams.count !== g.n ? `\n※チームの数（${g.n}→${S.teams.count}）は、はじめから始めないと変わりません。` : ''));
+});
+
+function mainNo(g, qi) { let n = 0; for (let i = 0; i <= qi; i++) if (g.qs[i].kind !== 'p') n++; return n; }
+function mainTotal(g) { return g.qs.filter(q => q.kind !== 'p').length; }
+
+// 音
+let AC = null;
+function tone(freq, dur, type, vol, delay) {
+  if (!S.opts.sound) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = AC.currentTime + (delay || 0);
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || 0.2, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0 + dur + 0.02);
+  } catch (e) { /* 音が出せない環境 */ }
+}
+const SND = {
+  tick: () => tone(880, 0.12, 'square', 0.12),
+  buzz: () => tone(196, 0.7, 'sawtooth', 0.18),
+  chime: () => { tone(784, 0.35, 'sine', 0.25); tone(1047, 0.6, 'sine', 0.25, 0.28); },
+  blip: s => tone(s ? 330 : 1175, 0.07, 'triangle', 0.12),
+  fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i === 3 ? 0.9 : 0.2, 'triangle', 0.22, i * 0.16)),
+  start: () => tone(1047, 0.18, 'sine', 0.2),
+};
+
+function openStage() {
+  document.body.classList.add('staging');
+  ensureBoard();
+  drawMap($('#map'), BOARD, S.game.owners, {});
+  renderStage();
+  startTick();
+}
+function closeStage() {
+  finishAnim(true);
+  document.body.classList.remove('staging');
+  stopTick();
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  showTab('play');
+}
+$('#stClose').addEventListener('click', closeStage);
+$('#stFull').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+});
+$('#stSound').addEventListener('click', () => { S.opts.sound = !S.opts.sound; saveSoon(); renderTop(); });
+
+// タイマー
+let tickId = null, lastWhole = null;
+function startTick() { stopTick(); tickId = setInterval(tick, 200); }
+function stopTick() { if (tickId) clearInterval(tickId); tickId = null; }
+function timeLeft(g) {
+  const t = g.timer;
+  if (!t) return 0;
+  return t.running ? Math.max(0, (t.endAt - Date.now()) / 1000) : t.left;
+}
+function tick() {
+  const g = S.game;
+  if (!g) return;
+  if (g.phase === 'think' && g.timer && g.timer.running) {
+    const left = timeLeft(g), whole = Math.ceil(left);
+    if (whole !== lastWhole && whole <= 5 && whole > 0) SND.tick();
+    lastWhole = whole;
+    if (left <= 0) { timeUp(); return; }
+  }
+  renderTop();
+}
+function timeUp() {
+  const g = S.game;
+  g.timer = { running: false, left: 0 };
+  g.phase = 'up';
+  SND.buzz();
+  saveNow(); renderStage();
+}
+
+// 進行
+function goQuestion(i) {
+  const g = S.game;
+  finishAnim(true);
+  if (i >= g.qs.length) { g.phase = 'final'; g.finalStep = 0; saveNow(); renderStage(); return; }
+  g.qi = i; g.phase = 'show';
+  g.correct = new Array(g.n).fill(false);
+  g.timer = { running: false, left: qSec(g.qs[i], g.sec) };
+  if (!g.startedAt) g.startedAt = Date.now();
+  saveNow(); renderStage();
+}
+function primary() {
+  const g = S.game;
+  if (!g) return;
+  if (ANIM) { finishAnim(); return; }
+  switch (g.phase) {
+    case 'intro': goQuestion(0); break;
+    case 'show': g.phase = 'think'; g.timer = { running: true, endAt: Date.now() + timeLeft(g) * 1000 }; lastWhole = null; SND.start(); saveNow(); renderStage(); break;
+    case 'think': timeUp(); break;
+    case 'up': g.phase = 'reveal'; SND.chime(); saveNow(); renderStage(); break;
+    case 'reveal': resolveNow(); break;
+    case 'result': goQuestion(g.qi + 1); break;
+    case 'final': if (g.finalStep < finalGroups(g).length) { g.finalStep++; saveNow(); renderStage(); if (g.finalStep === finalGroups(g).length) celebrate(); } break;
+  }
+}
+function resolveNow() {
+  const g = S.game, q = g.qs[g.qi], mult = qMult(q);
+  const before = g.owners.slice();
+  const cor = [];
+  g.correct.forEach((c, t) => { if (c) cor.push(t); });
+  g.history.push({ qi: g.qi, owners: before, correct: g.correct.slice(), last: g.last });
+  if (g.history.length > 60) g.history.shift();
+  if (!mult) {
+    g.last = { qi: g.qi, practice: true, changes: [], delta: new Array(g.n).fill(0), missed: [], nCorrect: cor.length };
+  } else {
+    const res = resolveRound(ensureBoard(), before, cor, mult, { steal: g.steal }, (g.seed + g.qi * 7919) >>> 0);
+    const c0 = counts(before, g.n), c1 = counts(res.owners, g.n);
+    g.owners = res.owners;
+    g.last = { qi: g.qi, changes: res.changes, delta: c1.map((v, t) => v - c0[t]), missed: res.missed, nCorrect: cor.length };
+  }
+  g.phase = 'result';
+  saveNow();
+  renderStage();
+  if (g.last.changes.length) startAnim(before, g.last.changes);
+}
+function undo() {
+  const g = S.game, h = g.history.pop();
+  if (!h) return;
+  finishAnim(true);
+  g.qi = h.qi; g.owners = h.owners; g.correct = h.correct; g.last = h.last; g.phase = 'reveal';
+  g.timer = { running: false, left: 0 };
+  saveNow();
+  paintMap($('#map'), g.owners, {});
+  renderStage();
+}
+$('#stPrimary').addEventListener('click', primary);
+$('#stUndo').addEventListener('click', () => { if (confirm('直前の「陣地を広げる」を取り消して、正解チームを選び直しますか？')) undo(); });
+$('#stSkip').addEventListener('click', () => { if (confirm('この問題をとばして次へ進みますか？（陣地は変わりません）')) goQuestion(S.game.qi + 1); });
+$('#stLast').addEventListener('click', () => {
+  const g = S.game;
+  if (confirm('残りの問題をとばして、最後の問題に進みますか？')) goQuestion(g.qs.length - 1);
+});
+$('#stShuffle').addEventListener('click', () => {
+  const g = S.game;
+  g.seed = (Math.random() * 4294967296) >>> 0;
+  g.owners = null;
+  ensureBoard();
+  saveNow();
+  drawMap($('#map'), BOARD, g.owners, {});
+  renderStage();
+});
+$('#stPause').addEventListener('click', () => {
+  const g = S.game;
+  if (g.phase !== 'think') return;
+  if (g.timer.running) g.timer = { running: false, left: timeLeft(g) };
+  else g.timer = { running: true, endAt: Date.now() + g.timer.left * 1000 };
+  saveNow(); renderStage();
+});
+$('#stPlus').addEventListener('click', () => {
+  const g = S.game;
+  if (g.phase === 'up') { g.phase = 'think'; g.timer = { running: true, endAt: Date.now() + 10000 }; lastWhole = null; }
+  else if (g.timer && g.timer.running) g.timer.endAt += 10000;
+  else if (g.timer) g.timer.left += 10;
+  saveNow(); renderStage();
+});
+$('#stage').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTimeout(() => b.blur(), 0); });
+document.addEventListener('keydown', e => {
+  if (!document.body.classList.contains('staging')) return;
+  if (e.target.matches && e.target.matches('input,textarea,select')) return;
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    if (!e.repeat) primary();
+  }
+});
+document.addEventListener('keyup', e => { if (document.body.classList.contains('staging') && e.key === ' ') e.preventDefault(); });
+
+// 陣地が広がるアニメーション
+let ANIM = null;
+function startAnim(before, changes) {
+  finishAnim(true);
+  const svg = $('#map'), disp = before.slice();
+  paintMap(svg, disp, {});
+  const step = Math.max(70, Math.min(260, 3600 / changes.length));
+  ANIM = { disp, k: 0, changes, id: null };
+  renderRank(disp, false);
+  renderBar();
+  ANIM.id = setInterval(() => {
+    if (!ANIM) return;
+    if (ANIM.k >= changes.length) { finishAnim(); return; }
+    const ch = changes[ANIM.k++];
+    disp[ch.cell] = ch.to;
+    paintCell(svg._cells[ch.cell], ch.to);
+    popCell(svg, ch.cell, ch.from >= 0);
+    SND.blip(ch.from >= 0);
+    renderRank(disp, false);
+  }, step);
+}
+function finishAnim(silent) {
+  if (!ANIM) return;
+  clearInterval(ANIM.id);
+  ANIM = null;
+  if (S.game && S.game.owners) paintMap($('#map'), S.game.owners, {});
+  if (!silent) renderStage();
+}
+
+// 描画
+function renderTop() {
+  const g = S.game;
+  if (!g) return;
+  const q = g.qs[g.qi];
+  let title = '';
+  if (g.phase === 'intro') title = 'ルール説明';
+  else if (g.phase === 'final') title = '結果発表';
+  else if (q) {
+    title = q.kind === 'p' ? '練習問題' : `第${mainNo(g, g.qi)}問 <small>／ 全${mainTotal(g)}問</small>`;
+    if (q.kind === '2') title += '<span class="badge b2">ボーナス 2マス</span>';
+    if (q.kind === '3') title += '<span class="badge b3">逆転チャンス 3マス</span>';
+    if (q.kind === 'p') title += '<span class="badge bp">陣地は変わりません</span>';
+  }
+  if ($('#stTitle')._h !== title) { $('#stTitle').innerHTML = title; $('#stTitle')._h = title; }
+  const tm = $('#stTimer');
+  if (['show', 'think', 'up'].includes(g.phase)) {
+    const left = timeLeft(g);
+    tm.textContent = Math.ceil(left);
+    tm.className = (g.phase === 'think' && !g.timer.running) ? 'paused' : (g.phase !== 'show' && left <= 5 ? 'low' : '');
+  } else { tm.textContent = ''; tm.className = ''; }
+  const el = g.startedAt ? Math.floor((Date.now() - g.startedAt) / 1000) : 0;
+  $('#stClock').textContent = g.startedAt ? `経過 ${Math.floor(el / 60)}:${String(el % 60).padStart(2, '0')}` : '';
+  $('#stSound').textContent = S.opts.sound ? '音 ON' : '音 OFF';
+}
+function renderStage() {
+  const g = S.game;
+  if (!g) return;
+  ensureBoard();
+  renderTop();
+  const main = $('#stMain');
+  main.classList.toggle('wide-map', g.phase === 'result');
+  main.classList.toggle('intro', g.phase === 'intro');
+  main.classList.toggle('final', g.phase === 'final');
+  $('#stLeft').innerHTML = g.phase === 'intro' ? rulesHtml(g) : g.phase === 'final' ? finalHtml(g) : questionHtml(g);
+  if (g.phase === 'reveal') bindToggles();
+  if (!ANIM) renderRank(g.owners, g.phase === 'result');
+  renderBar();
+}
+function rulesHtml(g) {
+  const hasP = g.qs[0] && g.qs[0].kind === 'p';
+  return `<div class="rules"><h2>陣取りクイズのルール</h2><ol>
+    <li>チームで相談して、答えを決める（考える時間 ${g.sec}秒）</li>
+    <li>「せーの！」で、いっせいに答えを上げる<span class="s">カード・タブレット・指（A＝1本 B＝2本 C＝3本 D＝4本）</span></li>
+    <li>正解すると、となりの空きマスを1つとれる<span class="s">ボーナス問題は2マス、最後の逆転チャンスは3マス！</span></li>
+    ${g.steal ? '<li>空きマスがなくなったら、<b>まちがえたチーム</b>のマスをうばう！<span class="s">マスをたくさん持っているチームがねらわれる</span></li><li>★（本拠地）と、3マス以下のチームのマスはうばわれない</li>' : '<li>空きマスがなくなったら、そこで陣地は止まる</li>'}
+  </ol><div class="win">🏆 最後にマスがいちばん多いチームの優勝！</div>
+  <div class="tiny">地図の★の番号が、自分のチームのスタート地点です。${hasP ? 'まずは練習問題から。' : ''}</div></div>`;
+}
+function choicesHtml(q, reveal) {
+  const ch = qChoices(q);
+  if (!ch.length) return '<div class="free">答えを紙やタブレットに書いて、「せーの！」で見せよう<br><small>いちばん近いチームが正解</small></div>';
+  const mb = isMaruBatsu(q);
+  const small = ch.some(c => c.text.length > 12);
+  return `<div class="choices${reveal ? ' dim' : ''}">` + ch.map(c => {
+    const d = CH[c.i], ok = reveal && q.answer === d.k;
+    if (mb) return `<div class="choice mb${ok ? ' ok' : ''}" style="background:${d.color};color:${d.ink}"><span class="ox">${c.i === 0 ? '○' : '×'}</span></div>`;
+    return `<div class="choice${small ? ' small' : ''}${ok ? ' ok' : ''}" style="background:${d.color};color:${d.ink}"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(c.text)}</span></div>`;
+  }).join('') + '</div>';
+}
+function questionHtml(g) {
+  const q = g.qs[g.qi];
+  if (!q) return '';
+  const len = q.text.length;
+  const lv = len <= 22 ? 'l1' : len <= 40 ? 'l2' : len <= 70 ? 'l3' : 'l4';
+  let h = `<div class="qtext ${lv}">${esc(q.text)}</div>`;
+  if (g.phase === 'result') return h + resultHtml(g, q);
+  h += choicesHtml(q, g.phase === 'reveal');
+  if (g.phase === 'up') h += `<div class="banner">せーの！<small>${isMaruBatsu(q) ? '○か×か、' : qChoices(q).length ? '' : '答えを'}いっせいに上げて！</small></div>`;
+  if (g.phase === 'reveal') {
+    if (!qChoices(q).length) h += `<div class="answerbox">正解：${esc(q.answerText || '（先生が発表）')}</div>`;
+    if (q.note) h += `<div class="note">${esc(q.note)}</div>`;
+    h += togglesHtml(g);
+  }
+  return h;
+}
+function togglesHtml(g) {
+  const cols = Math.max(1, Math.min(g.cols || 4, g.n));
+  const n = g.correct.filter(Boolean).length;
+  return `<div class="toggles-head">正解したチーム <span id="tgCount">${n}</span>チーム <span class="grow"></span><button data-tg="all">全チーム○</button><button data-tg="none">全部はずす</button></div>
+    <div class="toggles" style="grid-template-columns:repeat(${cols},1fr)">` +
+    g.names.map((nm, t) => {
+      const c = TEAM_COLORS[t % TEAM_COLORS.length];
+      return `<button class="tg" data-t="${t}" aria-pressed="${!!g.correct[t]}" style="border-color:${c};--tc:${c};--tci:${inkOn(c)}"><span class="sw" style="background:${c};color:${inkOn(c)}">${t + 1}</span><span class="ox">${g.correct[t] ? '○' : ''}</span></button>`;
+    }).join('') + '</div>';
+}
+function bindToggles() {
+  const g = S.game;
+  $$('#stLeft .tg').forEach(b => b.addEventListener('click', () => {
+    const t = +b.dataset.t;
+    g.correct[t] = !g.correct[t];
+    b.setAttribute('aria-pressed', g.correct[t]);
+    b.querySelector('.ox').textContent = g.correct[t] ? '○' : '';
+    $('#tgCount').textContent = g.correct.filter(Boolean).length;
+    saveSoon();
+  }));
+  $$('#stLeft [data-tg]').forEach(b => b.addEventListener('click', () => {
+    g.correct = new Array(g.n).fill(b.dataset.tg === 'all');
+    saveSoon(); renderStage();
+  }));
+}
+function resultHtml(g, q) {
+  const L = g.last;
+  if (!L || L.qi !== g.qi) return '';
+  let h = `<div class="choices dim">${qChoices(q).length ? qChoices(q).filter(c => CH[c.i].k === q.answer).map(c => { const d = CH[c.i]; return `<div class="choice ok" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(isMaruBatsu(q) ? (c.i === 0 ? '○' : '×') : c.text)}</span></div>`; }).join('') : `<div class="answerbox" style="grid-column:1/-1">正解：${esc(q.answerText || '')}</div>`}</div>`;
+  h += '<div class="result">';
+  if (L.practice) {
+    h += `<h3>正解 ${L.nCorrect}チーム</h3><div class="line">練習なので陣地は変わりません。本番では、正解したチームの陣地が広がります！</div>`;
+  } else {
+    const mult = qMult(q);
+    h += `<h3>正解 ${L.nCorrect}チーム${L.nCorrect ? ` → 陣地 ＋${mult}マス` : ''}</h3>`;
+    const st = {};
+    L.changes.filter(c => c.from >= 0).forEach(c => { const k = c.to + '>' + c.from; st[k] = (st[k] || 0) + 1; });
+    const items = Object.entries(st).map(([k, v]) => { const [to, from] = k.split('>').map(Number); return `<li>${swHtml(to)} が ${swHtml(from)} から ${v}マス うばった！</li>`; });
+    if (items.length) h += `<ul>${items.slice(0, 8).join('')}${items.length > 8 ? `<li>ほか ${items.length - 8}件</li>` : ''}</ul>`;
+    if (L.missed.length) h += `<div class="line">${L.missed.map(t => swHtml(t)).join(' ')} はとれるマスがありませんでした</div>`;
+    if (!L.nCorrect) h += '<div class="line">正解のチームはありませんでした。</div>';
+  }
+  return h + '</div>';
+}
+let rankPos = {};
+function renderRank(owners, showDelta) {
+  const g = S.game, el = $('#stRank');
+  const cnt = counts(owners, g.n), rk = ranksOf(cnt);
+  const order = cnt.map((c, t) => t).sort((a, b) => cnt[b] - cnt[a] || a - b);
+  const d = showDelta && g.last && g.last.qi === g.qi ? g.last.delta : null;
+  // 並びかえを動かして見せる
+  const old = {};
+  $$('.rk', el).forEach(r => { old[r.dataset.t] = r.getBoundingClientRect().top; });
+  el.innerHTML = order.map(t => {
+    const dl = d && d[t] ? `<span class="dl ${d[t] > 0 ? 'up' : 'down'}">${d[t] > 0 ? '+' : ''}${d[t]}</span>` : '<span class="dl"></span>';
+    return `<div class="rk${rk[t] === 1 && cnt[t] > 1 ? ' top' : ''}" data-t="${t}"><span class="no">${rk[t]}</span>${swHtml(t)}<span class="nm">${esc(g.names[t] || '')}</span><span class="ct">${cnt[t]}</span>${dl}</div>`;
+  }).join('');
+  $$('.rk', el).forEach(r => {
+    const o = old[r.dataset.t];
+    if (o == null) return;
+    const dy = o - r.getBoundingClientRect().top;
+    if (Math.abs(dy) < 1) return;
+    r.style.transform = `translateY(${dy}px)`;
+    r.style.transition = 'none';
+    requestAnimationFrame(() => { r.style.transition = 'transform .4s'; r.style.transform = ''; });
+  });
+}
+function renderBar() {
+  const g = S.game, p = g.phase, q = g.qs[g.qi];
+  const lastIdx = g.qs.length - 1;
+  const btn = $('#stPrimary');
+  let label = '', go = false;
+  if (ANIM) label = '結果をすぐ出す';
+  else if (p === 'intro') { label = g.qs[0] && g.qs[0].kind === 'p' ? '練習問題へ ▶' : '第1問へ ▶'; go = true; }
+  else if (p === 'show') { label = `スタート（${Math.ceil(timeLeft(g))}秒）`; go = true; }
+  else if (p === 'think') label = '時間終了 ▶';
+  else if (p === 'up') label = '正解発表 ▶';
+  else if (p === 'reveal') label = q && q.kind === 'p' ? '次へ ▶' : '陣地を広げる ▶';
+  else if (p === 'result') { label = g.qi >= lastIdx ? '結果発表へ ▶' : (g.qs[g.qi + 1].kind === 'p' ? '次の練習問題へ ▶' : (g.qi + 1 === lastIdx ? '最終問題へ ▶' : '次の問題へ ▶')); go = true; }
+  else if (p === 'final') { const G = finalGroups(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : ''; }
+  btn.textContent = label;
+  btn.hidden = !label;
+  btn.classList.toggle('go', go);
+  $('#stUndo').hidden = !g.history.length || p === 'intro';
+  $('#stSkip').hidden = !['show', 'think', 'up', 'reveal'].includes(p);
+  $('#stLast').hidden = !(['show', 'result'].includes(p) && g.qi < lastIdx - 1);
+  $('#stShuffle').hidden = p !== 'intro';
+  $('#stPause').hidden = p !== 'think';
+  $('#stPause').textContent = g.timer && g.timer.running ? '一時停止' : '再開';
+  $('#stPlus').hidden = !['show', 'think', 'up'].includes(p);
+}
+
+// 結果発表
+function finalGroups(g) {
+  const rk = ranksOf(counts(g.owners, g.n));
+  return [...new Set(rk)].filter(r => r <= 3).sort((a, b) => a - b); // 例 [1,2,3] や [1,3]
+}
+function finalHtml(g) {
+  const cnt = counts(g.owners, g.n), rk = ranksOf(cnt);
+  const G = finalGroups(g);
+  const shown = new Set(G.slice(G.length - g.finalStep));
+  const pod = r => {
+    const ts = cnt.map((c, t) => t).filter(t => rk[t] === r);
+    const inner = !G.includes(r) ? '' : shown.has(r)
+      ? ts.map(t => `<div class="tm">${swHtml(t)}<div class="nm">${esc(g.names[t])}</div><div class="ct">${cnt[t]}マス</div></div>`).join('')
+      : '<div class="q">？</div>';
+    return `<div class="pod r${r}${ts.length > 1 && shown.has(r) ? ' multi' : ''}"><div class="teams">${inner}</div><div class="step">${G.includes(r) ? r + '位' : ''}</div></div>`;
+  };
+  const others = cnt.map((c, t) => t).filter(t => rk[t] > 3).sort((a, b) => rk[a] - rk[b] || a - b);
+  const all = g.finalStep >= G.length;
+  const tie = all && cnt.filter((c, t) => rk[t] === 1).length > 1;
+  return `<div class="final-wrap"><h2>${all ? (tie ? '同点優勝！' : '🏆 優勝おめでとう！') : '結果発表'}</h2>
+    <div class="podium">${pod(2)}${pod(1)}${pod(3)}</div>
+    ${others.length ? `<div class="others">${others.map(t => `<span>${rk[t]}位 ${swHtml(t)} ${esc(g.names[t])} ${cnt[t]}マス</span>`).join('')}</div>` : ''}</div>`;
+}
+function celebrate() {
+  SND.fanfare();
+  const cv = $('#confetti');
+  cv.hidden = false;
+  const ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const P = [];
+  for (let i = 0; i < 180; i++) P.push({ x: Math.random() * cv.width, y: -Math.random() * cv.height * 0.6, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, s: 6 + Math.random() * 8, c: TEAM_COLORS[i % 10], a: Math.random() * 6 });
+  const t0 = performance.now();
+  (function frame(now) {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += 0.1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); });
+    if (now - t0 < 4500) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
+  })(t0);
+}
+window.addEventListener('resize', () => { if (document.body.classList.contains('staging') && S.game && !ANIM) renderRank(S.game.owners, S.game.phase === 'result'); });
+
+// ---------- ⑤ 印刷 ----------
+function printKind() { return ($('input[name=pKind]:checked') || {}).value || 'cards'; }
+function renderPrint() {
+  const k = printKind();
+  let h = '';
+  if (k === 'cards') {
+    h = CH.map(c => `<div class="page"><div class="pcard" style="border-color:${c.color}">${shapeSvg(c.shape, c.color)}<div class="big" style="color:${c.color}">${c.k}</div><div class="sm">指なら ${'ABCD'.indexOf(c.k) + 1}本</div></div></div>`).join('') +
+      `<div class="page"><div class="pcard" style="border-color:#e21b3c"><div class="big" style="color:#e21b3c;font-size:210mm">○</div></div></div>` +
+      `<div class="page"><div class="pcard" style="border-color:#1368ce"><div class="big" style="color:#1368ce;font-size:210mm">×</div></div></div>`;
+    $('#pHint').textContent = '6ページ。1チーム1組あると便利です（印刷の画面で部数をチームの数にする）。白黒でも文字と形で見分けられます。';
+  } else if (k === 'teams') {
+    h = S.teams.names.slice(0, S.teams.count).map((nm, t) => { const c = TEAM_COLORS[t]; return `<div class="page"><div class="pteam"><div class="num" style="background:${c};color:${inkOn(c)}">${t + 1}</div><div class="name">${esc(nm)}</div></div></div>`; }).join('');
+    $('#pHint').textContent = `${S.teams.count}ページ。チームの場所の目印や、スタート地点（地図の番号）の確認に。`;
+  } else {
+    let no = 0;
+    const rows = S.questions.map(q => {
+      const lab = q.kind === 'p' ? '練習' : `${++no}`;
+      const ch = qChoices(q).map(c => `${CH[c.i].k}. ${esc(c.text)}`).join('<br>');
+      const ans = qChoices(q).length ? `${q.answer} ${esc((q.choices['ABCD'.indexOf(q.answer)] || ''))}` : esc(q.answerText);
+      const kind = { '1': '', '2': 'ボーナス2', '3': '逆転3', p: '練習' }[q.kind];
+      return `<tr><td>${lab}</td><td>${kind}</td><td>${esc(q.text)}</td><td>${ch}</td><td class="ans">${ans}</td><td>${esc(q.note)}</td></tr>`;
+    }).join('');
+    h = `<div class="page flow pscript"><h1>陣取りクイズ 台本（先生用・生徒に見せない）</h1><table><thead><tr><th>問</th><th>種類</th><th>問題</th><th>選択肢</th><th>正解</th><th>解説</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    $('#pHint').textContent = '問題と正解の一覧です。';
+  }
+  $('#printPreview').innerHTML = h;
+}
+$$('input[name=pKind]').forEach(r => r.addEventListener('change', renderPrint));
+$('#pPrint').addEventListener('click', () => { renderPrint(); window.print(); });
+
+// ---------- ⑥ 保存 ----------
+$('#sExport').addEventListener('click', () => {
+  const data = { app: 'jintori-quiz', version: 1, savedAt: new Date().toISOString(), teams: S.teams, opts: S.opts, questions: S.questions };
+  const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = `陣取りクイズ_${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  $('#sMsg').innerHTML = '<div class="msg good">書き出しました（ダウンロードフォルダを見てください）。</div>';
+});
+$('#sImport').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const d = JSON.parse(rd.result);
+      if (!d || d.app !== 'jintori-quiz') throw new Error('形式');
+      const n = normalizeState({ teams: d.teams, opts: d.opts, questions: d.questions, game: S.game });
+      S = n; saveNow();
+      $('#sMsg').innerHTML = `<div class="msg good">読みこみました：${S.teams.count}チーム・問題${S.questions.length}問。</div>`;
+    } catch (err) {
+      $('#sMsg').innerHTML = '<div class="msg bad">このファイルは読めませんでした。「ファイルに書き出す」で作ったファイルを選んでください。</div>';
+    }
+    e.target.value = '';
+  };
+  rd.readAsText(f);
+});
+$('#sReset').addEventListener('click', () => {
+  if (!confirm('チーム・問題・本番の途中経過をすべて消します。よろしいですか？')) return;
+  S = defaultState(); BOARD = null; saveNow();
+  $('#sMsg').innerHTML = '<div class="msg good">最初の状態にもどしました。</div>';
+});
+
+// ---------- はじめ ----------
+showTab(lsGet('jintori-quiz-tab') || 'guide');
+</script>
+</body>
+</html>

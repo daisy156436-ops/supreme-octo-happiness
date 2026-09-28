@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>回答カード</title>
+<style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#1d2330;--sub:#5b6475;--line:#d9dde5;--team:#888;--teamInk:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;-webkit-user-select:none;user-select:none;overflow:hidden}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+button{font:inherit;cursor:pointer;color:inherit}
+
+/* チームを選ぶ */
+#pick{padding:max(3vmin,env(safe-area-inset-top)) 4vmin 4vmin;gap:2.5vmin;overflow:auto}
+#pick h1{margin:0;font-size:6vmin}
+#pick p{margin:0;font-size:3.4vmin;color:var(--sub)}
+.teams{display:grid;grid-template-columns:repeat(5,1fr);gap:2vmin}
+.teams button{aspect-ratio:1/1;border:none;border-radius:2.4vmin;font-size:8vmin;font-weight:900;font-family:Arial,sans-serif;box-shadow:0 .4vmin 1vmin rgba(0,0,0,.15)}
+.teams button.on{outline:1.2vmin solid var(--ink);outline-offset:.6vmin}
+
+/* 答えを選ぶ */
+#pad{padding:max(2vmin,env(safe-area-inset-top)) 2.5vmin 2.5vmin;gap:2vmin}
+.bar{display:flex;align-items:center;gap:2vmin}
+.tbadge{display:flex;align-items:center;gap:1.5vmin;font-size:4.4vmin;font-weight:bold}
+.tbadge .n{min-width:9vmin;height:9vmin;border-radius:1.6vmin;display:flex;align-items:center;justify-content:center;font-size:6vmin;font-weight:900;font-family:Arial,sans-serif;background:var(--team);color:var(--teamInk);padding:0 1vmin}
+.bar .sp{flex:1}
+.bar button{font-size:3.2vmin;padding:1.4vmin 2.4vmin;border:1px solid var(--line);background:#fff;border-radius:1.4vmin}
+.grid4{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2vmin;min-height:0}
+.ans{border:none;border-radius:2.6vmin;display:flex;align-items:center;justify-content:center;gap:3vmin;font-size:16vmin;font-weight:900;font-family:Arial,sans-serif;box-shadow:0 .6vmin 1.2vmin rgba(0,0,0,.18)}
+.ans svg{width:14vmin;height:14vmin}
+.ans:active{transform:scale(.97)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:2vmin;height:17vmin}
+.row2 .ans{font-size:13vmin}
+.textrow{display:flex;gap:2vmin}
+.textrow input{flex:1;min-width:0;font:inherit;font-size:5vmin;padding:1.6vmin 2vmin;border:.4vmin solid var(--line);border-radius:1.6vmin;-webkit-user-select:text;user-select:text}
+.textrow button{font-size:4vmin;font-weight:bold;padding:0 3vmin;border:none;border-radius:1.6vmin;background:var(--ink);color:#fff}
+
+/* 見せる */
+#show{align-items:center;justify-content:center;border:3.2vmin solid var(--team)}
+#show .big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vmin;font-weight:900;font-family:Arial,"Hiragino Sans",sans-serif;line-height:1;text-align:center;padding:0 4vmin;word-break:break-all}
+#show .big svg{width:32vmin;height:32vmin}
+#show .corner{position:absolute;top:max(2vmin,env(safe-area-inset-top));right:2.4vmin;min-width:14vmin;height:14vmin;border-radius:2vmin;background:var(--team);color:var(--teamInk);display:flex;align-items:center;justify-content:center;font-size:9vmin;font-weight:900;font-family:Arial,sans-serif;padding:0 1.4vmin;box-shadow:0 0 0 .6vmin #fff}
+#back{position:absolute;top:max(2vmin,env(safe-area-inset-top));left:2.4vmin;font-size:3.6vmin;padding:1.6vmin 3vmin;border:none;border-radius:1.6vmin;background:rgba(255,255,255,.88);color:#1d2330;font-weight:bold}
+@media (orientation:landscape){
+  .teams{grid-template-columns:repeat(10,1fr)}
+  .teams button{font-size:6vmin}
+  #pad{display:grid;grid-template-columns:1fr 34%;grid-template-rows:auto 1fr auto;gap:2vmin}
+  #pad .bar{grid-column:1/-1}
+  #pad .grid4{grid-row:2/4}
+  #pad .side{display:flex;flex-direction:column;gap:2vmin;grid-row:2/4;min-height:0}
+  #pad .row2{flex:1;height:auto;grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+  #pad .textrow{flex-direction:column}
+  #pad .textrow button{padding:2vmin}
+}
+@media (orientation:portrait){ #pad .side{display:contents} }
+</style>
+</head>
+<body>
+
+<div class="screen" id="pick">
+  <h1>回答カード</h1>
+  <p>自分のチームの番号をタップしてください（スクリーンの地図の番号と同じ）。</p>
+  <div class="teams" id="teams"></div>
+</div>
+
+<div class="screen" id="pad">
+  <div class="bar">
+    <div class="tbadge"><span class="n" id="tNum"></span><span id="tLabel">のチーム</span></div>
+    <span class="sp"></span>
+    <button id="change">チームを変える</button>
+  </div>
+  <div class="grid4" id="grid4"></div>
+  <div class="side">
+    <div class="row2">
+      <button class="ans" data-a="○" style="background:#e21b3c;color:#fff">○</button>
+      <button class="ans" data-a="×" style="background:#1368ce;color:#fff">×</button>
+    </div>
+    <form class="textrow" id="textForm">
+      <input type="text" id="textIn" placeholder="文字や数字で答える" enterkeyhint="done" autocomplete="off">
+      <button type="submit">大きく表示</button>
+    </form>
+  </div>
+</div>
+
+<div class="screen" id="show">
+  <button id="back">← もどる</button>
+  <div class="corner" id="corner"></div>
+  <div class="big" id="big"></div>
+</div>
+
+<script>
+const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
+  '#000075', '#469990', '#800000', '#808000', '#fabed4', '#dcbeff', '#aaffc3', '#ffd8b1', '#222222', '#8c8c8c'];
+const CH = [
+  { k: 'A', color: '#e21b3c', ink: '#fff', shape: 'tri' },
+  { k: 'B', color: '#1368ce', ink: '#fff', shape: 'circle' },
+  { k: 'C', color: '#f2b705', ink: '#1d2330', shape: 'square' },
+  { k: 'D', color: '#26890c', ink: '#fff', shape: 'star' },
+];
+function inkOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const L = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2] > 0.36 ? '#1d2330' : '#ffffff';
+}
+function starPath(cx, cy, R, r) {
+  let d = '';
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R;
+    d += (i ? 'L' : 'M') + (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy + rr * Math.sin(a)).toFixed(1);
+  }
+  return d + 'Z';
+}
+function shapeSvg(shape, fill) {
+  const body = {
+    tri: `<path d="M50 8 L95 90 L5 90 Z" fill="${fill}"/>`,
+    circle: `<circle cx="50" cy="50" r="44" fill="${fill}"/>`,
+    square: `<rect x="8" y="8" width="84" height="84" rx="4" fill="${fill}"/>`,
+    star: `<path d="${starPath(50, 53, 48, 20)}" fill="${fill}"/>`,
+  }[shape];
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${body}</svg>`;
+}
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+const $ = s => document.querySelector(s);
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 保存できなくても使える */ } }
+
+let team = parseInt(lsGet('jintori-card-team'), 10);
+if (!(team >= 1 && team <= TEAM_COLORS.length)) team = 0;
+
+function screen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); }
+function setTeam(t) {
+  team = t;
+  lsSet('jintori-card-team', String(t));
+  const c = TEAM_COLORS[t - 1];
+  document.documentElement.style.setProperty('--team', c);
+  document.documentElement.style.setProperty('--teamInk', inkOn(c));
+  $('#tNum').textContent = t;
+  $('#corner').textContent = t;
+}
+
+$('#teams').innerHTML = TEAM_COLORS.map((c, i) => `<button data-t="${i + 1}" style="background:${c};color:${inkOn(c)}">${i + 1}</button>`).join('');
+$('#teams').addEventListener('click', e => {
+  const b = e.target.closest('button[data-t]');
+  if (!b) return;
+  setTeam(+b.dataset.t);
+  screen('pad');
+});
+$('#change').addEventListener('click', () => {
+  document.querySelectorAll('#teams button').forEach(b => b.classList.toggle('on', +b.dataset.t === team));
+  screen('pick');
+});
+
+$('#grid4').innerHTML = CH.map(c => `<button class="ans" data-a="${c.k}" style="background:${c.color};color:${c.ink}">${shapeSvg(c.shape, c.ink)}${c.k}</button>`).join('');
+
+function show(a) {
+  const ch = CH.find(c => c.k === a);
+  const sh = $('#show'), big = $('#big');
+  if (ch) {
+    sh.style.background = ch.color; big.style.color = ch.ink;
+    big.style.fontSize = '46vmin';
+    big.innerHTML = shapeSvg(ch.shape, ch.ink) + ch.k;
+  } else if (a === '○' || a === '×') {
+    sh.style.background = a === '○' ? '#e21b3c' : '#1368ce'; big.style.color = '#fff';
+    big.style.fontSize = '80vmin';
+    big.textContent = a;
+  } else {
+    sh.style.background = '#ffffff'; big.style.color = '#1d2330';
+    const len = [...a].length;
+    big.style.fontSize = Math.max(8, Math.min(40, 170 / Math.max(1, len) * (innerWidth > innerHeight ? innerWidth / innerHeight : 1))) + 'vmin';
+    big.innerHTML = esc(a);
+  }
+  screen('show');
+  keepAwake();
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.ans');
+  if (b) show(b.dataset.a);
+});
+$('#textForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#textIn').value.trim();
+  $('#textIn').blur();
+  if (v) show(v);
+});
+$('#back').addEventListener('click', () => screen('pad'));
+
+// 画面が暗くならないようにする（対応している端末だけ）
+let lock = null;
+async function keepAwake() {
+  try { if (!lock && navigator.wakeLock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => { lock = null; }); } } catch (e) { lock = null; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && $('#show').classList.contains('on')) keepAwake(); });
+
+if (team) { setTeam(team); screen('pad'); } else screen('pick');
+</script>
+</body>
+</html>
