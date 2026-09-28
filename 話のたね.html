@@ -8,7 +8,7 @@
   --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#E8EBF3; --ink:#1C2240; --sub:#5B6180; --line:#D8DCE8;
   --accent:#2B4C9A; --accent-ink:#FFFFFF; --accent-weak:#E2E8F7;
   --seed:#E9AE00; --seed-weak:#FFF3C4;
-  --k-cont:#2B4C9A; --k-link:#16786A; --k-side:#8C3D7C; --k-now:#9A6300;
+  --k-core:#B0412E; --k-cont:#2B4C9A; --k-link:#16786A; --k-side:#8C3D7C; --k-now:#9A6300;
   --bad:#B3261E; --bad-weak:#FBE9E7; --good:#1E7A45; --good-weak:#E3F4EA; --warn:#8A5A00; --warn-weak:#FFF1D6;
   --shadow:0 1px 2px rgba(28,34,64,.05),0 6px 20px rgba(28,34,64,.07);
   --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
@@ -20,7 +20,7 @@
     --bg:#11141D; --surface:#191D29; --surface-2:#232939; --ink:#E6E8F2; --sub:#A0A6BF; --line:#2E3447;
     --accent:#98AEF2; --accent-ink:#11141D; --accent-weak:#252E4A;
     --seed:#F2C230; --seed-weak:#3A3115;
-    --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
+    --k-core:#F29482; --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
     --bad:#FF8A80; --bad-weak:#3B1E1C; --good:#72D49C; --good-weak:#18301F; --warn:#F0C060; --warn-weak:#352A12;
     --shadow:none;
   }
@@ -30,14 +30,14 @@
   --bg:#11141D; --surface:#191D29; --surface-2:#232939; --ink:#E6E8F2; --sub:#A0A6BF; --line:#2E3447;
   --accent:#98AEF2; --accent-ink:#11141D; --accent-weak:#252E4A;
   --seed:#F2C230; --seed-weak:#3A3115;
-  --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
+  --k-core:#F29482; --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
   --bad:#FF8A80; --bad-weak:#3B1E1C; --good:#72D49C; --good-weak:#18301F; --warn:#F0C060; --warn-weak:#352A12;
   --shadow:none;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.8 var(--f-body);font-feature-settings:"palt" 0}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.8 var(--f-body)}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 button:disabled{opacity:.45;cursor:not-allowed}
@@ -63,7 +63,7 @@ h1,h2,h3{text-wrap:balance;line-height:1.4}
 
 main{max-width:840px;margin:0 auto;padding-inline:16px;padding-block:18px 0}
 .panel{padding-bottom:32px}
-.lead{color:var(--sub);margin:4px 0 14px;max-width:38em}
+.lead{color:var(--sub);margin:4px 0 14px;max-width:40em}
 .hint{color:var(--sub);font-size:13px}
 .note{font-size:13px;color:var(--sub);margin:6px 0}
 .note.bad{color:var(--bad)}
@@ -80,6 +80,9 @@ main{max-width:840px;margin:0 auto;padding-inline:16px;padding-block:18px 0}
 input[type=text],select,textarea.field{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 10px;min-width:0}
 input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-color:var(--accent)}
 .tag-sample{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--sub);border:1px dashed var(--sub);border-radius:4px;padding:0 6px;line-height:1.6}
+.dots{display:inline-flex;gap:2px;align-items:center;vertical-align:1px}
+.dots i{width:5px;height:7px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--line)}
+.dots i.on{background:var(--seed)}
 
 /* 話す */
 .talk{display:flex;flex-direction:column;min-height:calc(100dvh - 118px)}
@@ -133,31 +136,54 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 .copts{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:12.5px;color:var(--sub);padding:6px 6px 0}
 .copts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
 
-/* 話題 */
+/* 好きなテーマ */
 .pagehead h1{font-family:var(--f-disp);font-weight:700;font-size:26px;margin:4px 0 0;letter-spacing:.03em}
+.tastebox{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.tastehead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.tastehead h2{font-size:15px;margin:0}
+.tastehead .btn{margin-left:auto}
+.themechips{display:flex;flex-wrap:wrap;gap:6px}
+.tchip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 13px 4px 12px;font-size:14px;line-height:1.5;max-width:100%}
+.tchip:hover:not(:disabled){border-color:var(--seed)}
+.tchip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tchip[aria-pressed="true"] .dots i:not(.on){background:color-mix(in srgb,var(--bg) 35%,transparent)}
+.tchip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tasteempty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.tasteempty p{margin:0}
+.style-line{font-size:13.5px;color:var(--sub);margin:0}
+
+/* 話題 */
 .finder{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px}
 .moods{display:flex;flex-wrap:wrap;gap:6px}
 .moods button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 13px;font-size:14px}
 .moods button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .finder input[type=text]{width:100%}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--sub);margin:0 0 12px}
-.legend span{display:inline-flex;align-items:center;gap:6px}
-.legend b{font-weight:700}
+.legend > span{display:inline-flex;align-items:center;gap:6px}
 .deckhead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
 .deckhead h2{font-size:14px;margin:0;color:var(--sub);letter-spacing:.06em}
 .deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
 .deck.compact{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
 .topic{--k:var(--k-side);display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px 10px;min-width:0}
-.topic.k-cont{--k:var(--k-cont)} .topic.k-link{--k:var(--k-link)} .topic.k-side{--k:var(--k-side)} .topic.k-now{--k:var(--k-now)}
-.topic-top{display:flex;align-items:center;gap:8px}
-.kind{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--k);background:color-mix(in srgb,var(--k) 13%,transparent);padding:1px 10px;border-radius:999px;line-height:1.7}
+.topic.k-core{--k:var(--k-core)} .topic.k-cont{--k:var(--k-cont)} .topic.k-link{--k:var(--k-link)} .topic.k-side{--k:var(--k-side)} .topic.k-now{--k:var(--k-now)}
+.topic.dim{opacity:.55}
+.topic.liked{border-color:color-mix(in srgb,var(--seed) 70%,var(--line))}
+.topic-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.kind{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--k);background:color-mix(in srgb,var(--k) 13%,transparent);padding:1px 10px;border-radius:999px;line-height:1.7;white-space:nowrap}
+.topic-theme{font-size:12px;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:0 9px;line-height:1.7;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fit{margin-left:auto;font-size:11px;color:var(--sub);display:inline-flex;gap:5px;align-items:center;white-space:nowrap}
 .topic-title{font-family:var(--f-disp);font-weight:700;font-size:19px;line-height:1.5;margin:0}
 .topic.compact .topic-title{font-size:17px}
 .topic-hook{margin:0;font-size:14.5px}
 .topic-why{margin:0;font-size:13px;color:var(--sub);display:flex;gap:8px;align-items:baseline}
 .why-k{flex:none;font-size:11px;letter-spacing:.06em;border:1px solid var(--line);border-radius:4px;padding:0 5px;line-height:1.6}
-.topic-go{margin-top:auto;align-self:flex-start;background:none;border:none;color:var(--k);font-weight:700;padding:6px 0;font-size:14px}
+.topic-foot{margin-top:auto;display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.topic-go{background:none;border:none;color:var(--k);font-weight:700;padding:6px 0;font-size:14px;margin-right:auto}
 .topic-go:hover{text-decoration:underline;text-underline-offset:3px}
+.fb{border:1px solid transparent;background:none;border-radius:999px;padding:1px 10px;font-size:12.5px;color:var(--sub)}
+.fb:hover{border-color:var(--line)}
+.fb[aria-pressed="true"].like{background:var(--seed-weak);color:var(--ink);border-color:color-mix(in srgb,var(--seed) 60%,transparent);font-weight:700}
+.fb[aria-pressed="true"].nope{background:var(--surface-2);color:var(--ink);border-color:var(--line);font-weight:700}
 .topic.pending{justify-content:center;align-items:flex-start;min-height:180px;border-style:dashed;background:transparent}
 
 /* これまで */
@@ -165,6 +191,14 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 .card h2{margin:0;font-size:17px}
 .card p{margin:0}
 .card textarea.field{width:100%;min-height:96px;resize:vertical;font-size:13.5px;line-height:1.6}
+.sources{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.sources > li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:10px 0;border-top:1px solid var(--line);align-items:center}
+.sources > li:first-child{border-top:none;padding-top:0}
+.sources .nm{font-weight:700}
+.sources .st{font-size:13px;color:var(--sub);grid-column:1}
+.sources .act{grid-column:2;grid-row:1 / span 2}
+.sources .more{grid-column:1 / -1;font-size:13px;color:var(--sub)}
+.steps{margin:4px 0 0;padding-left:1.4em;font-size:13.5px;color:var(--ink)}
 .filepick{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
 .filepick input[type=file]{max-width:100%;font-size:13.5px}
 .plan{background:var(--accent-weak);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
@@ -188,13 +222,17 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 .memo-list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px}
 .memo-list li{display:flex;gap:10px;align-items:flex-start;padding:7px 6px 7px 14px;border-top:1px solid var(--line)}
 .memo-list li:first-child{border-top:none}
-.memo-list li span{flex:1;min-width:0;overflow-wrap:anywhere}
+.memo-list li > span,.memo-list li > div{flex:1;min-width:0;overflow-wrap:anywhere}
+.theme-row .nm{font-weight:700;margin-right:8px}
+.theme-row .why{display:block;font-size:13px;color:var(--sub)}
 .x{flex:none;width:30px;height:30px;border-radius:8px;border:none;background:none;color:var(--sub);font-size:17px;line-height:1}
 .x:hover{background:var(--bad-weak);color:var(--bad)}
 .memoadd{display:flex;flex-wrap:wrap;gap:8px}
 .memoadd input[type=text]{flex:1 1 220px}
 .privacy{font-size:13px;color:var(--sub);border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:10px 0 0}
 .dangerzone{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.subhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:22px 0 6px}
+.subhead h2{font-size:17px;margin:0}
 
 .toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
 
@@ -247,7 +285,17 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
   <section id="p-topics" class="panel" role="tabpanel" aria-labelledby="tab-topics" hidden>
     <div class="pagehead">
       <h1>話題をさがす</h1>
-      <p class="lead">これまでの会話と覚え書きをまとめて読み、この先話したら面白そうなことを Claude が6つ考えます。</p>
+      <p class="lead">これまでのチャットから、あなたが好きそうなテーマを読み取り、そのテーマで話したら面白そうなことを Claude が6つ考えます。</p>
+    </div>
+    <div class="tastebox" id="tasteBox">
+      <div class="tastehead">
+        <h2>あなたが好きそうなテーマ</h2>
+        <span id="tasteBasis" class="hint"></span>
+        <button id="tasteRefresh" class="btn small" type="button">読み直す</button>
+      </div>
+      <div id="themeChips" class="themechips" role="group" aria-label="テーマで絞る"></div>
+      <p id="tasteStyle" class="style-line"></p>
+      <div id="tasteEmpty" class="tasteempty" hidden></div>
     </div>
     <div class="finder">
       <div class="moods" id="moods" role="group" aria-label="気分">
@@ -257,18 +305,19 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
         <button type="button" data-mood="知ってためになる話" aria-pressed="false">ためになる</button>
         <button type="button" data-mood="くだらなくて笑える話" aria-pressed="false">くだらなく</button>
       </div>
-      <input type="text" id="moodText" maxlength="200" placeholder="ほかに希望があれば（例：音楽の話、寝る前に5分で終わる話）" aria-label="話題の希望">
+      <input type="text" id="moodText" maxlength="200" placeholder="ほかに希望があれば（例：寝る前に5分で終わる話）" aria-label="話題の希望">
       <div class="row">
-        <button id="findBtn" class="btn primary" type="button">話題を見つける</button>
+        <button id="findBtn" class="btn primary" type="button">好きそうな話題を見つける</button>
         <button id="findStop" class="btn" type="button" hidden>止める</button>
         <span id="deckNote" class="note" aria-live="polite"></span>
       </div>
     </div>
     <div class="legend" aria-label="話題の種類">
+      <span><span class="kind" style="--k:var(--k-core)">ど真ん中</span>好きなテーマに新しい切り口で</span>
+      <span><span class="kind" style="--k:var(--k-link)">つなげる</span>好きなもの同士を結ぶ</span>
       <span><span class="kind" style="--k:var(--k-cont)">続き</span>途中で終わった話</span>
-      <span><span class="kind" style="--k:var(--k-link)">つなげる</span>別々の話を結びつける</span>
-      <span><span class="kind" style="--k:var(--k-side)">寄り道</span>関心の少し外側</span>
-      <span><span class="kind" style="--k:var(--k-now)">いま</span>今日の日付や季節から</span>
+      <span><span class="kind" style="--k:var(--k-side)">寄り道</span>好きなテーマのすぐ隣</span>
+      <span><span class="kind" style="--k:var(--k-now)">いま</span>季節や時期と好きなテーマ</span>
     </div>
     <div class="deckhead"><h2 id="deckTitle">話題</h2><span id="deckSample" class="tag-sample" hidden>見本</span></div>
     <div id="deck" class="deck"></div>
@@ -276,11 +325,43 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 
   <!-- これまで -->
   <section id="p-history" class="panel" role="tabpanel" aria-labelledby="tab-history" hidden>
+    <div class="card" id="sourcesCard">
+      <h2>読み込んだチャット</h2>
+      <p class="hint">ここにあるものすべてから、好きそうなテーマを読み取ります。</p>
+      <ul class="sources">
+        <li>
+          <span class="nm">このアプリでの会話</span>
+          <span class="st" id="srcApp"></span>
+          <span class="act hint">自動で使います</span>
+        </li>
+        <li id="ccRow">
+          <span class="nm">Claude Code のセッション</span>
+          <span class="st" id="srcCC"></span>
+          <span class="act"><button id="ccRead" class="btn small" type="button">読み込む</button></span>
+          <span class="more">Claude Code に頼んだ作業の題名・日付・結果のメモを読みます（やりとりの中身は読みません）。はじめて押すと、読んでよいかの確認が出ます。</span>
+        </li>
+        <li>
+          <span class="nm">claude.ai のチャット</span>
+          <span class="st" id="srcCAI"></span>
+          <span class="act"><button id="caiGo" class="btn small" type="button">取り込む</button></span>
+          <span class="more">
+            ページから直接は読めないため、書き出したファイルを使います。
+            <ol class="steps">
+              <li>claude.ai の［設定］→［プライバシー］で、データの書き出し（エクスポート）を押す</li>
+              <li>メールで届くリンクから zip ファイルをダウンロードする</li>
+              <li>下の「ファイルや文章を取り込む」で、その zip を選んで「読み込む準備」を押す（展開しなくて大丈夫です）</li>
+            </ol>
+          </span>
+        </li>
+      </ul>
+      <p id="ccErr" class="note bad" aria-live="polite"></p>
+    </div>
+
     <div class="card" id="importCard">
-      <h2>ほかのチャットを取り込む</h2>
-      <p class="hint">ほかの場所での会話も話題さがしに使えます。claude.ai の設定（プライバシー）から書き出したデータの <b>conversations.json</b>、ChatGPT の書き出し、LINE のトーク履歴（.txt）、コピーした文章などを読み込めます。中身は Claude が読んで覚え書きにまとめます。元の文章は保存しません。</p>
+      <h2>ファイルや文章を取り込む</h2>
+      <p class="hint">claude.ai の書き出し（zip または conversations.json）、ChatGPT の書き出し、LINE のトーク履歴（.txt）、コピーした文章などを読み込めます。会話が何百件あっても、全件の題名と書き出しから好きなテーマを読み取り、最近のものは中身まで読んで覚え書きにします。元の文章は保存しません。</p>
       <div class="filepick">
-        <input type="file" id="impFile" accept=".json,.txt,.md,.csv,.log,application/json,text/plain" aria-label="取り込むファイル">
+        <input type="file" id="impFile" accept=".zip,.json,.txt,.md,.csv,.log,application/zip,application/json,text/plain" aria-label="取り込むファイル">
         <span id="impFileInfo" class="hint"></span>
       </div>
       <textarea id="impText" class="field" placeholder="ここに会話を貼り付けることもできます" aria-label="貼り付ける会話"></textarea>
@@ -311,12 +392,14 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
   <section id="p-memo" class="panel" role="tabpanel" aria-labelledby="tab-memo" hidden>
     <div class="pagehead">
       <h1>覚え書き</h1>
-      <p class="lead">会話や取り込んだ記録から Claude が覚えたことです。返事や話題さがしのたびに読み返します。違っているものは消せます。</p>
+      <p class="lead">チャットから Claude が読み取った、あなたの好きなテーマと覚えていることです。返事や話題さがしのたびに読み返します。違っているものは消せます。</p>
     </div>
-    <div class="row">
-      <button id="digestNow" class="btn" type="button">いまの会話から覚え直す</button>
-      <span id="memoUpdated" class="hint"></span>
-    </div>
+    <div class="subhead"><h2>好きなテーマ</h2><span id="memoTasteBasis" class="hint"></span></div>
+    <p id="memoStyle" class="style-line"></p>
+    <ul id="memoThemes" class="memo-list"></ul>
+
+    <div class="subhead"><h2>覚えていること</h2><span id="memoUpdated" class="hint"></span></div>
+    <div class="row"><button id="digestNow" class="btn small" type="button">いまの会話から覚え直す</button></div>
     <div id="memoGroups" class="memo-groups"></div>
     <form id="memoAdd" class="memoadd">
       <select id="memoKind" aria-label="種類">
@@ -327,7 +410,7 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
     </form>
     <p id="memoPrivacy" class="privacy"></p>
     <div class="dangerzone">
-      <button id="memoClear" class="btn danger small" type="button">覚え書きをすべて消す</button>
+      <button id="memoClear" class="btn danger small" type="button">覚え書きと好きなテーマをすべて消す</button>
       <span class="hint">会話の記録は「これまで」から1つずつ消せます。</span>
     </div>
   </section>
@@ -341,13 +424,14 @@ input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-col
 /* ---------- 定数 ---------- */
 const KINDS = ['関心', '途中の話', '覚えておくこと', '苦手'];
 const KIND_NOTE = { 関心: '好きなこと・気になっていること', 途中の話: '続きがありそうな話', 覚えておくこと: '話に出た具体的なこと', 苦手: 'あまり話したくなさそうなこと' };
-const TOPIC_KINDS = { 続き: 'k-cont', つなげる: 'k-link', 寄り道: 'k-side', いま: 'k-now' };
+const TOPIC_KINDS = { ど真ん中: 'k-core', つなげる: 'k-link', 続き: 'k-cont', 寄り道: 'k-side', いま: 'k-now' };
 const MARK = '[[たね]]';
 const MARK_RE = /\[\[\s*たね\s*\]\]/;
 const LS_KEY = 'hanashi-no-tane:v1';
 const LS_DEEP = 'hanashi-no-tane:deep';
-const CHUNK = 12000, MAX_CHUNKS = 8;
+const CC_SERVER = 'Claude Code Remote';
 const FATAL = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
+const JSZIP_SRC = ['https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'];
 
 /* ---------- 小道具 ---------- */
 const $ = (id) => document.getElementById(id);
@@ -369,6 +453,7 @@ const bytes = (s) => enc.encode(s).length;
 const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
 const newId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const clampInt = (v, lo, hi, d) => { const n = Math.round(Number(v)); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d; };
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
 function joinUpTo(lines, max) {
@@ -379,6 +464,7 @@ function joinUpTo(lines, max) {
 const WD = '日月火水木金土';
 function todayLong() { const d = new Date(); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日（${WD[d.getDay()]}曜日）`; }
 function fmtDateLong(ms) { if (!ms) return ''; const d = new Date(ms); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`; }
+function ym(ms) { if (!ms) return ''; const d = new Date(ms); return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}`; }
 function fmtWhen(ms) {
   if (!ms) return '';
   const d = new Date(ms), n = new Date();
@@ -394,7 +480,12 @@ function toast(msg) {
   const t = $('toast');
   t.textContent = msg; t.hidden = false;
   clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => { t.hidden = true; }, 4200);
+  toast.timer = setTimeout(() => { t.hidden = true; }, 4600);
+}
+function dots(n, label) {
+  const s = el('span', { class: 'dots', role: 'img', 'aria-label': label || `5段階の${n}` });
+  for (let i = 1; i <= 5; i++) s.append(el('i', { class: i <= n ? 'on' : '' }));
+  return s;
 }
 function errorCopy(e) {
   switch (e && e.code) {
@@ -409,15 +500,33 @@ function errorCopy(e) {
   }
 }
 const isFatal = (e) => FATAL.includes(e && e.code);
+function ccErrorCopy(e) {
+  switch (e && e.code) {
+    case 'server_not_connected': case 'server_not_found':
+      return 'Claude Code の履歴につながりませんでした。claude.ai の［設定］→［コネクタ］で Claude Code Remote が使える状態か確かめてください。';
+    case 'needs_reauth': return 'claude.ai の［設定］→［コネクタ］で Claude Code Remote をつなぎ直してから、もう一度押してください。';
+    case 'selection_required': return '同じ名前のコネクタが複数あります。表示された確認で使うものを選んでから、もう一度押してください。';
+    case 'not_in_manifest': return '読み込みが許可されませんでした。ページを開き直すと、もう一度確認が出ます。';
+    case 'blocked_by_policy': case 'approval_required': return '組織の設定で、この画面からは読めないようになっています。';
+    case 'tool_error': return `読み込みに失敗しました（${clip(e.message, 80)}）。`;
+    case 'server_unavailable': case 'upstream_error': case 'rate_limited': return '一時的につながりませんでした。少し待ってからもう一度押してください。';
+    case 'not_granted': case 'capability_disabled': case 'capability_removed': return 'この画面では Claude Code の履歴を読めません。';
+    default: return '読み込めませんでした。もう一度押してください。';
+  }
+}
 
 /* ---------- 状態 ---------- */
-function emptyHome() { return { v: 1, memory: { items: [], updatedAt: 0 }, deck: null, recentTopics: [] }; }
+function emptyHome() {
+  return { v: 2, memory: { items: [], updatedAt: 0 }, deck: null, recentTopics: [], taste: null, feedback: { likes: [], nopes: [] }, cc: null };
+}
 const S = {
-  ai: 'wait', sample: null, store: null, loaded: false, saveBroken: false,
+  ai: 'wait', sample: null, mcp: null, store: null, loaded: false, saveBroken: false,
   home: emptyHome(), chats: [], imports: [], cur: null,
   busy: false, busyChat: null, ctl: null, streamText: '', lastError: null,
-  findBusy: false, findCtl: null, liveDeck: null, deckNote: '', deckNoteBad: false, mood: 'おまかせ',
+  findBusy: false, findCtl: null, liveDeck: null, deckNote: '', deckNoteBad: false, mood: 'おまかせ', focus: '',
+  tasteBusy: false, tasteCtl: null, tasteNote: '',
   digesting: 0, digestChain: Promise.resolve(), digestErr: '',
+  ccBusy: false, ccErr: '',
   imp: null, impError: '',
   tab: 'talk', deep: lsGet(LS_DEEP) === '1',
 };
@@ -431,9 +540,20 @@ function normTopic(o) {
   if (!o || typeof o.title !== 'string' || !o.title.trim()) return null;
   return {
     kind: TOPIC_KINDS[o.kind] ? o.kind : '寄り道',
+    theme: clip(o.theme, 30), fit: clampInt(o.fit, 0, 5, 0),
     title: clip(o.title, 40), hook: clip(o.hook, 220), why: clip(o.why, 180),
     opener: String(o.opener || '').trim().slice(0, 500),
   };
+}
+function normTheme(t) {
+  if (!t || typeof t.name !== 'string' || !t.name.trim()) return null;
+  return {
+    name: clip(t.name, 24), score: clampInt(t.score, 1, 5, 3), why: clip(t.why, 140),
+    examples: Array.isArray(t.examples) ? t.examples.map((x) => clip(x, 30)).filter(Boolean).slice(0, 3) : [],
+  };
+}
+function normFb(a) {
+  return Array.isArray(a) ? a.filter((x) => x && x.title).map((x) => ({ title: clip(x.title, 40), theme: clip(x.theme, 30), at: +x.at || 0 })).slice(0, 40) : [];
 }
 function normHome(h) {
   const x = emptyHome();
@@ -441,9 +561,20 @@ function normHome(h) {
   if (h.memory && Array.isArray(h.memory.items)) x.memory = { items: h.memory.items.map(normItem).filter(Boolean).slice(0, 80), updatedAt: +h.memory.updatedAt || 0 };
   if (h.deck && Array.isArray(h.deck.items)) {
     const items = h.deck.items.map(normTopic).filter(Boolean);
-    if (items.length) x.deck = { at: +h.deck.at || 0, mood: String(h.deck.mood || ''), items };
+    if (items.length) x.deck = { at: +h.deck.at || 0, mood: String(h.deck.mood || ''), focus: String(h.deck.focus || ''), items };
   }
   if (Array.isArray(h.recentTopics)) x.recentTopics = h.recentTopics.map(String).slice(0, 40);
+  if (h.taste && Array.isArray(h.taste.themes)) {
+    x.taste = {
+      themes: h.taste.themes.map(normTheme).filter(Boolean).slice(0, 24), style: String(h.taste.style || ''),
+      updatedAt: +h.taste.updatedAt || 0, basis: h.taste.basis && typeof h.taste.basis === 'object' ? h.taste.basis : {},
+    };
+  }
+  if (h.feedback) x.feedback = { likes: normFb(h.feedback.likes), nopes: normFb(h.feedback.nopes) };
+  if (h.cc && Array.isArray(h.cc.items)) {
+    x.cc = { at: +h.cc.at || 0, count: +h.cc.count || h.cc.items.length,
+      items: h.cc.items.filter((i) => i && i.title).map((i) => ({ title: clip(i.title, 60), date: +i.date || 0, note: clip(i.note, 80) })).slice(0, 300) };
+  }
   return x;
 }
 function normSeeds(a) {
@@ -467,7 +598,7 @@ function normImport(d) {
   return {
     id: String(d.id), name: String(d.name || '取り込んだ記録'), addedAt: +d.addedAt || 0, kind: String(d.kind || 'text'),
     chars: +d.chars || 0, convCount: +d.convCount || 0, total: +d.total || 0, summary: String(d.summary || ''),
-    titles: Array.isArray(d.titles) ? d.titles.map(String).slice(0, 60) : [], partial: !!d.partial,
+    titles: Array.isArray(d.titles) ? d.titles.map(String).slice(0, 80) : [], partial: !!d.partial,
   };
 }
 function newChat() { const now = Date.now(); return { id: newId('c'), title: '', summary: '', startedAt: now, updatedAt: now, digested: 0, topic: null, messages: [] }; }
@@ -587,8 +718,8 @@ function persistChat(c, bump = true) {
 function privacyText() {
   if (!S.store) return '';
   if (S.saveBroken) return '今は保存できない状態です。この画面を閉じると、会話と覚え書きは消えます。';
-  if (S.store.mode === 'db') return '会話と覚え書きは、あなただけが読める場所に保存されます。このページを共有しても、ほかの人には見えません（その人にはその人の記録ができます）。';
-  if (S.store.mode === 'local') return '会話と覚え書きは、この端末のブラウザにだけ保存されます。';
+  if (S.store.mode === 'db') return '会話・覚え書き・好きなテーマは、あなただけが読める場所に保存されます。このページを共有しても、ほかの人には見えません（その人にはその人の記録ができます）。';
+  if (S.store.mode === 'local') return '会話・覚え書き・好きなテーマは、この端末のブラウザにだけ保存されます。';
   return 'この画面では保存できません。閉じると会話と覚え書きは消えます。';
 }
 
@@ -597,6 +728,20 @@ function memoryText(max) {
   const lines = [];
   for (const k of KINDS) for (const i of S.home.memory.items) if (i.kind === k) lines.push(`- [${k}] ${i.text}`);
   return joinUpTo(lines, max);
+}
+function tasteText(max, limit = 24) {
+  const t = S.home.taste;
+  if (!t || !t.themes.length) return '';
+  const lines = t.themes.slice(0, limit).map((x) => `- 【${x.score}】${x.name}: ${x.why}${x.examples.length ? `（例: ${x.examples.join('、')}）` : ''}`);
+  return joinUpTo(lines, max) + (t.style ? `\n好む切り口: ${t.style}` : '');
+}
+function feedbackText() {
+  const f = S.home.feedback;
+  const fmt = (x) => x.title + (x.theme ? `（${x.theme}）` : '');
+  return [
+    f.likes.length ? `好きと言った・話し始めた話題: ${f.likes.slice(0, 20).map(fmt).join('、')}` : '',
+    f.nopes.length ? `いまいちと言った話題: ${f.nopes.slice(0, 20).map(fmt).join('、')}` : '',
+  ].filter(Boolean).join('\n');
 }
 function userGist(c) { return clip(c.messages.filter((m) => m.r === 'u').map((m) => m.t).join(' / '), 110); }
 function historyText(max, excludeId) {
@@ -609,8 +754,10 @@ function historyText(max, excludeId) {
     const t = i.titles.length ? ` 会話の題名の例: ${i.titles.slice(0, 25).join('、')}` : '';
     entries.push({ at: i.addedAt, line: `- 取り込んだ記録「${i.name}」${i.convCount ? `（会話${i.convCount}件）` : ''}: ${i.summary}${t}` });
   }
+  const cc = S.home.cc;
+  if (cc && cc.items.length) entries.push({ at: cc.at, line: `- Claude Code で頼んだ作業（${cc.count}件）: ${cc.items.slice(0, 30).map((i) => i.title).join('、')}` });
   entries.sort((a, b) => b.at - a.at);
-  return joinUpTo(entries.map((e) => clip(e.line, 700)), max);
+  return joinUpTo(entries.map((e) => clip(e.line, 900)), max);
 }
 function recentExcerpt(max) {
   const blocks = [];
@@ -624,11 +771,13 @@ function recentExcerpt(max) {
   return blocks.join('\n\n');
 }
 function chatRules(c) {
+  const taste = tasteText(1500, 10);
   return [
-    'あなたは「話のたね」というおしゃべり相手です。相手の人とこれまでに交わした会話の記録を踏まえて、気楽に楽しく話しながら、面白そうな話題を見つけて差し出すのが役目です。',
+    'あなたは「話のたね」というおしゃべり相手です。相手の人とこれまでに交わした会話の記録を踏まえて、気楽に楽しく話しながら、この人が好きそうな話題を見つけて差し出すのが役目です。',
     `今日は${todayLong()}です。`,
-    `## この人について覚えていること\n${memoryText(3600) || '（まだありません）'}`,
-    `## これまでの会話\n${historyText(4500, c.id) || '（まだありません）'}`,
+    taste ? `## この人が好きなテーマ（【】は好きそうな度合い 1〜5）\n${taste}` : '',
+    `## この人について覚えていること\n${memoryText(3200) || '（まだありません）'}`,
+    `## これまでの会話\n${historyText(4000, c.id) || '（まだありません）'}`,
     c.topic ? `## この会話のきっかけ\nあなたが「${c.topic.title}」という話題を見つけて、最初のひとことを投げかけたところから始まっています。` : '',
     `## 話し方
 - 日本語で、友だちのように気さくに話す。返事は短め（2〜6文）。詳しく聞かれたときだけ長くしてよい。
@@ -642,7 +791,7 @@ ${MARK}
 - 話題名（15字以内）｜なぜ面白そうか（25字以内）
 - 話題名｜ひとこと
 - 話題名｜ひとこと
-3つには「いまの話の続き」「過去の会話とのつながり」「少し意外な寄り道」を混ぜる。過去の会話とつなげるときは、何の話とつながるのかがわかるように書く。`,
+3つには「いまの話の続き」「この人の好きなテーマにつながる話」「過去の会話とのつながりや少し意外な寄り道」を混ぜる。好きなテーマや過去の会話とつなげるときは、何とつながるのかがわかるように書く。`,
     '以下が、いまの会話です。',
   ].filter(Boolean).join('\n\n');
 }
@@ -677,36 +826,47 @@ function splitSeeds(text) {
     .slice(0, 4);
   return { body: clean(text.slice(0, m.index)), seeds };
 }
-function topicPrompt(mood) {
-  return `あなたは、会話の話題を考える名人です。ある人のおしゃべり相手として、この人と次に話したら盛り上がりそうな話題を6つ考えてください。
+function topicPrompt(mood, focus) {
+  const taste = tasteText(3000);
+  const fb = feedbackText();
+  return `あなたは、会話の話題を考える名人です。ある人のおしゃべり相手として、この人が「それ話したい！」と思いそうな話題を6つ考えてください。いちばん大事なのは、この人の好きなテーマにぴったり合うことです。
 
 今日は${todayLong()}です。
-${mood ? `この人の今の希望: ${mood}\n` : ''}
+${focus ? `今回は「${focus}」のテーマに絞る。6つすべてをこのテーマに関係させ、切り口を変える。\n` : ''}${mood ? `この人の今の希望: ${mood}\n` : ''}
+## この人の好きなテーマ（【】は好きそうな度合い 1〜5、強い順）
+${taste || '（まだ読み取れていません。下の記録から推し量る）'}
+
+## 話題への反応
+${fb || '（まだありません）'}
+
 ## この人について覚えていること
-${memoryText(3600) || '（まだほとんどありません）'}
+${memoryText(3000) || '（まだほとんどありません）'}
 
 ## これまでの会話（新しい順）
-${historyText(5000) || '（まだほとんどありません）'}
+${historyText(4000) || '（まだほとんどありません）'}
 
 ## 最近の会話の抜粋
-${recentExcerpt(4000) || '（なし）'}
+${recentExcerpt(3000) || '（なし）'}
 
 ## 最近すでに出した話題（これらと同じものは避ける）
 ${S.home.recentTopics.slice(0, 30).join('、') || '（なし）'}
 
 ## 考え方
-- kind は次の4種類。6つの内訳は「続き」2、「つなげる」2、「寄り道」1、「いま」1。
+- kind は5種類。6つの内訳は「ど真ん中」2、「つなげる」1、「続き」1、「寄り道」1、「いま」1。
+  - ど真ん中: 好きなテーマの上位に、まだ話していない新しい切り口で踏み込む。
+  - つなげる: 好きなテーマどうし、または好きなテーマと別の会話を結びつける。
   - 続き: 途中で終わった話、その後どうなったか気になる話。
-  - つなげる: 別々の会話に出てきた2つのことを結びつけると面白くなる話。どれとどれをつなぐのかがはっきりわかるように。
-  - 寄り道: この人の関心の少し外側にある、意外だけれど好きそうな話。
-  - いま: 今日の日付や季節、時期に絡めた話。
-- 記録が少ないときは、少ない手がかりから想像を広げてよい。ただし、記録にない事実をこの人のこととして断定しない。
-- 「苦手」にあることは避ける。
-- ありきたりな話題（天気、趣味は何か、など）より、具体的で「それ話したい」と思える切り口にする。
+  - 寄り道: 好きなテーマのすぐ隣にある、まだ話していないけれど好きそうなこと。
+  - いま: 今日の日付や季節・時期と、好きなテーマを絡めた話。
+- どの話題も、好きなテーマのどれにつながるかを theme に書く（テーマ名そのまま。2つなら「A×B」）。
+- fit は、この人が好きそうな度合いの見込み（1〜5）。根拠が薄い推測は低めにする。
+- 「好き」と言われた話題の方向は増やし、「いまいち」と言われた話題や「苦手」に近いものは避ける。
+- 好きなテーマがまだわからないとき（材料が少ないとき）は、覚え書きや会話から想像を広げてよい。ただし、記録にない事実をこの人のこととして断定しない。
+- ありきたりな話題より、具体的で「それ話したい」と思える切り口にする。
 
 ## 出力の形
 1行に1つ、次のキーを持つJSONオブジェクトを書く。全部で6行。前後に説明やコードブロックの記号は書かない。
-{"kind":"続き","title":"20字以内の話題名","hook":"興味をそそる紹介（1〜2文）","why":"どの会話の何から思いついたか（1文。寄り道・いまは理由でよい）","opener":"あなたがこの話を切り出す最初のひとこと（1〜3文、最後は答えやすい質問1つ）"}`;
+{"kind":"ど真ん中","theme":"好きなテーマ名","fit":5,"title":"20字以内の話題名","hook":"興味をそそる紹介（1〜2文）","why":"なぜこの人が好きそうか。どの会話や傾向から思いついたか（1文）","opener":"あなたがこの話を切り出す最初のひとこと（1〜3文、最後は答えやすい質問1つ）"}`;
 }
 const DIGEST_RULES = `あなたは記録係です。ある人の「おしゃべり相手」が次からの会話で使う「覚え書き」を更新します。いまの覚え書きと新しい記録を読み、更新後の覚え書きをJSONで返してください。
 
@@ -739,9 +899,75 @@ async function runDigest(label, body, signal) {
   }
   return { title: clip(r.title, 30), summary: clip(r.summary, 200) };
 }
+const TASTE_RULES = `あなたは、ある人の「好きなテーマ」を読み取る係です。この人がこれまでにしてきたチャットの記録から、好きそうなテーマ・熱中していること・よく考えていることをまとめます。いまの「好みのまとめ」と新しい材料を読み、更新後のまとめをJSONで返してください。
+
+読み取り方:
+- 何度も出てくること、長く続いた話、自分から深掘りしていることほど score（好きそうな度合い 1〜5）が高い。1回きりの用事（ちょっとした調べもの、事務的な作業）は低め。
+- テーマ名は具体的に、12字前後で（「趣味」ではなく「フィルムカメラ散歩」くらいの粒度）。
+- why は根拠を1文で（どんな会話に、どのくらい出てくるか）。examples は根拠になった会話の題名などを最大3つ、記録の表現のまま。
+- 「好き」と言われた話題に近いテーマは score を上げ、「いまいち」と言われた話題に近いテーマは下げるか消す。
+- すでにあるテーマは、新しい材料で裏付けが増えれば score を上げ、変える理由がなければそのまま残す。似たテーマはまとめる。
+- style は、この人が好む切り口や話し方を1〜2文で（例: 仕組みを理解するのが好き、実際に作って試すのが好き）。
+- 健康・お金・他人の個人情報などの立ち入った内容はテーマにしない。
+- themes は全部で24件まで、score の高い順。
+
+返す形（JSONのみ）:
+{"themes":[{"name":"...","score":5,"why":"...","examples":["..."]}],"style":"..."}`;
+function tastePrompt(label, body) {
+  const cur = S.home.taste ? { themes: S.home.taste.themes, style: S.home.taste.style } : { themes: [], style: '' };
+  const fb = feedbackText();
+  return `${TASTE_RULES}\n\n今日は${todayLong()}です。\n\n## いまの好みのまとめ\n${JSON.stringify(cur)}\n\n## 話題への反応\n${fb || '（まだありません）'}\n\n## 新しい材料（${label}）\n${body}`;
+}
+function tasteBasisNow() {
+  return {
+    chats: S.chats.filter((c) => c.messages.some((m) => m.r === 'u')).length,
+    imports: S.imports.length,
+    importConvs: S.imports.reduce((a, i) => a + (i.convCount || 0), 0),
+    cc: S.home.cc ? S.home.cc.count : 0,
+  };
+}
+async function runTaste(label, body, signal) {
+  const opts = { modelTier: 'default', cache: false };
+  if (signal) opts.signal = signal;
+  const r = await S.sample.json(tastePrompt(label, body), opts);
+  if (!r || !Array.isArray(r.themes)) throw { code: 'invalid_json' };
+  const themes = r.themes.map(normTheme).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 24);
+  if (!themes.length && S.home.taste && S.home.taste.themes.length) return;
+  S.home.taste = { themes, style: clip(r.style, 160), updatedAt: Date.now(), basis: tasteBasisNow() };
+  saveHome();
+}
+function tasteMaterials(max) {
+  const parts = [];
+  const chats = S.chats.filter((c) => c.messages.some((m) => m.r === 'u'));
+  if (chats.length) parts.push(`### このアプリでの会話（${chats.length}件、新しい順）\n` + joinUpTo(chats.map((c) => `- ${fmtDateLong(c.startedAt)}「${c.title || '無題'}」: ${c.summary || userGist(c)}`), 9000));
+  if (S.home.memory.items.length) parts.push(`### 覚え書き\n${memoryText(4000)}`);
+  const cc = S.home.cc;
+  if (cc && cc.items.length) parts.push(`### Claude Code で頼んだ作業（${cc.count}件、新しい順。題名と結果のメモ）\n` + joinUpTo(cc.items.map((i) => `- ${ym(i.date)} ${i.title}${i.note ? ` — ${i.note}` : ''}`), 9000));
+  if (S.imports.length) parts.push('### 取り込んだ記録\n' + joinUpTo(S.imports.map((i) => `- 「${i.name}」${i.convCount ? `（会話${i.convCount}件）` : ''}: ${i.summary}${i.titles.length ? ` 題名の例: ${i.titles.slice(0, 50).join('、')}` : ''}`), 7000));
+  return parts.join('\n\n').slice(0, max);
+}
+function hasTasteMaterial() {
+  return S.chats.some((c) => c.messages.some((m) => m.r === 'u')) || S.imports.length > 0 || !!(S.home.cc && S.home.cc.items.length) || S.home.memory.items.length > 0;
+}
+function tasteStale() {
+  if (!hasTasteMaterial()) return false;
+  const t = S.home.taste;
+  if (!t || !t.themes.length) return true;
+  const since = t.updatedAt;
+  const newChats = S.chats.filter((c) => c.digested > 0 && c.updatedAt > since).length;
+  const newImps = S.imports.filter((i) => i.addedAt > since).length;
+  const ccNew = !!(S.home.cc && S.home.cc.at > since);
+  const fb = [...S.home.feedback.likes, ...S.home.feedback.nopes].filter((f) => f.at > since).length;
+  return newImps > 0 || ccNew || newChats >= 2 || fb >= 3;
+}
+async function refreshTaste(signal) {
+  const body = tasteMaterials(30000);
+  if (!body) return false;
+  await runTaste('これまでの記録すべて', body, signal);
+  return true;
+}
 
 /* ---------- 会話 ---------- */
-function aiOff() { S.ai = 'off'; renderAll(); }
 function send(text) {
   text = String(text || '').trim();
   if (!text) return false;
@@ -819,6 +1045,7 @@ function startTopic(t, isSample) {
     send(`「${t.title}」の話がしたい`);
     return;
   }
+  if (fbState(t.title) !== 'like') setFeedback(t, 'like', true);
   const c = newChat();
   c.title = t.title;
   c.topic = { kind: t.kind, title: t.title };
@@ -829,6 +1056,27 @@ function startTopic(t, isSample) {
   renderTalk(); renderHistory();
   scrollEnd(true);
   try { $('msg').focus({ preventScroll: true }); } catch (e) { /* 無視 */ }
+}
+
+/* ---------- 話題への反応 ---------- */
+function fbState(title) {
+  if (S.home.feedback.likes.some((x) => x.title === title)) return 'like';
+  if (S.home.feedback.nopes.some((x) => x.title === title)) return 'nope';
+  return null;
+}
+function setFeedback(t, kind, quiet) {
+  const f = S.home.feedback;
+  const was = fbState(t.title);
+  f.likes = f.likes.filter((x) => x.title !== t.title);
+  f.nopes = f.nopes.filter((x) => x.title !== t.title);
+  if (was !== kind) {
+    const entry = { title: clip(t.title, 40), theme: clip(t.theme, 30), at: Date.now() };
+    if (kind === 'like') f.likes.unshift(entry); else f.nopes.unshift(entry);
+    f.likes = f.likes.slice(0, 40); f.nopes = f.nopes.slice(0, 40);
+    if (!quiet) toast(kind === 'like' ? '「好き」を覚えました。次からの話題に反映します。' : '「いまいち」を覚えました。似た話題は控えます。');
+  }
+  saveHome();
+  if (!quiet) { renderDeck(); renderTaste(); }
 }
 
 /* ---------- 覚え書きの更新 ---------- */
@@ -856,28 +1104,56 @@ async function digestChat(c) {
     S.digestErr = '覚え書きを更新できませんでした。次の区切りでやり直します。';
   } finally {
     S.digesting--;
-    renderDigestNote(); renderMemo(); renderHistory(); renderStatus();
+    renderDigestNote(); renderMemo(); renderHistory(); renderStatus(); renderTaste();
     if (S.cur === c) renderTalkHead();
+  }
+}
+
+/* ---------- 好きなテーマの読み直し ---------- */
+async function refreshTasteNow() {
+  if (S.ai !== 'ok' || S.tasteBusy || S.findBusy) return;
+  if (!hasTasteMaterial()) { toast('読み取れる記録がまだありません。話したり、チャットを取り込んだりしてください。'); return; }
+  const ctl = new AbortController();
+  S.tasteBusy = true; S.tasteCtl = ctl; S.tasteNote = '';
+  renderTaste(); renderMemo();
+  try {
+    await refreshTaste(ctl.signal);
+    toast(`好きなテーマを読み直しました（${S.home.taste ? S.home.taste.themes.length : 0}件）。`);
+  } catch (e) {
+    if (!(e && e.code === 'cancelled')) { S.tasteNote = errorCopy(e); if (isFatal(e)) S.ai = 'off'; }
+  } finally {
+    S.tasteBusy = false; S.tasteCtl = null;
+    renderAll();
   }
 }
 
 /* ---------- 話題さがし ---------- */
 async function findTopics() {
   if (S.ai !== 'ok') { toast('Claude につながっていないため、話題を考えられません。'); return; }
-  if (S.findBusy) return;
+  if (S.findBusy || S.tasteBusy) return;
   const mood = [S.mood !== 'おまかせ' ? S.mood : '', $('moodText').value.trim()].filter(Boolean).join('／');
+  const focus = S.focus;
   const ctl = new AbortController();
-  S.findBusy = true; S.findCtl = ctl; S.liveDeck = []; S.deckNote = 'これまでの記録を読んで考えています（30秒〜1分ほど）'; S.deckNoteBad = false;
-  renderTopics();
+  S.findBusy = true; S.findCtl = ctl; S.liveDeck = null; S.deckNoteBad = false;
   const got = [];
-  let pending = '';
-  const add = (line) => {
-    line = line.trim().replace(/,$/, '');
-    if (!line.startsWith('{')) return;
-    try { const t = normTopic(JSON.parse(line)); if (t) { got.push(t); S.liveDeck = got.slice(); renderDeck(); } } catch (e) { /* 途中の行は読み飛ばす */ }
-  };
   try {
-    const res = await S.sample(topicPrompt(mood), {
+    if (tasteStale()) {
+      S.deckNote = 'まず、これまでの記録から好きなテーマを読み直しています（30秒ほど）';
+      renderTopics();
+      try { await refreshTaste(ctl.signal); }
+      catch (e) { if (e && (e.code === 'cancelled' || isFatal(e))) throw e; /* 読み直せなくても、前のまとめで続ける */ }
+      renderTaste();
+    }
+    S.liveDeck = [];
+    S.deckNote = focus ? `「${focus}」で話題を考えています（30秒〜1分ほど）` : '好きなテーマから話題を考えています（30秒〜1分ほど）';
+    renderTopics();
+    let pending = '';
+    const add = (line) => {
+      line = line.trim().replace(/,$/, '');
+      if (!line.startsWith('{')) return;
+      try { const t = normTopic(JSON.parse(line)); if (t) { got.push(t); S.liveDeck = got.slice(); renderDeck(); } } catch (e) { /* 途中の行は読み飛ばす */ }
+    };
+    const res = await S.sample(topicPrompt(mood, focus), {
       cache: false, signal: ctl.signal, modelTier: 'default',
       onText: ({ delta }) => { const lines = (pending + delta).split('\n'); pending = lines.pop(); lines.forEach(add); },
     });
@@ -893,17 +1169,94 @@ async function findTopics() {
     else { S.deckNote = errorCopy(e); S.deckNoteBad = true; if (isFatal(e)) S.ai = 'off'; }
   } finally {
     if (got.length) {
-      S.home.deck = { at: Date.now(), mood, items: got.slice(0, 8) };
+      const items = got.slice(0, 8).map((t, i) => ({ t, i })).sort((a, b) => (b.t.fit - a.t.fit) || (a.i - b.i)).map((x) => x.t);
+      S.home.deck = { at: Date.now(), mood, focus, items };
       const seen = new Set();
       S.home.recentTopics = [...got.map((t) => t.title), ...S.home.recentTopics].filter((x) => !seen.has(x) && seen.add(x)).slice(0, 40);
       saveHome();
     }
     S.findBusy = false; S.findCtl = null; S.liveDeck = null;
-    renderTopics(); renderWelcomeIfShown(); renderStatus();
+    renderTopics(); renderWelcomeIfShown(); renderStatus(); renderMemo();
   }
 }
 
+/* ---------- Claude Code の履歴 ---------- */
+function parseSessions(p) {
+  if (typeof p === 'string') {
+    const a = p.indexOf('{'), b = p.lastIndexOf('}');
+    try { p = a >= 0 && b > a ? JSON.parse(p.slice(a, b + 1)) : null; } catch (e) { p = null; }
+  }
+  const root = p && typeof p === 'object' ? (p.ccr && typeof p.ccr === 'object' ? p.ccr : p) : null;
+  const arr = Array.isArray(root) ? root : (root && (Array.isArray(root.data) ? root.data : Array.isArray(root.sessions) ? root.sessions : [])) || [];
+  const items = arr.filter((s) => s && typeof s.title === 'string' && s.title.trim()).map((s) => {
+    const pts = s.post_turn_summary || (s.external_metadata && s.external_metadata.post_turn_summary) || {};
+    return { id: String(s.id || ''), title: clip(s.title, 60), date: Date.parse(s.created_at || s.updated_at) || 0, note: clip(pts.status_detail || pts.recent_action || '', 80) };
+  });
+  return { items, hasMore: !!(root && !Array.isArray(root) && root.has_more), lastId: root && !Array.isArray(root) ? root.last_id : null };
+}
+async function readClaudeCode() {
+  if (!S.mcp || S.ccBusy) return;
+  S.ccBusy = true; S.ccErr = '';
+  renderSources();
+  const all = [], seen = new Set();
+  let after = null, pages = 0, retried = false;
+  try {
+    do {
+      const input = { limit: 100 };
+      if (after) input.after_id = after;
+      let res;
+      try { res = await S.mcp.callTool(CC_SERVER, 'list_sessions', input, { cache: false }); }
+      catch (e) {
+        if (e && e.retryable && !retried) { retried = true; await sleep(e.retryAfterMs || 1200 + Math.random() * 800); res = await S.mcp.callTool(CC_SERVER, 'list_sessions', input, { cache: false }); }
+        else throw e;
+      }
+      const page = parseSessions(res && res.payload !== undefined ? res.payload : res);
+      for (const it of page.items) { const k = it.id || it.title + it.date; if (!seen.has(k)) { seen.add(k); all.push(it); } }
+      after = page.hasMore && page.lastId ? page.lastId : null;
+      pages++;
+    } while (after && pages < 5);
+    all.sort((a, b) => b.date - a.date);
+    S.home.cc = { at: Date.now(), count: all.length, items: all.slice(0, 300).map(({ title, date, note }) => ({ title, date, note })) };
+    saveHome();
+    toast(all.length ? `Claude Code のセッションを ${all.length} 件読みました。` : 'Claude Code のセッションは見つかりませんでした。');
+  } catch (e) {
+    S.ccErr = ccErrorCopy(e);
+  } finally {
+    S.ccBusy = false;
+    renderAll();
+  }
+  if (!S.ccErr && S.home.cc && S.home.cc.count && S.ai === 'ok') refreshTasteNow();
+}
+
 /* ---------- 取り込み ---------- */
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = () => res(); s.onerror = () => { s.remove(); rej(new Error('load')); };
+    (document.head || document.documentElement).appendChild(s);
+  });
+}
+async function loadJSZip() {
+  if (window.JSZip) return window.JSZip;
+  for (const src of JSZIP_SRC) { try { await loadScript(src); if (window.JSZip) return window.JSZip; } catch (e) { /* 次の配信元を試す */ } }
+  throw new Error('jszip');
+}
+async function readImportFile(f) {
+  const isZip = /\.zip$/i.test(f.name) || /zip/.test(f.type || '');
+  if (!isZip) return { text: await f.text(), memText: '' };
+  const JSZip = await loadJSZip();
+  const zip = await JSZip.loadAsync(f);
+  const conv = zip.file(/(^|\/)conversations\.json$/i)[0];
+  let text = conv ? await conv.async('string') : '';
+  if (!text) {
+    const any = zip.file(/\.(json|txt)$/i).filter((e) => !/(^|\/)(users?|projects?)\.json$/i.test(e.name))[0];
+    if (any) text = await any.async('string');
+  }
+  const mem = zip.file(/(^|\/)[^/]*memor[^/]*\.(json|txt|md)$/i)[0];
+  const memText = mem ? await mem.async('string') : '';
+  return { text, memText };
+}
 function msgText(m) {
   if (typeof m.text === 'string' && m.text.trim()) return m.text.trim();
   if (Array.isArray(m.content)) return m.content.filter((x) => x && x.type === 'text' && typeof x.text === 'string').map((x) => x.text).join('\n').trim();
@@ -922,7 +1275,7 @@ function parseImport(raw) {
         if (Array.isArray(c.chat_messages)) {
           kind = kind || 'claude';
           convs.push({ title: c.name || c.title || '', date: Date.parse(c.updated_at || c.created_at) || 0,
-            msgs: c.chat_messages.map((m) => ({ user: m && m.sender === 'human', text: m ? msgText(m) : '' })).filter((m) => m.text) });
+            msgs: c.chat_messages.map((m) => ({ user: !!m && m.sender === 'human', text: m ? msgText(m) : '' })).filter((m) => m.text) });
         } else if (c.mapping && typeof c.mapping === 'object') {
           kind = kind || 'chatgpt';
           const nodes = Object.values(c.mapping).map((n) => n && n.message)
@@ -952,61 +1305,99 @@ function convBlock(c, per) {
   if (s.length === head && src.length) s += `・${clip(src[0].text, Math.max(40, per - head - 4))}\n`;
   return s + '\n';
 }
-function buildChunks(p) {
-  const chunks = [], chunkConvs = [];
-  if (p.convs) {
-    const convs = p.convs.slice().sort((a, b) => b.date - a.date);
-    const per = Math.max(240, Math.min(1500, Math.floor((CHUNK * MAX_CHUNKS) / convs.length) - 30));
-    let cur = '', curConvs = [];
-    for (const c of convs) {
-      const block = convBlock(c, per);
-      if (cur && cur.length + block.length > CHUNK) {
-        chunks.push(cur); chunkConvs.push(curConvs); cur = ''; curConvs = [];
-        if (chunks.length >= MAX_CHUNKS) break;
-      }
-      cur += block; curConvs.push(c);
+function packLines(lines, size, maxChunks) {
+  const chunks = [];
+  let cur = '', count = 0, used = 0;
+  for (const l of lines) {
+    if (cur && cur.length + l.length + 1 > size) {
+      chunks.push({ body: cur, n: count }); cur = ''; count = 0;
+      if (chunks.length >= maxChunks) return { chunks, used };
     }
-    if (cur && chunks.length < MAX_CHUNKS) { chunks.push(cur); chunkConvs.push(curConvs); }
-    return { chunks, chunkConvs, covered: chunkConvs.reduce((a, x) => a + x.length, 0), total: convs.length, cut: false, used: 0 };
+    cur += l + '\n'; count++; used++;
   }
-  let body = p.text, cut = false;
-  if (body.length > CHUNK * MAX_CHUNKS) { body = body.slice(-CHUNK * MAX_CHUNKS); cut = true; }
-  let cur = '';
-  for (let line of body.split('\n')) {
-    while (line.length > CHUNK) { if (cur) { chunks.push(cur); cur = ''; } chunks.push(line.slice(0, CHUNK)); line = line.slice(CHUNK); }
-    if (cur.length + line.length + 1 > CHUNK) { chunks.push(cur); cur = ''; }
-    cur += line + '\n';
-  }
-  if (cur.trim()) chunks.push(cur);
-  return { chunks: chunks.slice(-MAX_CHUNKS), chunkConvs: null, covered: 0, total: 0, cut, used: body.length };
+  if (cur) chunks.push({ body: cur, n: count });
+  return { chunks, used };
 }
-const KIND_LABEL = { claude: 'Claude', chatgpt: 'ChatGPT' };
+const KIND_LABEL = { claude: 'claude.ai', chatgpt: 'ChatGPT' };
+function buildPlan(parsed, memText, who) {
+  const steps = [];
+  let info;
+  if (memText && memText.trim()) {
+    steps.push({ type: 'digest', label: `${KIND_LABEL[parsed.kind] || '書き出し'}に入っていたメモリー`, body: `（チャットのサービスが、この人について覚えていたことの書き出し）\n${memText.trim().slice(0, 12000)}` });
+  }
+  if (parsed.convs) {
+    const convs = parsed.convs.slice().sort((a, b) => b.date - a.date);
+    const k = KIND_LABEL[parsed.kind] || 'チャット';
+    // 1) 全件の題名と書き出しから好きなテーマを読む
+    const TMAX = 6, TSIZE = 14000;
+    const perLine = Math.max(24, Math.min(100, Math.floor((TMAX * TSIZE) / convs.length) - 2));
+    const lines = convs.map((c) => {
+      const first = (c.msgs.find((m) => m.user) || c.msgs[0] || { text: '' }).text;
+      const l = `${ym(c.date)} ${clip(c.title || '無題', 40)}｜${clip(first, 70)}`;
+      return l.length > perLine ? l.slice(0, perLine - 1) + '…' : l;
+    });
+    const tp = packLines(lines, TSIZE, TMAX);
+    let offset = 0;
+    tp.chunks.forEach((ch, i) => {
+      steps.push({ type: 'taste', label: `${k}のチャット一覧（${i + 1}/${tp.chunks.length}）`,
+        body: `（${k}のチャットの一覧。1行に1つ「年/月 題名｜この人の最初の発言」。新しい順）\n${ch.body}`, convs: convs.slice(offset, offset + ch.n) });
+      offset += ch.n;
+    });
+    // 2) 最近の会話は中身まで読んで覚え書きにする
+    const recent = convs.slice(0, 80);
+    const per = Math.max(300, Math.min(1500, Math.floor(36000 / recent.length) - 30));
+    const dp = packLines(recent.map((c) => convBlock(c, per)), 12000, 3);
+    dp.chunks.forEach((ch, i) => steps.push({ type: 'digest', label: `${k}の最近の会話（${i + 1}/${dp.chunks.length}）`,
+      body: `（${k}の記録から、この人の発言を会話ごとに抜き出したもの。■は会話の題名）\n${ch.body}` }));
+    info = { total: convs.length, titled: tp.used, detailed: dp.used, convsAll: convs };
+  } else {
+    let body = parsed.text, cut = false;
+    const MAX = 6 * 12000;
+    if (body.length > MAX) { body = body.slice(-MAX); cut = true; }
+    const lines = [];
+    for (let line of body.split('\n')) { while (line.length > 12000) { lines.push(line.slice(0, 12000)); line = line.slice(12000); } lines.push(line); }
+    const dp = packLines(lines, 12000, 6);
+    const intro = `（チャットの記録。${who ? `「${who}」がこの人です。` : 'どの発言者がこの人かはわからない。複数人の会話なら、特定の誰かのことをこの人のこととして決めつけない。'}）\n`;
+    dp.chunks.forEach((ch, i) => steps.push({ type: 'digest', label: `貼り付けた記録（${i + 1}/${dp.chunks.length}）`, body: intro + ch.body }));
+    info = { cut, used: body.length };
+  }
+  return { steps, info };
+}
 async function prepImport() {
   S.impError = '';
   const f = $('impFile').files && $('impFile').files[0];
-  let text = $('impText').value;
+  let text = $('impText').value, memText = '';
   let name = $('impName').value.trim();
   if (f) {
-    if (f.size > 80 * 1024 * 1024) { S.impError = 'ファイルが大きすぎます（80MBまで）。'; renderImport(); return; }
-    try { text = await f.text(); } catch (e) { S.impError = 'ファイルを読めませんでした。別のファイルで試してください。'; renderImport(); return; }
+    if (f.size > 300 * 1024 * 1024) { S.impError = 'ファイルが大きすぎます（300MBまで）。'; renderImport(); return; }
+    $('impPrep').disabled = true; $('impPrep').textContent = '読んでいます…';
+    try { ({ text, memText } = await readImportFile(f)); }
+    catch (e) {
+      S.impError = e && e.message === 'jszip' ? 'zip を開く部品を読み込めませんでした。zip を展開して、中の conversations.json を選んでください。' : 'ファイルを読めませんでした。別のファイルで試してください。';
+      renderImport(); return;
+    } finally { $('impPrep').textContent = '読み込む準備'; $('impPrep').disabled = false; }
     if (!name) name = f.name.replace(/\.[^.]+$/, '');
   }
-  if (!text || !text.trim()) { S.impError = '取り込むファイルを選ぶか、会話を貼り付けてください。'; renderImport(); return; }
+  if (!text || !text.trim()) { S.impError = f ? 'このファイルの中に会話が見つかりませんでした。' : '取り込むファイルを選ぶか、会話を貼り付けてください。'; renderImport(); return; }
   const parsed = parseImport(text);
-  const plan = buildChunks(parsed);
-  if (!plan.chunks.length) { S.impError = '読み取れる会話が見つかりませんでした。'; renderImport(); return; }
-  if (!name) name = parsed.convs ? `${KIND_LABEL[parsed.kind] || ''} のチャット`.trim() : '貼り付けた会話';
-  S.imp = Object.assign({ name: clip(name, 60), who: $('impWho').value.trim(), parsed, running: false, done: 0, stop: false, ctl: null, summaries: [] }, plan);
+  const who = $('impWho').value.trim();
+  const plan = buildPlan(parsed, memText, who);
+  if (!plan.steps.length) { S.impError = '読み取れる会話が見つかりませんでした。'; renderImport(); return; }
+  if (!name || /^data-/.test(name)) name = parsed.convs ? `${KIND_LABEL[parsed.kind] || ''} のチャット`.trim() : '貼り付けた会話';
+  S.imp = { name: clip(name, 60), parsed, steps: plan.steps, info: plan.info, hasMem: !!(memText && memText.trim()), running: false, done: 0, stop: false, ctl: null, summaries: [] };
   renderImport();
 }
 function planText(imp) {
-  const n = imp.chunks.length;
+  const n = imp.steps.length;
   const cost = `Claude を ${n} 回使って読みます（1回あたり数十秒）。`;
+  const mem = imp.hasMem ? '書き出しに入っていたメモリーも読みます。' : '';
   if (imp.parsed.convs) {
     const k = KIND_LABEL[imp.parsed.kind] || '';
-    return `「${imp.name}」: ${k}の会話が ${imp.total} 件ありました。` + (imp.covered < imp.total ? `新しいほうから ${imp.covered} 件を読みます。` : '') + cost;
+    const i = imp.info;
+    const titled = i.titled >= i.total ? 'すべての' : `新しいほうから ${i.titled} 件の`;
+    return `「${imp.name}」: ${k} の会話が ${i.total} 件ありました。${titled}題名と書き出しから好きなテーマを読み取り、新しい ${i.detailed} 件は中身まで読んで覚え書きにします。${mem}${cost}`;
   }
-  return `「${imp.name}」: ${imp.parsed.chars.toLocaleString()} 文字の記録です。` + (imp.cut ? `長いので、最後（新しいほう）の ${imp.used.toLocaleString()} 文字を読みます。` : '') + cost;
+  return `「${imp.name}」: ${imp.parsed.chars.toLocaleString()} 文字の記録です。` + (imp.info.cut ? `長いので、最後（新しいほう）の ${imp.info.used.toLocaleString()} 文字を読みます。` : '') + mem + cost;
 }
 async function runImport() {
   const imp = S.imp;
@@ -1014,34 +1405,42 @@ async function runImport() {
   if (S.ai !== 'ok') { S.impError = 'Claude につながっていないため読み込めません。'; renderImport(); return; }
   imp.running = true; imp.stop = false; S.impError = '';
   renderImport();
-  const intro = imp.parsed.convs
-    ? `（${KIND_LABEL[imp.parsed.kind] || 'チャット'}の記録から、この人の発言を会話ごとに抜き出したもの。■は会話の題名）\n`
-    : `（チャットの記録。${imp.who ? `「${imp.who}」がこの人です。` : 'どの発言者がこの人かはわからない。複数人の会話なら、特定の誰かのことをこの人のこととして決めつけない。'}）\n`;
-  for (let i = imp.done; i < imp.chunks.length && !imp.stop; i++) {
+  for (let i = imp.done; i < imp.steps.length && !imp.stop; i++) {
+    const step = imp.steps[i];
     imp.ctl = new AbortController();
+    imp.current = step.type === 'taste' ? '全体から好きなテーマを読み取っています' : '中身を読んで覚え書きにしています';
+    renderImport();
     try {
-      const r = await runDigest(`取り込んだ記録「${imp.name}」の一部（${i + 1}/${imp.chunks.length}）`, intro + imp.chunks[i], imp.ctl.signal);
-      if (r.summary) imp.summaries.push(r.summary);
+      if (step.type === 'taste') await runTaste(`取り込んだ記録「${imp.name}」: ${step.label}`, step.body, imp.ctl.signal);
+      else { const r = await runDigest(`取り込んだ記録「${imp.name}」: ${step.label}`, step.body, imp.ctl.signal); if (r.summary) imp.summaries.push(r.summary); }
       imp.done = i + 1;
     } catch (e) {
-      if (!(e && e.code === 'cancelled')) { S.impError = errorCopy(e); if (isFatal(e)) S.ai = 'off'; }
+      if (!(e && e.code === 'cancelled')) { S.impError = errorCopy(e) + '（「続きを読み込む」で、止まったところから再開できます）'; if (isFatal(e)) S.ai = 'off'; }
       break;
-    } finally { renderImport(); renderMemo(); }
+    } finally { renderImport(); renderMemo(); renderTaste(); }
   }
   imp.running = false; imp.ctl = null;
   if (imp.done > 0) {
-    const convsDone = imp.chunkConvs ? imp.chunkConvs.slice(0, imp.done).flat() : [];
+    const doneSteps = imp.steps.slice(0, imp.done);
+    const titledConvs = doneSteps.filter((s) => s.convs).flatMap((s) => s.convs);
     const doc = {
       name: imp.name, addedAt: Date.now(), kind: imp.parsed.kind || 'text', chars: imp.parsed.chars,
-      convCount: convsDone.length, total: imp.total, summary: clip(imp.summaries.join(' '), 400),
-      titles: convsDone.map((c) => clip(c.title || '無題', 30)).slice(0, 60), partial: imp.done < imp.chunks.length,
+      convCount: imp.parsed.convs ? titledConvs.length : 0, total: imp.parsed.convs ? imp.info.total : 0,
+      summary: clip(imp.summaries.join(' '), 400),
+      titles: titledConvs.map((c) => clip(c.title || '無題', 30)).slice(0, 80), partial: imp.done < imp.steps.length,
     };
+    if (!doc.summary && titledConvs.length) doc.summary = `会話の題名 ${titledConvs.length} 件から好きなテーマを読み取りました。`;
     const id = newId('i');
     S.imports.unshift(Object.assign({ id }, doc));
     if (S.store) S.store.saveImport(id, doc);
-    toast(`「${imp.name}」を取り込みました。覚え書きは ${S.home.memory.items.length} 件です。`);
-    S.imp = null;
-    $('impFile').value = ''; $('impText').value = ''; $('impName').value = ''; $('impWho').value = ''; $('impFileInfo').textContent = '';
+    if (imp.done === imp.steps.length || imp.stop) {
+      toast(`「${imp.name}」を取り込みました。好きなテーマ ${S.home.taste ? S.home.taste.themes.length : 0} 件・覚え書き ${S.home.memory.items.length} 件になりました。`);
+      S.imp = null;
+      $('impFile').value = ''; $('impText').value = ''; $('impName').value = ''; $('impWho').value = ''; $('impFileInfo').textContent = '';
+    } else {
+      // 途中で失敗したときは、読み終わった分を記録しつつ、続きから再開できるようにしておく
+      imp.steps = imp.steps.slice(imp.done); imp.done = 0; imp.summaries = [];
+    }
   }
   renderAll();
 }
@@ -1057,16 +1456,39 @@ function examples() {
   ];
 }
 function topicCard(t, opt = {}) {
-  return el('article', { class: `topic ${TOPIC_KINDS[t.kind] || 'k-side'}${opt.compact ? ' compact' : ''}` },
-    el('div', { class: 'topic-top' }, el('span', { class: 'kind', text: t.kind }), opt.sample ? el('span', { class: 'tag-sample', text: '見本' }) : null),
+  const st = opt.sample ? null : fbState(t.title);
+  const card = el('article', { class: `topic ${TOPIC_KINDS[t.kind] || 'k-side'}${opt.compact ? ' compact' : ''}${st === 'nope' ? ' dim' : ''}${st === 'like' ? ' liked' : ''}` },
+    el('div', { class: 'topic-top' },
+      el('span', { class: 'kind', text: t.kind }),
+      t.theme ? el('span', { class: 'topic-theme', title: 'つながる好きなテーマ', text: t.theme }) : null,
+      opt.sample ? el('span', { class: 'tag-sample', text: '見本' }) : null,
+      !opt.sample && t.fit ? el('span', { class: 'fit' }, '好きそう度', dots(t.fit, `好きそう度 5段階の${t.fit}`)) : null),
     el('h3', { class: 'topic-title', text: t.title }),
     t.hook ? el('p', { class: 'topic-hook', text: t.hook }) : null,
-    !opt.compact && t.why ? el('p', { class: 'topic-why' }, el('span', { class: 'why-k', text: 'きっかけ' }), el('span', { text: t.why })) : null,
-    el('button', { class: 'topic-go', type: 'button', onclick: () => startTopic(t, !!opt.sample) }, 'この話をする →'),
+    !opt.compact && t.why ? el('p', { class: 'topic-why' }, el('span', { class: 'why-k', text: '好きそうな理由' }), el('span', { text: t.why })) : null,
   );
+  const foot = el('div', { class: 'topic-foot' }, el('button', { class: 'topic-go', type: 'button', onclick: () => startTopic(t, !!opt.sample) }, 'この話をする →'));
+  if (!opt.sample && !opt.compact) {
+    foot.append(
+      el('button', { class: 'fb like', type: 'button', 'aria-pressed': String(st === 'like'), onclick: () => setFeedback(t, 'like') }, '好き'),
+      el('button', { class: 'fb nope', type: 'button', 'aria-pressed': String(st === 'nope'), onclick: () => setFeedback(t, 'nope') }, 'いまいち'));
+  }
+  card.append(foot);
+  return card;
 }
 function thinkingNode(label) {
   return el('span', { class: 'thinking' }, el('i'), el('i'), el('i'), el('span', { text: label }));
+}
+function basisText() {
+  const t = S.home.taste;
+  if (!t) return '';
+  const b = t.basis || {};
+  const parts = [];
+  if (b.chats) parts.push(`このアプリの会話 ${b.chats}件`);
+  if (b.importConvs) parts.push(`取り込んだ会話 ${b.importConvs}件`);
+  else if (b.imports) parts.push(`取り込み ${b.imports}件`);
+  if (b.cc) parts.push(`Claude Code ${b.cc}件`);
+  return (parts.length ? parts.join('・') + ' から · ' : '') + `${fmtWhen(t.updatedAt)}に読み取り` + (tasteStale() ? '（新しい記録があります）' : '');
 }
 function renderStatus() {
   const s = $('status');
@@ -1077,7 +1499,8 @@ function renderStatus() {
   s.title = privacyText();
   const nChats = S.chats.length;
   $('histCount').textContent = nChats ? String(nChats) : '';
-  $('memoCount').textContent = S.home.memory.items.length ? String(S.home.memory.items.length) : '';
+  const nm = S.home.memory.items.length + (S.home.taste ? S.home.taste.themes.length : 0);
+  $('memoCount').textContent = nm ? String(nm) : '';
 }
 function renderTalkHead() {
   const c = S.cur;
@@ -1091,21 +1514,30 @@ function renderWelcome() {
   const w = $('welcome');
   w.replaceChildren();
   w.append(el('h1', { text: '何の話をしよう？' }));
-  w.append(el('p', { class: 'lead', text: '話しかけると、これまでの会話を覚えたうえで返事をして、次に広げられそうな話題を3つ添えます。話すほど、話題が自分向けになっていきます。' }));
+  w.append(el('p', { class: 'lead', text: '話しかけると、これまでのチャットから読み取ったあなたの好きなテーマを踏まえて返事をし、次に広げられそうな話題を3つ添えます。' }));
   if (S.loaded && S.ai === 'off') w.append(el('div', { class: 'offnote', text: 'いまは Claude につながっていません。このページを claude.ai で開くと、話したり話題を見つけたりできます。記録を見ることはできます。' }));
   const last = S.chats.find((c) => c.messages.length);
   if (last) {
     w.append(el('button', { class: 'resume', type: 'button', onclick: () => openChat(last.id) },
       el('span', { class: 'resume-k', text: '前回の続き' }), el('span', { class: 'resume-t', text: last.title || '無題の話' }), el('span', { class: 'resume-d', text: fmtWhen(last.updatedAt) })));
   }
-  const deck = S.home.deck && S.home.deck.items.length ? S.home.deck.items.slice(0, 3) : null;
-  w.append(el('div', { class: 'wsub' }, el('h2', { text: deck ? '前に見つけた話のたね' : 'たとえばこんな話から' }), deck ? null : el('span', { class: 'tag-sample', text: '見本' })));
+  const themes = S.home.taste ? S.home.taste.themes.slice(0, 6) : [];
+  if (themes.length) {
+    w.append(el('div', { class: 'wsub' }, el('h2', { text: 'あなたが好きそうなテーマ' })));
+    w.append(el('div', { class: 'themechips' }, themes.map((th) => el('button', { class: 'tchip', type: 'button', title: `「${th.name}」で話題を見つける`,
+      onclick: () => { S.focus = th.name; switchTab('topics'); renderTopics(); if (S.ai === 'ok') findTopics(); } },
+      el('span', { class: 'nm', text: th.name }), dots(th.score, `好きそうな度合い 5段階の${th.score}`)))));
+  }
+  const deck = S.home.deck && S.home.deck.items.length ? S.home.deck.items.filter((t) => fbState(t.title) !== 'nope').slice(0, 3) : null;
+  const useDeck = deck && deck.length ? deck : null;
+  w.append(el('div', { class: 'wsub' }, el('h2', { text: useDeck ? '前に見つけた話のたね' : 'たとえばこんな話から' }), useDeck ? null : el('span', { class: 'tag-sample', text: '見本' })));
   const grid = el('div', { class: 'deck compact' });
-  (deck || examples()).forEach((t) => grid.append(topicCard(t, { compact: true, sample: !deck })));
+  (useDeck || examples()).forEach((t) => grid.append(topicCard(t, { compact: true, sample: !useDeck })));
   w.append(grid);
+  const hasSources = S.imports.length || (S.home.cc && S.home.cc.count);
   w.append(el('div', { class: 'row' },
-    el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('topics'); if (S.ai === 'ok' && !S.findBusy) findTopics(); } }, '話題をさがしてもらう'),
-    el('button', { class: 'btn ghost', type: 'button', onclick: () => { switchTab('history'); $('impFile').focus(); } }, 'ほかのチャットを取り込む')));
+    el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('topics'); if (S.ai === 'ok' && !S.findBusy) findTopics(); } }, '好きそうな話題をさがしてもらう'),
+    hasSources ? null : el('button', { class: 'btn ghost', type: 'button', onclick: () => switchTab('history') }, 'これまでのチャットを読み込む')));
 }
 function renderWelcomeIfShown() { if (!$('welcome').hidden) renderWelcome(); }
 function msgNode(m) {
@@ -1165,6 +1597,43 @@ function renderTalk() {
   renderComposer();
   renderDigestNote();
 }
+function renderTaste() {
+  const t = S.home.taste;
+  const has = !!(t && t.themes.length);
+  const chips = $('themeChips');
+  chips.replaceChildren();
+  if (has) {
+    if (S.focus && !t.themes.some((x) => x.name === S.focus)) S.focus = '';
+    chips.append(el('button', { class: 'tchip', type: 'button', 'aria-pressed': String(!S.focus), onclick: () => { S.focus = ''; renderTopics(); } }, el('span', { class: 'nm', text: 'すべてのテーマから' })));
+    t.themes.slice(0, 12).forEach((th) => chips.append(el('button', { class: 'tchip', type: 'button', 'aria-pressed': String(S.focus === th.name), title: th.why,
+      onclick: () => { S.focus = S.focus === th.name ? '' : th.name; renderTopics(); } },
+      el('span', { class: 'nm', text: th.name }), dots(th.score, `好きそうな度合い 5段階の${th.score}`))));
+  }
+  chips.hidden = !has;
+  $('tasteStyle').textContent = has && t.style ? `好む切り口: ${t.style}` : '';
+  $('tasteStyle').hidden = !(has && t.style);
+  const basis = $('tasteBasis');
+  basis.replaceChildren();
+  if (S.tasteBusy) basis.append(thinkingNode('好きなテーマを読み直しています'));
+  else if (S.tasteNote) { basis.textContent = S.tasteNote; }
+  else basis.textContent = basisText();
+  const rb = $('tasteRefresh');
+  rb.hidden = !has && !hasTasteMaterial();
+  rb.disabled = S.ai !== 'ok' || S.tasteBusy || S.findBusy || !hasTasteMaterial();
+  rb.textContent = S.tasteBusy ? '読み直しています…' : has ? '読み直す' : '読み取る';
+  const empty = $('tasteEmpty');
+  empty.replaceChildren();
+  empty.hidden = has;
+  if (!has) {
+    empty.append(el('p', { text: hasTasteMaterial()
+      ? 'まだ好きなテーマを読み取っていません。「読み取る」を押すか、話題を見つけるときに自動で読み取ります。チャットをもっと読み込むほど正確になります。'
+      : 'まだ好きなテーマがわかりません。これまでのチャットを読み込むと、ここにテーマが並び、話題がそのテーマに合わせたものになります。' }));
+    const row = el('div', { class: 'row' });
+    if (S.mcp) row.append(el('button', { class: 'btn', type: 'button', disabled: S.ccBusy, onclick: () => readClaudeCode() }, 'Claude Code の履歴を読む'));
+    row.append(el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('history'); } }, 'claude.ai のチャットを取り込む'));
+    empty.append(row);
+  }
+}
 function renderDeck() {
   const box = $('deck');
   box.replaceChildren();
@@ -1176,15 +1645,20 @@ function renderDeck() {
   items.forEach((t) => box.append(topicCard(t, { sample })));
   if (live) for (let i = live.length; i < 6; i++) box.append(el('div', { class: 'topic pending' }, i === live.length ? thinkingNode('考えています') : null));
   $('deckSample').hidden = !sample;
-  $('deckTitle').textContent = live ? '見つけている話題' : sample ? '話題の見本' : `${fmtWhen(S.home.deck.at)}に見つけた話題${S.home.deck.mood ? `（${S.home.deck.mood}）` : ''}`;
+  const d = S.home.deck;
+  $('deckTitle').textContent = live ? '見つけている話題' : sample ? '話題の見本' : `${fmtWhen(d.at)}に見つけた話題${d.focus ? `（${d.focus}）` : ''}${d.mood ? `（${d.mood}）` : ''}`;
 }
 function renderTopics() {
-  $('findBtn').hidden = S.findBusy;
-  $('findBtn').disabled = S.ai !== 'ok';
-  $('findBtn').textContent = S.home.deck ? '別の話題を見つける' : '話題を見つける';
+  renderTaste();
+  const fb = $('findBtn');
+  fb.hidden = S.findBusy;
+  fb.disabled = S.ai !== 'ok' || S.tasteBusy;
+  fb.textContent = S.focus ? `「${S.focus}」で話題を見つける` : S.home.deck ? '別の好きそうな話題を見つける' : '好きそうな話題を見つける';
   $('findStop').hidden = !S.findBusy;
   const note = $('deckNote');
-  note.textContent = S.ai === 'off' && S.loaded && !S.deckNote ? 'Claude につながっていないため、新しい話題は考えられません。' : S.deckNote;
+  note.replaceChildren();
+  if (S.findBusy && S.deckNote) note.append(thinkingNode(S.deckNote));
+  else note.textContent = S.ai === 'off' && S.loaded && !S.deckNote ? 'Claude につながっていないため、新しい話題は考えられません。' : S.deckNote;
   note.className = 'note' + (S.deckNoteBad ? ' bad' : '');
   document.querySelectorAll('#moods button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mood === S.mood)));
   renderDeck();
@@ -1203,7 +1677,22 @@ function confirmButton(label, onConfirm, cls = 'btn danger small') {
   });
   return b;
 }
+function renderSources() {
+  const chats = S.chats.filter((c) => c.messages.some((m) => m.r === 'u')).length;
+  $('srcApp').textContent = chats ? `${chats}件` : 'まだありません';
+  const cc = S.home.cc;
+  $('srcCC').textContent = S.mcp ? (cc ? `${cc.count}件（${fmtWhen(cc.at)}に読み込み）` : 'まだ読み込んでいません') : 'この画面では読めません（claude.ai で開くと使えます）';
+  const btn = $('ccRead');
+  btn.hidden = !S.mcp;
+  btn.disabled = S.ccBusy;
+  btn.textContent = S.ccBusy ? '読んでいます…' : cc ? '読み直す' : '読み込む';
+  $('ccErr').textContent = S.ccErr;
+  const cai = S.imports.filter((i) => i.kind === 'claude');
+  const n = cai.reduce((a, i) => a + (i.convCount || 0), 0);
+  $('srcCAI').textContent = cai.length ? `会話 ${n}件（${fmtWhen(cai[0].addedAt)}に取り込み）` : 'まだ取り込んでいません';
+}
 function renderHistory() {
+  renderSources();
   const list = $('chatList');
   list.replaceChildren();
   const chats = S.chats.filter((c) => c.messages.length);
@@ -1222,7 +1711,7 @@ function renderHistory() {
   const il = $('impList');
   il.replaceChildren();
   $('impCount').textContent = S.imports.length ? `${S.imports.length}件` : '';
-  if (!S.imports.length) il.append(el('li', { style: 'display:block' }, el('p', { class: 'empty', text: 'まだありません。上の「ほかのチャットを取り込む」から追加できます。' })));
+  if (!S.imports.length) il.append(el('li', { style: 'display:block' }, el('p', { class: 'empty', text: 'まだありません。上の「ファイルや文章を取り込む」から追加できます。' })));
   for (const i of S.imports) {
     const meta = [fmtWhen(i.addedAt), i.convCount ? `会話${i.convCount}件${i.total > i.convCount ? `（全${i.total}件中）` : ''}` : `${i.chars.toLocaleString()}文字`, i.partial ? '途中まで' : ''].filter(Boolean).join(' · ');
     il.append(el('li', {},
@@ -1244,7 +1733,7 @@ function deleteChat(c) {
 function deleteImport(i) {
   S.imports = S.imports.filter((x) => x !== i);
   if (S.store) S.store.deleteImport(i.id);
-  toast('取り込んだ記録を消しました。覚え書きに残ったことは「覚え書き」から消せます。');
+  toast('取り込んだ記録を消しました。覚え書きや好きなテーマに残ったことは「覚え書き」から消せます。');
   renderAll();
 }
 function renderImport() {
@@ -1252,16 +1741,37 @@ function renderImport() {
   $('impPlan').hidden = !imp || imp.running;
   $('impProg').hidden = !imp || !imp.running;
   if (imp) {
-    $('impPlanText').textContent = planText(imp) + (imp.done ? `（${imp.done}/${imp.chunks.length} まで読み終わっています）` : '');
-    $('impGo').textContent = imp.done ? '続きを読み込む' : '読み込む';
-    $('impBar').max = imp.chunks.length; $('impBar').value = imp.done;
-    $('impProgText').textContent = `${imp.done} / ${imp.chunks.length} を読み終わりました`;
+    $('impPlanText').textContent = planText(imp) + (imp.done ? `（${imp.done}/${imp.steps.length} まで読み終わっています）` : '');
+    $('impGo').textContent = imp.done || S.impError ? '続きを読み込む' : '読み込む';
+    $('impBar').max = imp.steps.length; $('impBar').value = imp.done;
+    $('impProgText').textContent = `${imp.done} / ${imp.steps.length} ${imp.current || ''}`;
   }
   $('impGo').disabled = S.ai !== 'ok';
   $('impPrep').disabled = !!(imp && imp.running);
   $('impErr').textContent = S.impError || (S.loaded && S.ai === 'off' ? 'Claude につながっていないため、今は読み込めません。' : '');
 }
 function renderMemo() {
+  // 好きなテーマ
+  const t = S.home.taste;
+  const tl = $('memoThemes');
+  tl.replaceChildren();
+  $('memoTasteBasis').textContent = basisText();
+  $('memoStyle').textContent = t && t.style ? `好む切り口: ${t.style}` : '';
+  $('memoStyle').hidden = !(t && t.style);
+  if (!t || !t.themes.length) {
+    tl.append(el('li', {}, el('span', { class: 'hint', text: 'まだありません。「これまで」でチャットを読み込むか、「話題をさがす」で読み取ると、ここに並びます。' })));
+  } else {
+    for (const th of t.themes) {
+      tl.append(el('li', { class: 'theme-row' },
+        el('div', {}, el('span', { class: 'nm', text: th.name }), dots(th.score, `好きそうな度合い 5段階の${th.score}`),
+          el('span', { class: 'why', text: th.why + (th.examples.length ? `（例: ${th.examples.join('、')}）` : '') })),
+        el('button', { class: 'x', type: 'button', title: '消す', 'aria-label': `テーマ「${th.name}」を消す`, onclick: () => {
+          const idx = S.home.taste.themes.indexOf(th);
+          if (idx >= 0) { S.home.taste.themes.splice(idx, 1); saveHome(); renderMemo(); renderTaste(); renderStatus(); }
+        } }, '×')));
+    }
+  }
+  // 覚えていること
   const box = $('memoGroups');
   box.replaceChildren();
   const items = S.home.memory.items;
@@ -1284,7 +1794,7 @@ function renderMemo() {
   dn.textContent = S.digesting ? '更新しています…' : 'いまの会話から覚え直す';
   dn.title = hasUndigested(S.cur) ? '' : 'いま開いている会話は、すでに覚え書きに反映されています';
   $('memoPrivacy').textContent = privacyText();
-  $('memoClear').hidden = !items.length;
+  $('memoClear').hidden = !items.length && !(t && t.themes.length);
 }
 function renderAll() {
   renderStatus(); renderTalk(); renderTopics(); renderHistory(); renderImport(); renderMemo();
@@ -1315,7 +1825,10 @@ $('deep').addEventListener('change', (e) => { S.deep = e.target.checked; lsSet(L
 $('newChat').addEventListener('click', () => { leaveCurrent(); renderTalk(); renderHistory(); try { $('msg').focus(); } catch (e) { /* 無視 */ } });
 $('findBtn').addEventListener('click', findTopics);
 $('findStop').addEventListener('click', () => { if (S.findCtl) S.findCtl.abort(); });
+$('tasteRefresh').addEventListener('click', () => { if (S.tasteBusy) { if (S.tasteCtl) S.tasteCtl.abort(); } else refreshTasteNow(); });
 $('moods').addEventListener('click', (e) => { const b = e.target.closest('button[data-mood]'); if (!b) return; S.mood = b.dataset.mood; renderTopics(); });
+$('ccRead').addEventListener('click', readClaudeCode);
+$('caiGo').addEventListener('click', () => { $('importCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); try { $('impFile').focus({ preventScroll: true }); } catch (e) { /* 無視 */ } });
 $('impFile').addEventListener('change', () => {
   const f = $('impFile').files && $('impFile').files[0];
   $('impFileInfo').textContent = f ? `${f.name}（${(f.size / 1024 / 1024).toFixed(f.size > 1048576 ? 1 : 2)} MB）` : '';
@@ -1337,16 +1850,19 @@ $('memoAdd').addEventListener('submit', (e) => {
 });
 (() => {
   const b = $('memoClear');
+  const label = '覚え書きと好きなテーマをすべて消す';
   let armed = false, timer = null;
   b.addEventListener('click', () => {
     if (!armed) {
       armed = true; b.textContent = '本当にすべて消す'; b.classList.add('armed');
-      timer = setTimeout(() => { armed = false; b.textContent = '覚え書きをすべて消す'; b.classList.remove('armed'); }, 4000);
+      timer = setTimeout(() => { armed = false; b.textContent = label; b.classList.remove('armed'); }, 4000);
       return;
     }
-    clearTimeout(timer); armed = false; b.textContent = '覚え書きをすべて消す'; b.classList.remove('armed');
+    clearTimeout(timer); armed = false; b.textContent = label; b.classList.remove('armed');
     S.home.memory = { items: [], updatedAt: Date.now() };
-    saveHome(); renderMemo(); renderStatus(); toast('覚え書きを消しました。');
+    S.home.taste = null;
+    S.home.feedback = { likes: [], nopes: [] };
+    saveHome(); renderAll(); toast('覚え書きと好きなテーマを消しました。');
   });
 })();
 
@@ -1357,8 +1873,9 @@ async function boot() {
   renderAll();
   const c = window.claude;
   const use = (name) => (c && typeof c.use === 'function' ? c.use(name).catch(() => null) : Promise.resolve(null));
-  const [db, user, sample] = await Promise.all([use('db'), use('user'), use('sample')]);
+  const [db, user, sample, mcp] = await Promise.all([use('db'), use('user'), use('sample'), use('mcp')]);
   S.sample = sample;
+  S.mcp = mcp;
   S.ai = sample ? 'ok' : 'off';
   let uid = null;
   if (user) { try { uid = await user.id(); } catch (e) { uid = null; } }
