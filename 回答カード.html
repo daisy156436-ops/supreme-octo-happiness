@@ -34,15 +34,17 @@ button{font:inherit;cursor:pointer;color:inherit}
 .ans svg{width:14vmin;height:14vmin}
 .ans:active{transform:scale(.97)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:2vmin;height:17vmin}
-.row2 .ans{font-size:13vmin}
+.row2 .ans svg{width:11vmin;height:11vmin}
 .textrow{display:flex;gap:2vmin}
 .textrow input{flex:1;min-width:0;font:inherit;font-size:5vmin;padding:1.6vmin 2vmin;border:.4vmin solid var(--line);border-radius:1.6vmin;-webkit-user-select:text;user-select:text}
 .textrow button{font-size:4vmin;font-weight:bold;padding:0 3vmin;border:none;border-radius:1.6vmin;background:var(--ink);color:#fff}
 
 /* 見せる */
 #show{align-items:center;justify-content:center;border:3.2vmin solid var(--team)}
-#show .big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vmin;font-weight:900;font-family:Arial,"Hiragino Sans",sans-serif;line-height:1;text-align:center;padding:0 4vmin;word-break:break-all}
+#show .big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vmin;font-weight:900;font-family:Arial,"Hiragino Sans",sans-serif;line-height:1.05;text-align:center;overflow-wrap:anywhere}
 #show .big svg{width:32vmin;height:32vmin}
+#show .big.ox svg{width:70vmin;height:70vmin}
+#show .big.txt{max-width:100%;max-height:100%}
 #show .corner{position:absolute;top:max(2vmin,env(safe-area-inset-top));right:2.4vmin;min-width:14vmin;height:14vmin;border-radius:2vmin;background:var(--team);color:var(--teamInk);display:flex;align-items:center;justify-content:center;font-size:9vmin;font-weight:900;font-family:Arial,sans-serif;padding:0 1.4vmin;box-shadow:0 0 0 .6vmin #fff}
 #back{position:absolute;top:max(2vmin,env(safe-area-inset-top));left:2.4vmin;font-size:3.6vmin;padding:1.6vmin 3vmin;border:none;border-radius:1.6vmin;background:rgba(255,255,255,.88);color:#1d2330;font-weight:bold}
 @media (orientation:landscape){
@@ -76,8 +78,8 @@ button{font:inherit;cursor:pointer;color:inherit}
   <div class="grid4" id="grid4"></div>
   <div class="side">
     <div class="row2">
-      <button class="ans" data-a="○" style="background:#e21b3c;color:#fff">○</button>
-      <button class="ans" data-a="×" style="background:#1368ce;color:#fff">×</button>
+      <button class="ans" data-a="○" style="background:#e21b3c;color:#fff" aria-label="まる"></button>
+      <button class="ans" data-a="×" style="background:#1368ce;color:#fff" aria-label="ばつ"></button>
     </div>
     <form class="textrow" id="textForm">
       <input type="text" id="textIn" placeholder="文字や数字で答える" enterkeyhint="done" autocomplete="off">
@@ -123,6 +125,8 @@ function shapeSvg(shape, fill) {
   }[shape];
   return `<svg viewBox="0 0 100 100" aria-hidden="true">${body}</svg>`;
 }
+function maruSvg(c) { return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="37" fill="none" stroke="${c}" stroke-width="13"/></svg>`; }
+function batsuSvg(c) { return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 20 L80 80 M80 20 L20 80" stroke="${c}" stroke-width="14" stroke-linecap="round"/></svg>`; }
 function esc(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 const $ = s => document.querySelector(s);
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
@@ -154,32 +158,43 @@ $('#change').addEventListener('click', () => {
   screen('pick');
 });
 
+document.querySelector('.ans[data-a="○"]').innerHTML = maruSvg('#fff');
+document.querySelector('.ans[data-a="×"]').innerHTML = batsuSvg('#fff');
 $('#grid4').innerHTML = CH.map(c => `<button class="ans" data-a="${c.k}" style="background:${c.color};color:${c.ink}">${shapeSvg(c.shape, c.ink)}${c.k}</button>`).join('');
 
 function show(a) {
   const ch = CH.find(c => c.k === a);
   const sh = $('#show'), big = $('#big');
+  big.className = 'big';
   if (ch) {
     sh.style.background = ch.color; big.style.color = ch.ink;
     big.style.fontSize = '46vmin';
     big.innerHTML = shapeSvg(ch.shape, ch.ink) + ch.k;
   } else if (a === '○' || a === '×') {
-    sh.style.background = a === '○' ? '#e21b3c' : '#1368ce'; big.style.color = '#fff';
-    big.style.fontSize = '80vmin';
-    big.textContent = a;
+    sh.style.background = a === '○' ? '#e21b3c' : '#1368ce';
+    big.classList.add('ox');
+    big.innerHTML = a === '○' ? maruSvg('#fff') : batsuSvg('#fff');
   } else {
     sh.style.background = '#ffffff'; big.style.color = '#1d2330';
-    const len = [...a].length;
-    big.style.fontSize = Math.max(8, Math.min(40, 170 / Math.max(1, len) * (innerWidth > innerHeight ? innerWidth / innerHeight : 1))) + 'vmin';
+    big.classList.add('txt');
     big.innerHTML = esc(a);
   }
   screen('show');
+  if (!ch && a !== '○' && a !== '×') fitText(big);
   keepAwake();
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('.ans');
   if (b) show(b.dataset.a);
 });
+// 文字の答え：画面に収まるいちばん大きい文字にする（短い答えは1行のまま）
+function fitText(el) {
+  const W = innerWidth * 0.84, H = innerHeight * 0.66;
+  el.style.whiteSpace = [...el.textContent].length <= 8 ? 'nowrap' : 'normal';
+  let size = 60;
+  el.style.fontSize = size + 'vmin';
+  while (size > 6 && (el.scrollWidth > W || el.scrollHeight > H)) { size *= 0.9; el.style.fontSize = size + 'vmin'; }
+}
 $('#textForm').addEventListener('submit', e => {
   e.preventDefault();
   const v = $('#textIn').value.trim();

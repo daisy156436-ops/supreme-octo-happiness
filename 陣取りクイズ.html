@@ -88,6 +88,7 @@ details summary{cursor:pointer;color:var(--accent)}
 .page.flow{height:auto;min-height:297mm}
 .pcard{display:flex;flex-direction:column;align-items:center;justify-content:center;border:5mm solid;border-radius:10mm;height:100%;gap:4mm}
 .pcard svg{width:95mm;height:95mm}
+.pcard.ox svg{width:165mm;height:165mm}
 .pcard .big{font-size:150mm;line-height:1;font-weight:900;font-family:Arial,"Hiragino Sans",sans-serif}
 .pcard .sm{font-size:9mm;color:#555}
 .pteam{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8mm}
@@ -117,6 +118,11 @@ body.staging #stage{display:flex}
 .st-main.wide-map{grid-template-columns:28fr 52fr 20fr}
 .st-main.final{grid-template-columns:62fr 38fr 0fr}
 .st-main.intro{grid-template-columns:56fr 44fr 0fr}
+.st-main.reveal{grid-template-columns:50fr 32fr 18fr}
+#stLeft > *{flex:none}
+#stLeft > .toggles{flex:1 1 0;min-height:0}
+.st-main.reveal .choice{min-height:7vh;padding:.8vh 1.4vh}
+.st-main.reveal .note{font-size:2.2vh;padding:.8vh 1.4vh}
 .st-main.intro #stRank{display:none}
 .st-main.final #stRank{display:none}
 #stLeft{display:flex;flex-direction:column;gap:1.4vh;min-height:0;overflow:hidden;padding:1.2vh;margin:-1.2vh}
@@ -141,7 +147,8 @@ body.staging #stage{display:flex}
 .choice .tx{font-size:3.2vh;line-height:1.25}
 .choice.small .tx{font-size:2.5vh}
 .choice.mb{justify-content:center}
-.choice.mb .ox{font-size:11vh;line-height:1;font-weight:900}
+.choice.mb .ox svg{width:9vh;height:9vh;display:block}
+.choice .mk.oxmk svg{width:5vh;height:5vh}
 .choices.dim .choice{opacity:.28}
 .choices.dim .choice.ok{opacity:1;box-shadow:0 0 0 .5vh #fff,0 0 0 1.1vh #16803c}
 .free{font-size:3vh;text-align:center;padding:2vh;border:.4vh dashed var(--line);border-radius:1.4vh;color:var(--sub);background:#fff}
@@ -150,12 +157,13 @@ body.staging #stage{display:flex}
 .banner{font-size:7vh;font-weight:900;text-align:center;color:#c8102e;padding:1vh;animation:bounce .8s ease-in-out infinite alternate}
 .banner small{display:block;font-size:2.8vh;color:var(--ink);font-weight:bold}
 @keyframes bounce{from{transform:scale(1)}to{transform:scale(1.06)}}
-.toggles-head{display:flex;align-items:center;gap:1vh;font-size:2.4vh;font-weight:bold}
+.toggles-head{display:flex;align-items:center;gap:1vh;font-size:2.4vh;font-weight:bold;white-space:nowrap}
 .toggles-head button{font:inherit;font-size:1.9vh;font-weight:normal;padding:.5vh 1.2vh;border:1px solid var(--line);border-radius:.8vh;background:#fff;cursor:pointer}
-.toggles{display:grid;gap:.8vh;min-height:0}
-.tg{display:flex;align-items:center;justify-content:center;gap:1vh;border-radius:1vh;border:.4vh solid;background:#fff;font:inherit;font-weight:bold;padding:.6vh .4vh;cursor:pointer;min-height:6vh;color:var(--ink)}
-.tg .sw{min-width:4.8vh;height:4.4vh;font-size:2.8vh;border-radius:.8vh}
-.tg .ox{font-size:3.6vh;min-width:3.6vh;line-height:1}
+.toggles{display:grid;gap:.8vh;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tg{display:flex;align-items:center;justify-content:center;gap:1vh;border-radius:1vh;border:.4vh solid;background:#fff;font:inherit;font-weight:bold;padding:.6vh .4vh;cursor:pointer;min-height:0;max-height:8vh;color:var(--ink)}
+.tg .sw{min-width:4.8vh;height:min(4.4vh,100%);font-size:2.8vh;border-radius:.8vh}
+.tg .ox{font-size:3.6vh;line-height:1}
+.tg{overflow:hidden}
 .tg[aria-pressed=false]{border-style:dashed;background:#f7f8fa}
 .tg[aria-pressed=false] .sw{opacity:.55}
 .tg[aria-pressed=true]{background:var(--tc);color:var(--tci)}
@@ -209,12 +217,13 @@ body.staging #stage{display:flex}
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
 
 @media (max-aspect-ratio:1/1){
-  #stage{font-size:1.2vh}
-  .st-main,.st-main.wide-map,.st-main.final{grid-template-columns:1fr;grid-template-rows:auto 1fr auto}
-  #stRank{flex-direction:row;flex-wrap:wrap}
-  .rk{flex:0 0 calc(50% - .5vh);max-height:none;min-height:3.4vh}
+  .st-main,.st-main.wide-map,.st-main.final,.st-main.intro,.st-main.reveal{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr)}
+  #stRank,.st-bar .keyhint,#stClock{display:none}
+  .st-top{flex-wrap:wrap}
+  .st-bar{flex-wrap:wrap}
+  #stLeft > .toggles{flex:none;grid-auto-rows:6vh}
+  .podium{min-height:30vh}
 }
-
 @media print{
   body{background:#fff}
   header,nav,.noprint,#stage{display:none!important}
@@ -302,7 +311,7 @@ body.staging #stage{display:flex}
         <li>1問でうばわれるのは、1チーム最大2マス（ボーナス問題は4マス、逆転チャンスは6マス）。一度のまちがいで大きく減りすぎないようにしています</li>
         <li>となりにとれるマスがないときは、いちばん近くのとれるマスをとります（飛び地）。それもないときは増えません</li>
         <li>②チームの「うばい合い」を切ると、空きマスがなくなったあとは増えなくなります</li>
-        <li>この決まりは、16チーム・20問の対戦を何十回も試して決めました。いちばん少ないチームでも最後に3マス以上残り、15問目で1位のチームが最後に入れかわることが半分以上あります</li>
+        <li>この決まりは、16チーム・20問の対戦を何百回も試して決めました。うばわれて3マスより少なくなることはなく、いちばん少ないチームも平均3マスほど残ります。15問目で1位のチームが最後に入れかわることが、半分以上ありました</li>
       </ul>
     </details>
   </div>
@@ -675,6 +684,9 @@ function shapeSvg(shape, fill) {
   }[shape];
   return `<svg viewBox="0 0 100 100" aria-hidden="true">${body}</svg>`;
 }
+function maruSvg(c) { return `<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="37" fill="none" stroke="${c}" stroke-width="13"/></svg>`; }
+function batsuSvg(c) { return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M20 20 L80 80 M80 20 L20 80" stroke="${c}" stroke-width="14" stroke-linecap="round"/></svg>`; }
+function oxSvg(i, c) { return i === 0 ? maruSvg(c) : batsuSvg(c); }
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1324,6 +1336,7 @@ function renderStage() {
   const main = $('#stMain');
   main.classList.toggle('wide-map', g.phase === 'result');
   main.classList.toggle('intro', g.phase === 'intro');
+  main.classList.toggle('reveal', g.phase === 'reveal');
   main.classList.toggle('final', g.phase === 'final');
   $('#stLeft').innerHTML = g.phase === 'intro' ? rulesHtml(g) : g.phase === 'final' ? finalHtml(g) : questionHtml(g);
   if (g.phase === 'reveal') bindToggles();
@@ -1347,7 +1360,7 @@ function choicesHtml(q, reveal) {
   const small = ch.some(c => c.text.length > 12);
   return `<div class="choices${reveal ? ' dim' : ''}">` + ch.map(c => {
     const d = CH[c.i], ok = reveal && q.answer === d.k;
-    if (mb) return `<div class="choice mb${ok ? ' ok' : ''}" style="background:${d.color};color:${d.ink}"><span class="ox">${c.i === 0 ? '○' : '×'}</span></div>`;
+    if (mb) return `<div class="choice mb${ok ? ' ok' : ''}" style="background:${d.color};color:${d.ink}"><span class="ox">${oxSvg(c.i, d.ink)}</span></div>`;
     return `<div class="choice${small ? ' small' : ''}${ok ? ' ok' : ''}" style="background:${d.color};color:${d.ink}"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(c.text)}</span></div>`;
   }).join('') + '</div>';
 }
@@ -1370,8 +1383,8 @@ function questionHtml(g) {
 function togglesHtml(g) {
   const cols = Math.max(1, Math.min(g.cols || 4, g.n));
   const n = g.correct.filter(Boolean).length;
-  return `<div class="toggles-head">正解したチーム <span id="tgCount">${n}</span>チーム <span class="grow"></span><button data-tg="all">全チーム○</button><button data-tg="none">全部はずす</button></div>
-    <div class="toggles" style="grid-template-columns:repeat(${cols},1fr)">` +
+  return `<div class="toggles-head">正解 <span id="tgCount">${n}</span>チーム <span class="grow"></span><button data-tg="all">全チーム○</button><button data-tg="none">全部はずす</button></div>
+    <div class="toggles" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">` +
     g.names.map((nm, t) => {
       const c = TEAM_COLORS[t % TEAM_COLORS.length];
       return `<button class="tg" data-t="${t}" aria-pressed="${!!g.correct[t]}" style="border-color:${c};--tc:${c};--tci:${inkOn(c)}"><span class="sw" style="background:${c};color:${inkOn(c)}">${t + 1}</span><span class="ox">${g.correct[t] ? '○' : ''}</span></button>`;
@@ -1395,13 +1408,15 @@ function bindToggles() {
 function resultHtml(g, q) {
   const L = g.last;
   if (!L || L.qi !== g.qi) return '';
-  let h = `<div class="choices dim">${qChoices(q).length ? qChoices(q).filter(c => CH[c.i].k === q.answer).map(c => { const d = CH[c.i]; return `<div class="choice ok" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(isMaruBatsu(q) ? (c.i === 0 ? '○' : '×') : c.text)}</span></div>`; }).join('') : `<div class="answerbox" style="grid-column:1/-1">正解：${esc(q.answerText || '')}</div>`}</div>`;
+  let h = `<div class="choices dim">${qChoices(q).length ? qChoices(q).filter(c => CH[c.i].k === q.answer).map(c => { const d = CH[c.i]; return isMaruBatsu(q)
+        ? `<div class="choice ok mb" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="ox">${oxSvg(c.i, d.ink)}</span></div>`
+        : `<div class="choice ok" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(c.text)}</span></div>`; }).join('') : `<div class="answerbox" style="grid-column:1/-1">正解：${esc(q.answerText || '')}</div>`}</div>`;
   h += '<div class="result">';
   if (L.practice) {
     h += `<h3>正解 ${L.nCorrect}チーム</h3><div class="line">練習なので陣地は変わりません。本番では、正解したチームの陣地が広がります！</div>`;
   } else {
     const mult = qMult(q);
-    h += `<h3>正解 ${L.nCorrect}チーム${L.nCorrect ? ` → 陣地 ＋${mult}マス` : ''}</h3>`;
+    h += `<h3>正解 ${L.nCorrect}チーム</h3>` + (L.nCorrect ? `<div class="line">正解チームの陣地が ＋${mult}マス 広がりました</div>` : '');
     const st = {};
     L.changes.filter(c => c.from >= 0).forEach(c => { const k = c.to + '>' + c.from; st[k] = (st[k] || 0) + 1; });
     const items = Object.entries(st).map(([k, v]) => { const [to, from] = k.split('>').map(Number); return `<li>${swHtml(to)} が ${swHtml(from)} から ${v}マス うばった！</li>`; });
@@ -1506,8 +1521,8 @@ function renderPrint() {
   let h = '';
   if (k === 'cards') {
     h = CH.map(c => `<div class="page"><div class="pcard" style="border-color:${c.color}">${shapeSvg(c.shape, c.color)}<div class="big" style="color:${c.color}">${c.k}</div><div class="sm">指なら ${'ABCD'.indexOf(c.k) + 1}本</div></div></div>`).join('') +
-      `<div class="page"><div class="pcard" style="border-color:#e21b3c"><div class="big" style="color:#e21b3c;font-size:210mm">○</div></div></div>` +
-      `<div class="page"><div class="pcard" style="border-color:#1368ce"><div class="big" style="color:#1368ce;font-size:210mm">×</div></div></div>`;
+      `<div class="page"><div class="pcard ox" style="border-color:#e21b3c">${maruSvg('#e21b3c')}<div class="sm">○（まる）</div></div></div>` +
+      `<div class="page"><div class="pcard ox" style="border-color:#1368ce">${batsuSvg('#1368ce')}<div class="sm">×（ばつ）</div></div></div>`;
     $('#pHint').textContent = '6ページ。1チーム1組あると便利です（印刷の画面で部数をチームの数にする）。白黒でも文字と形で見分けられます。';
   } else if (k === 'teams') {
     h = S.teams.names.slice(0, S.teams.count).map((nm, t) => { const c = TEAM_COLORS[t]; return `<div class="page"><div class="pteam"><div class="num" style="background:${c};color:${inkOn(c)}">${t + 1}</div><div class="name">${esc(nm)}</div></div></div>`; }).join('');
