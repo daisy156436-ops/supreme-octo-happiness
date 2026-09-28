@@ -1,0 +1,1379 @@
+<meta charset="utf-8">
+<title>話のたね</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kaisei+Decol:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#F2F3F7; --surface:#FFFFFF; --surface-2:#E8EBF3; --ink:#1C2240; --sub:#5B6180; --line:#D8DCE8;
+  --accent:#2B4C9A; --accent-ink:#FFFFFF; --accent-weak:#E2E8F7;
+  --seed:#E9AE00; --seed-weak:#FFF3C4;
+  --k-cont:#2B4C9A; --k-link:#16786A; --k-side:#8C3D7C; --k-now:#9A6300;
+  --bad:#B3261E; --bad-weak:#FBE9E7; --good:#1E7A45; --good-weak:#E3F4EA; --warn:#8A5A00; --warn-weak:#FFF1D6;
+  --shadow:0 1px 2px rgba(28,34,64,.05),0 6px 20px rgba(28,34,64,.07);
+  --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+  --f-disp:"Kaisei Decol","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#11141D; --surface:#191D29; --surface-2:#232939; --ink:#E6E8F2; --sub:#A0A6BF; --line:#2E3447;
+    --accent:#98AEF2; --accent-ink:#11141D; --accent-weak:#252E4A;
+    --seed:#F2C230; --seed-weak:#3A3115;
+    --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
+    --bad:#FF8A80; --bad-weak:#3B1E1C; --good:#72D49C; --good-weak:#18301F; --warn:#F0C060; --warn-weak:#352A12;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#11141D; --surface:#191D29; --surface-2:#232939; --ink:#E6E8F2; --sub:#A0A6BF; --line:#2E3447;
+  --accent:#98AEF2; --accent-ink:#11141D; --accent-weak:#252E4A;
+  --seed:#F2C230; --seed-weak:#3A3115;
+  --k-cont:#98AEF2; --k-link:#62C9B8; --k-side:#E291D3; --k-now:#EDB449;
+  --bad:#FF8A80; --bad-weak:#3B1E1C; --good:#72D49C; --good-weak:#18301F; --warn:#F0C060; --warn-weak:#352A12;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.8 var(--f-body);font-feature-settings:"palt" 0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+h1,h2,h3{text-wrap:balance;line-height:1.4}
+
+/* ヘッダー */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top-in{max-width:840px;margin:0 auto;padding:10px 16px 0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-disp);font-weight:700;font-size:22px;letter-spacing:.06em;line-height:1}
+.mark{position:relative;width:26px;height:22px;flex:none}
+.mark i{position:absolute;width:9px;height:13px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--seed)}
+.mark i:nth-child(1){left:0;top:6px;transform:rotate(-28deg)}
+.mark i:nth-child(2){left:8px;top:0;transform:rotate(4deg);background:var(--accent)}
+.mark i:nth-child(3){left:16px;top:7px;transform:rotate(30deg)}
+.status{order:1;margin-left:auto;font-size:12px;line-height:1.5;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--sub);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.status.ok{color:var(--good);border-color:color-mix(in srgb,var(--good) 35%,transparent);background:var(--good-weak)}
+.status.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 35%,transparent);background:var(--warn-weak)}
+.tabs{order:2;flex-basis:100%;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs button{border:none;background:none;padding:8px 12px 9px;border-bottom:2.5px solid transparent;color:var(--sub);font-weight:500;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+.tabs button .count{font-size:11px;color:var(--sub);margin-left:4px;font-variant-numeric:tabular-nums}
+
+main{max-width:840px;margin:0 auto;padding-inline:16px;padding-block:18px 0}
+.panel{padding-bottom:32px}
+.lead{color:var(--sub);margin:4px 0 14px;max-width:38em}
+.hint{color:var(--sub);font-size:13px}
+.note{font-size:13px;color:var(--sub);margin:6px 0}
+.note.bad{color:var(--bad)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 14px;line-height:1.5}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--accent);padding-inline:8px}
+.btn.ghost:hover:not(:disabled){background:var(--accent-weak)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.btn.danger.armed{background:var(--bad);color:var(--surface);border-color:var(--bad)}
+.btn.small{padding:3px 10px;font-size:13px}
+input[type=text],select,textarea.field{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 10px;min-width:0}
+input[type=text]:focus,select:focus,textarea.field:focus{outline:none;border-color:var(--accent)}
+.tag-sample{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--sub);border:1px dashed var(--sub);border-radius:4px;padding:0 6px;line-height:1.6}
+
+/* 話す */
+.talk{display:flex;flex-direction:column;min-height:calc(100dvh - 118px)}
+.talkhead{display:flex;align-items:center;gap:8px;margin-bottom:12px;min-height:34px}
+.curtitle{font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.curtitle .from{font-weight:400;color:var(--sub);font-size:13px;margin-left:6px}
+.welcome{display:flex;flex-direction:column;gap:14px;padding-bottom:12px}
+.welcome h1{font-family:var(--f-disp);font-weight:700;font-size:30px;margin:6px 0 0;letter-spacing:.03em}
+.welcome .lead{margin:0}
+.wsub{display:flex;align-items:center;gap:10px;margin-top:4px}
+.wsub h2{font-size:14px;margin:0;color:var(--sub);font-weight:700;letter-spacing:.06em}
+.resume{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.resume:hover{border-color:var(--accent)}
+.resume-k{font-size:12px;color:var(--accent);font-weight:700;letter-spacing:.06em}
+.resume-t{font-weight:700}
+.resume-d{font-size:12px;color:var(--sub);margin-left:auto}
+.offnote{background:var(--warn-weak);color:var(--warn);border-radius:10px;padding:10px 14px;font-size:14px}
+
+.log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px;flex:1}
+.msg{min-width:0}
+.msg.me{align-self:flex-end;max-width:min(86%,560px)}
+.msg.me .bubble{background:var(--accent-weak);border-radius:18px 18px 4px 18px;padding:9px 15px}
+.msg.ai{display:grid;grid-template-columns:30px minmax(0,1fr);column-gap:10px;row-gap:6px}
+.av{width:30px;height:30px;border-radius:50%;background:var(--seed-weak);position:relative;grid-row:span 3}
+.av::after{content:"";position:absolute;left:10px;top:8px;width:10px;height:14px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--seed);transform:rotate(-12deg)}
+.bubble{white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.ai .bubble{padding-top:2px;grid-column:2}
+.msgnote{grid-column:2;font-size:12px;color:var(--sub)}
+.msg.me .msgnote{text-align:right}
+.seeds{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.seeds-label{flex-basis:100%;font-size:12px;color:var(--sub);letter-spacing:.1em;line-height:1.4}
+.seed{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:9px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 13px 7px 11px;max-width:100%;line-height:1.5}
+.seed:hover:not(:disabled){border-color:var(--seed);background:var(--seed-weak)}
+.seed .dot{grid-row:span 2;width:8px;height:11px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--seed)}
+.seed-t{font-weight:700;font-size:14px}
+.seed-l{font-size:12.5px;color:var(--sub)}
+.errrow{grid-column:2;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:14px;color:var(--bad);background:var(--bad-weak);border-radius:10px;padding:8px 12px}
+.thinking{display:inline-flex;gap:5px;align-items:center;color:var(--sub);font-size:14px}
+.thinking i{width:7px;height:9px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:var(--seed);animation:bob 1.2s infinite ease-in-out}
+.thinking i:nth-child(2){animation-delay:.15s}
+.thinking i:nth-child(3){animation-delay:.3s}
+.thinking span{margin-left:6px}
+@keyframes bob{0%,80%,100%{transform:translateY(0);opacity:.45}40%{transform:translateY(-4px);opacity:1}}
+
+.composer-wrap{position:sticky;bottom:0;z-index:4;padding-block:14px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(to bottom,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 16px)}
+.composer{display:flex;gap:8px;align-items:flex-end;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:7px 7px 7px 16px;box-shadow:var(--shadow)}
+.composer:focus-within{border-color:var(--accent)}
+.composer textarea{flex:1;min-width:0;border:none;background:transparent;resize:none;line-height:1.6;max-height:40vh;min-height:30px;padding:4px 0;outline:none}
+.composer .btn{border-radius:12px;flex:none}
+.composer .btn.stop{background:var(--surface-2);color:var(--ink);border-color:var(--line)}
+.copts{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:12.5px;color:var(--sub);padding:6px 6px 0}
+.copts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+
+/* 話題 */
+.pagehead h1{font-family:var(--f-disp);font-weight:700;font-size:26px;margin:4px 0 0;letter-spacing:.03em}
+.finder{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px}
+.moods{display:flex;flex-wrap:wrap;gap:6px}
+.moods button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 13px;font-size:14px}
+.moods button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.finder input[type=text]{width:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--sub);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{font-weight:700}
+.deckhead{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.deckhead h2{font-size:14px;margin:0;color:var(--sub);letter-spacing:.06em}
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.deck.compact{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.topic{--k:var(--k-side);display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px 10px;min-width:0}
+.topic.k-cont{--k:var(--k-cont)} .topic.k-link{--k:var(--k-link)} .topic.k-side{--k:var(--k-side)} .topic.k-now{--k:var(--k-now)}
+.topic-top{display:flex;align-items:center;gap:8px}
+.kind{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--k);background:color-mix(in srgb,var(--k) 13%,transparent);padding:1px 10px;border-radius:999px;line-height:1.7}
+.topic-title{font-family:var(--f-disp);font-weight:700;font-size:19px;line-height:1.5;margin:0}
+.topic.compact .topic-title{font-size:17px}
+.topic-hook{margin:0;font-size:14.5px}
+.topic-why{margin:0;font-size:13px;color:var(--sub);display:flex;gap:8px;align-items:baseline}
+.why-k{flex:none;font-size:11px;letter-spacing:.06em;border:1px solid var(--line);border-radius:4px;padding:0 5px;line-height:1.6}
+.topic-go{margin-top:auto;align-self:flex-start;background:none;border:none;color:var(--k);font-weight:700;padding:6px 0;font-size:14px}
+.topic-go:hover{text-decoration:underline;text-underline-offset:3px}
+.topic.pending{justify-content:center;align-items:flex-start;min-height:180px;border-style:dashed;background:transparent}
+
+/* これまで */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+.card h2{margin:0;font-size:17px}
+.card p{margin:0}
+.card textarea.field{width:100%;min-height:96px;resize:vertical;font-size:13.5px;line-height:1.6}
+.filepick{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.filepick input[type=file]{max-width:100%;font-size:13.5px}
+.plan{background:var(--accent-weak);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.prog{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:14px}
+.prog progress{flex:1 1 200px;height:8px;accent-color:var(--accent)}
+.sechead{display:flex;align-items:baseline;gap:10px;margin:0 0 8px}
+.sechead h2{font-size:17px;margin:0}
+.list{list-style:none;margin:0 0 24px;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.list > li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:12px 14px;border-top:1px solid var(--line)}
+.list > li:first-child{border-top:none}
+.list .t{font-weight:700;overflow-wrap:anywhere}
+.list .t .now{font-size:11px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:4px;padding:0 5px;margin-left:8px;vertical-align:2px}
+.list .meta{font-size:12.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+.list .sum{font-size:13.5px;color:var(--sub);grid-column:1}
+.list .acts{grid-column:2;grid-row:1 / span 3;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.empty{color:var(--sub);font-size:14px;padding:14px;margin:0}
+
+/* 覚え書き */
+.memo-groups{display:flex;flex-direction:column;gap:18px;margin:14px 0 18px}
+.memo-group h3{margin:0 0 6px;font-size:15px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.memo-list{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.memo-list li{display:flex;gap:10px;align-items:flex-start;padding:7px 6px 7px 14px;border-top:1px solid var(--line)}
+.memo-list li:first-child{border-top:none}
+.memo-list li span{flex:1;min-width:0;overflow-wrap:anywhere}
+.x{flex:none;width:30px;height:30px;border-radius:8px;border:none;background:none;color:var(--sub);font-size:17px;line-height:1}
+.x:hover{background:var(--bad-weak);color:var(--bad)}
+.memoadd{display:flex;flex-wrap:wrap;gap:8px}
+.memoadd input[type=text]{flex:1 1 220px}
+.privacy{font-size:13px;color:var(--sub);border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:10px 0 0}
+.dangerzone{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:12px;font-size:14px;max-width:calc(100% - 32px);box-shadow:var(--shadow)}
+
+@media (min-width:720px){
+  .tabs{flex-basis:auto;order:1}
+  .status{order:2}
+  .top-in{padding-top:0;min-height:56px}
+  .tabs button{padding:17px 12px 15px}
+}
+@media (prefers-reduced-motion:reduce){
+  .thinking i{animation:none;opacity:.8}
+}
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><span>話のたね</span></div>
+    <nav class="tabs" role="tablist" aria-label="画面">
+      <button role="tab" id="tab-talk" data-tab="talk" aria-controls="p-talk" aria-selected="true">話す</button>
+      <button role="tab" id="tab-topics" data-tab="topics" aria-controls="p-topics" aria-selected="false">話題をさがす</button>
+      <button role="tab" id="tab-history" data-tab="history" aria-controls="p-history" aria-selected="false">これまで<span class="count" id="histCount"></span></button>
+      <button role="tab" id="tab-memo" data-tab="memo" aria-controls="p-memo" aria-selected="false">覚え書き<span class="count" id="memoCount"></span></button>
+    </nav>
+    <span id="status" class="status">つないでいます…</span>
+  </div>
+</header>
+
+<main>
+  <!-- 話す -->
+  <section id="p-talk" class="panel talk" role="tabpanel" aria-labelledby="tab-talk">
+    <div class="talkhead">
+      <div id="curTitle" class="curtitle">新しい話</div>
+      <button id="newChat" class="btn ghost small" type="button" hidden>＋ 新しい話</button>
+    </div>
+    <div id="welcome" class="welcome"></div>
+    <ol id="log" class="log" aria-live="polite"></ol>
+    <div class="composer-wrap">
+      <form id="composer" class="composer" autocomplete="off">
+        <textarea id="msg" rows="1" maxlength="4000" placeholder="なんでも話しかけてください" aria-label="メッセージ"></textarea>
+        <button id="sendBtn" class="btn primary" type="submit">送る</button>
+      </form>
+      <div class="copts">
+        <label><input type="checkbox" id="deep"> じっくり考えて返す（少し時間がかかります）</label>
+        <span id="digestNote" aria-live="polite"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 話題をさがす -->
+  <section id="p-topics" class="panel" role="tabpanel" aria-labelledby="tab-topics" hidden>
+    <div class="pagehead">
+      <h1>話題をさがす</h1>
+      <p class="lead">これまでの会話と覚え書きをまとめて読み、この先話したら面白そうなことを Claude が6つ考えます。</p>
+    </div>
+    <div class="finder">
+      <div class="moods" id="moods" role="group" aria-label="気分">
+        <button type="button" data-mood="おまかせ" aria-pressed="true">おまかせ</button>
+        <button type="button" data-mood="軽めの話" aria-pressed="false">軽めに</button>
+        <button type="button" data-mood="じっくり考える話" aria-pressed="false">じっくり</button>
+        <button type="button" data-mood="知ってためになる話" aria-pressed="false">ためになる</button>
+        <button type="button" data-mood="くだらなくて笑える話" aria-pressed="false">くだらなく</button>
+      </div>
+      <input type="text" id="moodText" maxlength="200" placeholder="ほかに希望があれば（例：音楽の話、寝る前に5分で終わる話）" aria-label="話題の希望">
+      <div class="row">
+        <button id="findBtn" class="btn primary" type="button">話題を見つける</button>
+        <button id="findStop" class="btn" type="button" hidden>止める</button>
+        <span id="deckNote" class="note" aria-live="polite"></span>
+      </div>
+    </div>
+    <div class="legend" aria-label="話題の種類">
+      <span><span class="kind" style="--k:var(--k-cont)">続き</span>途中で終わった話</span>
+      <span><span class="kind" style="--k:var(--k-link)">つなげる</span>別々の話を結びつける</span>
+      <span><span class="kind" style="--k:var(--k-side)">寄り道</span>関心の少し外側</span>
+      <span><span class="kind" style="--k:var(--k-now)">いま</span>今日の日付や季節から</span>
+    </div>
+    <div class="deckhead"><h2 id="deckTitle">話題</h2><span id="deckSample" class="tag-sample" hidden>見本</span></div>
+    <div id="deck" class="deck"></div>
+  </section>
+
+  <!-- これまで -->
+  <section id="p-history" class="panel" role="tabpanel" aria-labelledby="tab-history" hidden>
+    <div class="card" id="importCard">
+      <h2>ほかのチャットを取り込む</h2>
+      <p class="hint">ほかの場所での会話も話題さがしに使えます。claude.ai の設定（プライバシー）から書き出したデータの <b>conversations.json</b>、ChatGPT の書き出し、LINE のトーク履歴（.txt）、コピーした文章などを読み込めます。中身は Claude が読んで覚え書きにまとめます。元の文章は保存しません。</p>
+      <div class="filepick">
+        <input type="file" id="impFile" accept=".json,.txt,.md,.csv,.log,application/json,text/plain" aria-label="取り込むファイル">
+        <span id="impFileInfo" class="hint"></span>
+      </div>
+      <textarea id="impText" class="field" placeholder="ここに会話を貼り付けることもできます" aria-label="貼り付ける会話"></textarea>
+      <div class="row">
+        <input type="text" id="impName" maxlength="60" placeholder="名前（例：LINE 家族）" aria-label="記録の名前" style="flex:1 1 160px">
+        <input type="text" id="impWho" maxlength="40" placeholder="記録の中でのあなたの名前（わかれば）" aria-label="記録の中でのあなたの名前" style="flex:1 1 200px">
+        <button id="impPrep" class="btn" type="button">読み込む準備</button>
+      </div>
+      <div id="impPlan" class="plan" hidden>
+        <span id="impPlanText"></span>
+        <div class="row"><button id="impGo" class="btn primary" type="button">読み込む</button><button id="impCancel" class="btn ghost" type="button">やめる</button></div>
+      </div>
+      <div id="impProg" class="prog" hidden>
+        <progress id="impBar" max="1" value="0"></progress>
+        <span id="impProgText"></span>
+        <button id="impStop" class="btn small" type="button">止める</button>
+      </div>
+      <p id="impErr" class="note bad" aria-live="polite"></p>
+    </div>
+
+    <div class="sechead"><h2>これまでの会話</h2><span id="chatCount" class="hint"></span></div>
+    <ul id="chatList" class="list"></ul>
+    <div class="sechead"><h2>取り込んだ記録</h2><span id="impCount" class="hint"></span></div>
+    <ul id="impList" class="list"></ul>
+  </section>
+
+  <!-- 覚え書き -->
+  <section id="p-memo" class="panel" role="tabpanel" aria-labelledby="tab-memo" hidden>
+    <div class="pagehead">
+      <h1>覚え書き</h1>
+      <p class="lead">会話や取り込んだ記録から Claude が覚えたことです。返事や話題さがしのたびに読み返します。違っているものは消せます。</p>
+    </div>
+    <div class="row">
+      <button id="digestNow" class="btn" type="button">いまの会話から覚え直す</button>
+      <span id="memoUpdated" class="hint"></span>
+    </div>
+    <div id="memoGroups" class="memo-groups"></div>
+    <form id="memoAdd" class="memoadd">
+      <select id="memoKind" aria-label="種類">
+        <option>関心</option><option>途中の話</option><option>覚えておくこと</option><option>苦手</option>
+      </select>
+      <input type="text" id="memoText" maxlength="90" placeholder="自分で書き足す（例：最近は朝にランニングしている）" aria-label="書き足す内容">
+      <button class="btn" type="submit">足す</button>
+    </form>
+    <p id="memoPrivacy" class="privacy"></p>
+    <div class="dangerzone">
+      <button id="memoClear" class="btn danger small" type="button">覚え書きをすべて消す</button>
+      <span class="hint">会話の記録は「これまで」から1つずつ消せます。</span>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- 定数 ---------- */
+const KINDS = ['関心', '途中の話', '覚えておくこと', '苦手'];
+const KIND_NOTE = { 関心: '好きなこと・気になっていること', 途中の話: '続きがありそうな話', 覚えておくこと: '話に出た具体的なこと', 苦手: 'あまり話したくなさそうなこと' };
+const TOPIC_KINDS = { 続き: 'k-cont', つなげる: 'k-link', 寄り道: 'k-side', いま: 'k-now' };
+const MARK = '[[たね]]';
+const MARK_RE = /\[\[\s*たね\s*\]\]/;
+const LS_KEY = 'hanashi-no-tane:v1';
+const LS_DEEP = 'hanashi-no-tane:deep';
+const CHUNK = 12000, MAX_CHUNKS = 8;
+const FATAL = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
+
+/* ---------- 小道具 ---------- */
+const $ = (id) => document.getElementById(id);
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'text') n.textContent = v;
+    else if (k.startsWith('on') && typeof v === 'function') n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v === true ? '' : String(v));
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) n.append(c instanceof Node ? c : String(c));
+  return n;
+}
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const enc = new TextEncoder();
+const bytes = (s) => enc.encode(s).length;
+const clip = (s, n) => { s = String(s || '').replace(/\s+/g, ' ').trim(); return s.length > n ? s.slice(0, n - 1) + '…' : s; };
+const newId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function joinUpTo(lines, max) {
+  let out = '';
+  for (const l of lines) { if (out.length + l.length + 1 > max) break; out += l + '\n'; }
+  return out.trim();
+}
+const WD = '日月火水木金土';
+function todayLong() { const d = new Date(); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日（${WD[d.getDay()]}曜日）`; }
+function fmtDateLong(ms) { if (!ms) return ''; const d = new Date(ms); return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`; }
+function fmtWhen(ms) {
+  if (!ms) return '';
+  const d = new Date(ms), n = new Date();
+  const hm = `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const day0 = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day0(n) - day0(d)) / 86400000);
+  if (diff === 0) return `今日 ${hm}`;
+  if (diff === 1) return `昨日 ${hm}`;
+  if (d.getFullYear() === n.getFullYear()) return `${d.getMonth() + 1}月${d.getDate()}日`;
+  return fmtDateLong(ms);
+}
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { t.hidden = true; }, 4200);
+}
+function errorCopy(e) {
+  switch (e && e.code) {
+    case 'rate_limited': return 'Claude を続けて使いすぎたようです。少し待ってからもう一度どうぞ。';
+    case 'session_expired': return 'claude.ai のログインが切れています。ログインし直してから開き直してください。';
+    case 'refused': return 'この内容には返事ができませんでした。言い方や話題を変えてみてください。';
+    case 'prompt_too_large': return '記録が長すぎて一度に読めませんでした。「これまで」で古い会話を消すと読めるようになります。';
+    case 'empty_completion': case 'invalid_json': return 'うまく作れませんでした。もう一度試してください。';
+    case 'not_granted': case 'sampling_disabled': case 'not_declared': case 'capability_disabled': case 'capability_removed':
+      return 'この画面から Claude を使うことが許可されていません。';
+    default: return '通信が途切れました。もう一度試してください。';
+  }
+}
+const isFatal = (e) => FATAL.includes(e && e.code);
+
+/* ---------- 状態 ---------- */
+function emptyHome() { return { v: 1, memory: { items: [], updatedAt: 0 }, deck: null, recentTopics: [] }; }
+const S = {
+  ai: 'wait', sample: null, store: null, loaded: false, saveBroken: false,
+  home: emptyHome(), chats: [], imports: [], cur: null,
+  busy: false, busyChat: null, ctl: null, streamText: '', lastError: null,
+  findBusy: false, findCtl: null, liveDeck: null, deckNote: '', deckNoteBad: false, mood: 'おまかせ',
+  digesting: 0, digestChain: Promise.resolve(), digestErr: '',
+  imp: null, impError: '',
+  tab: 'talk', deep: lsGet(LS_DEEP) === '1',
+};
+
+/* ---------- データの整形 ---------- */
+function normItem(i) {
+  if (!i || typeof i.text !== 'string' || !i.text.trim()) return null;
+  return { kind: KINDS.includes(i.kind) ? i.kind : '覚えておくこと', text: clip(i.text, 90) };
+}
+function normTopic(o) {
+  if (!o || typeof o.title !== 'string' || !o.title.trim()) return null;
+  return {
+    kind: TOPIC_KINDS[o.kind] ? o.kind : '寄り道',
+    title: clip(o.title, 40), hook: clip(o.hook, 220), why: clip(o.why, 180),
+    opener: String(o.opener || '').trim().slice(0, 500),
+  };
+}
+function normHome(h) {
+  const x = emptyHome();
+  if (!h || typeof h !== 'object') return x;
+  if (h.memory && Array.isArray(h.memory.items)) x.memory = { items: h.memory.items.map(normItem).filter(Boolean).slice(0, 80), updatedAt: +h.memory.updatedAt || 0 };
+  if (h.deck && Array.isArray(h.deck.items)) {
+    const items = h.deck.items.map(normTopic).filter(Boolean);
+    if (items.length) x.deck = { at: +h.deck.at || 0, mood: String(h.deck.mood || ''), items };
+  }
+  if (Array.isArray(h.recentTopics)) x.recentTopics = h.recentTopics.map(String).slice(0, 40);
+  return x;
+}
+function normSeeds(a) {
+  return Array.isArray(a) ? a.filter((s) => s && s.title).map((s) => ({ title: String(s.title), line: String(s.line || '') })).slice(0, 4) : [];
+}
+function normChat(d) {
+  if (!d || !d.id || !Array.isArray(d.messages)) return null;
+  const messages = d.messages.filter((m) => m && (m.r === 'u' || m.r === 'a') && typeof m.t === 'string')
+    .map((m) => ({ r: m.r, t: m.t, at: +m.at || 0, seeds: normSeeds(m.seeds), note: m.note ? String(m.note) : '' }));
+  if (!messages.length) return null;
+  return {
+    id: String(d.id), title: String(d.title || ''), summary: String(d.summary || ''),
+    startedAt: +d.startedAt || messages[0].at || Date.now(), updatedAt: +d.updatedAt || +d.startedAt || Date.now(),
+    digested: Math.min(+d.digested || 0, messages.length),
+    topic: d.topic && d.topic.title ? { kind: String(d.topic.kind || ''), title: String(d.topic.title) } : null,
+    messages,
+  };
+}
+function normImport(d) {
+  if (!d || !d.id) return null;
+  return {
+    id: String(d.id), name: String(d.name || '取り込んだ記録'), addedAt: +d.addedAt || 0, kind: String(d.kind || 'text'),
+    chars: +d.chars || 0, convCount: +d.convCount || 0, total: +d.total || 0, summary: String(d.summary || ''),
+    titles: Array.isArray(d.titles) ? d.titles.map(String).slice(0, 60) : [], partial: !!d.partial,
+  };
+}
+function newChat() { const now = Date.now(); return { id: newId('c'), title: '', summary: '', startedAt: now, updatedAt: now, digested: 0, topic: null, messages: [] }; }
+function serializeChat(c) {
+  const o = {
+    title: c.title || '', summary: c.summary || '', startedAt: c.startedAt, updatedAt: c.updatedAt,
+    digested: c.digested || 0, topic: c.topic || null,
+    messages: c.messages.map((m) => {
+      const x = { r: m.r, t: m.t, at: m.at };
+      if (m.seeds && m.seeds.length) x.seeds = m.seeds;
+      if (m.note) x.note = m.note;
+      return x;
+    }),
+  };
+  // 1つの記録の大きさの上限（256KB）を超えないよう、長すぎる会話は古い方から保存を省く
+  while (o.messages.length > 10 && bytes(JSON.stringify(o)) > 230000) {
+    o.messages.splice(0, 10);
+    o.digested = Math.max(0, o.digested - 10);
+  }
+  return o;
+}
+
+/* ---------- 保存先 ---------- */
+function onStoreError(e) {
+  const code = e && e.code;
+  if (code === 'invalid_argument' || code === 'revoked' || code === 'not_granted') {
+    if (!S.saveBroken) toast('保存する権限がないため、この画面を開いているあいだだけ覚えています。');
+    S.saveBroken = true;
+  } else if (code === 'quota_exceeded') {
+    toast('保存できる量の上限に達しました。「これまで」で古い会話を消してください。');
+  } else if (code === 'local_full') {
+    if (!S.saveBroken) toast('この端末の保存場所がいっぱいです。古い会話を消してください。');
+    S.saveBroken = true;
+  } else {
+    toast('保存に失敗しました。次に操作したときに保存し直します。');
+  }
+  renderStatus();
+}
+function makeDbStore(db, uid) {
+  const home = db.doc(`data/users/${uid}/home`);
+  const chats = home.collection('chats');
+  const imps = home.collection('imports');
+  const pending = new Map(), chains = new Map();
+  function write(ref, op) {
+    pending.set(ref.path, op);
+    const prev = chains.get(ref.path) || Promise.resolve();
+    const next = prev.then(async () => {
+      const cur = pending.get(ref.path);
+      if (!cur) return;
+      pending.delete(ref.path);
+      const run = () => (cur.del ? ref.delete() : ref.set(cur.data));
+      try { await run(); }
+      catch (e) {
+        if (e && e.code === 'unavailable') { await sleep(400 + Math.random() * 900); await run(); }
+        else throw e;
+      }
+      if (S.saveBroken && S.store && S.store.mode === 'db') { S.saveBroken = false; renderStatus(); }
+    }).catch(onStoreError);
+    chains.set(ref.path, next);
+    return next;
+  }
+  return {
+    mode: 'db',
+    async load() {
+      const [h, cs, is] = await Promise.all([
+        home.get(),
+        chats.orderBy('updatedAt', 'desc').limit(400).get(),
+        imps.orderBy('addedAt', 'desc').limit(100).get(),
+      ]);
+      return {
+        home: h.exists ? clone(h.data()) : null,
+        chats: cs.docs.map((d) => Object.assign(clone(d.data()), { id: d.id })),
+        imports: is.docs.map((d) => Object.assign(clone(d.data()), { id: d.id })),
+      };
+    },
+    saveHome(h) { return write(home, { data: clone(h) }); },
+    saveChat(id, data) { return write(chats.doc(id), { data }); },
+    deleteChat(id) { return write(chats.doc(id), { del: true }); },
+    saveImport(id, data) { return write(imps.doc(id), { data }); },
+    deleteImport(id) { return write(imps.doc(id), { del: true }); },
+  };
+}
+function makeLocalStore() {
+  const ok = lsSet(LS_KEY + ':probe', '1');
+  let data = { home: null, chats: {}, imports: {} };
+  if (ok) { try { const raw = lsGet(LS_KEY); if (raw) Object.assign(data, JSON.parse(raw)); } catch (e) { /* 壊れた控えは使わない */ } }
+  let t = null;
+  const later = () => {
+    if (!ok || t) return;
+    t = setTimeout(() => { t = null; if (!lsSet(LS_KEY, JSON.stringify(data))) onStoreError({ code: 'local_full' }); }, 300);
+  };
+  return {
+    mode: ok ? 'local' : 'memory',
+    async load() {
+      return {
+        home: data.home,
+        chats: Object.entries(data.chats || {}).map(([id, c]) => Object.assign({}, c, { id })),
+        imports: Object.entries(data.imports || {}).map(([id, c]) => Object.assign({}, c, { id })),
+      };
+    },
+    saveHome(h) { data.home = clone(h); later(); },
+    saveChat(id, d) { data.chats[id] = d; later(); },
+    deleteChat(id) { delete data.chats[id]; later(); },
+    saveImport(id, d) { data.imports[id] = d; later(); },
+    deleteImport(id) { delete data.imports[id]; later(); },
+  };
+}
+function saveHome() { if (S.store) S.store.saveHome(S.home); }
+function persistChat(c, bump = true) {
+  if (!c.messages.length) return;
+  if (bump) c.updatedAt = Date.now();
+  const i = S.chats.indexOf(c);
+  if (i < 0) S.chats.unshift(c);
+  else if (bump && i > 0) { S.chats.splice(i, 1); S.chats.unshift(c); }
+  if (S.store) S.store.saveChat(c.id, serializeChat(c));
+}
+function privacyText() {
+  if (!S.store) return '';
+  if (S.saveBroken) return '今は保存できない状態です。この画面を閉じると、会話と覚え書きは消えます。';
+  if (S.store.mode === 'db') return '会話と覚え書きは、あなただけが読める場所に保存されます。このページを共有しても、ほかの人には見えません（その人にはその人の記録ができます）。';
+  if (S.store.mode === 'local') return '会話と覚え書きは、この端末のブラウザにだけ保存されます。';
+  return 'この画面では保存できません。閉じると会話と覚え書きは消えます。';
+}
+
+/* ---------- Claude に渡す文章 ---------- */
+function memoryText(max) {
+  const lines = [];
+  for (const k of KINDS) for (const i of S.home.memory.items) if (i.kind === k) lines.push(`- [${k}] ${i.text}`);
+  return joinUpTo(lines, max);
+}
+function userGist(c) { return clip(c.messages.filter((m) => m.r === 'u').map((m) => m.t).join(' / '), 110); }
+function historyText(max, excludeId) {
+  const entries = [];
+  for (const c of S.chats) {
+    if (c.id === excludeId || !c.messages.some((m) => m.r === 'u')) continue;
+    entries.push({ at: c.startedAt, line: `- ${fmtDateLong(c.startedAt)}「${c.title || '無題'}」: ${c.summary || userGist(c)}` });
+  }
+  for (const i of S.imports) {
+    const t = i.titles.length ? ` 会話の題名の例: ${i.titles.slice(0, 25).join('、')}` : '';
+    entries.push({ at: i.addedAt, line: `- 取り込んだ記録「${i.name}」${i.convCount ? `（会話${i.convCount}件）` : ''}: ${i.summary}${t}` });
+  }
+  entries.sort((a, b) => b.at - a.at);
+  return joinUpTo(entries.map((e) => clip(e.line, 700)), max);
+}
+function recentExcerpt(max) {
+  const blocks = [];
+  let used = 0;
+  for (const c of S.chats.slice(0, 4)) {
+    const lines = c.messages.slice(-12).map((m) => `${m.r === 'u' ? 'この人' : 'あなた'}: ${clip(m.t, 160)}`);
+    const block = `[${fmtDateLong(c.updatedAt)}「${c.title || '無題'}」]\n${lines.join('\n')}`;
+    if (used + block.length > max) { if (!blocks.length) blocks.push(block.slice(0, max)); break; }
+    blocks.push(block); used += block.length + 2;
+  }
+  return blocks.join('\n\n');
+}
+function chatRules(c) {
+  return [
+    'あなたは「話のたね」というおしゃべり相手です。相手の人とこれまでに交わした会話の記録を踏まえて、気楽に楽しく話しながら、面白そうな話題を見つけて差し出すのが役目です。',
+    `今日は${todayLong()}です。`,
+    `## この人について覚えていること\n${memoryText(3600) || '（まだありません）'}`,
+    `## これまでの会話\n${historyText(4500, c.id) || '（まだありません）'}`,
+    c.topic ? `## この会話のきっかけ\nあなたが「${c.topic.title}」という話題を見つけて、最初のひとことを投げかけたところから始まっています。` : '',
+    `## 話し方
+- 日本語で、友だちのように気さくに話す。返事は短め（2〜6文）。詳しく聞かれたときだけ長くしてよい。
+- 覚えていることは、流れに合うときだけさりげなく使う（「前に〜って話してたよね」など）。全部を持ち出さない。
+- 記録にないことを覚えているふりをしない。わからないことは聞けばよい。
+- 質問は1回の返事で1つまで。質問攻めにせず、自分の考えや小ネタも出す。
+- 「苦手」にあることは自分から持ち出さない。
+- **太字** や見出しなど、記号での装飾は使わない。
+- 返事の最後に、次に広げられそうな話題を3つ、必ず次の形で書く。この部分は画面ではボタンになり、相手が押すとその話が始まる。
+${MARK}
+- 話題名（15字以内）｜なぜ面白そうか（25字以内）
+- 話題名｜ひとこと
+- 話題名｜ひとこと
+3つには「いまの話の続き」「過去の会話とのつながり」「少し意外な寄り道」を混ぜる。過去の会話とつなげるときは、何の話とつながるのかがわかるように書く。`,
+    '以下が、いまの会話です。',
+  ].filter(Boolean).join('\n\n');
+}
+function withSeeds(m) {
+  if (m.r !== 'a' || !m.seeds || !m.seeds.length) return m.t;
+  return `${m.t}\n\n${MARK}\n${m.seeds.map((s) => `- ${s.title}｜${s.line}`).join('\n')}`;
+}
+function chatTurns(c) {
+  const rules = chatRules(c);
+  const msgs = c.messages.filter((m) => m.t && m.t.trim()).map((m) => ({ role: m.r === 'u' ? 'user' : 'assistant', content: withSeeds(m) }));
+  const limit = 58000 - bytes(rules);
+  let total = msgs.reduce((a, m) => a + bytes(m.content), 0);
+  while (msgs.length > 1 && total > limit) { total -= bytes(msgs[0].content); msgs.shift(); }
+  const last = msgs[msgs.length - 1];
+  if (last && bytes(last.content) > limit) last.content = last.content.slice(-Math.floor(limit / 3));
+  const turns = [{ role: 'user', content: rules }, ...msgs];
+  if (turns[turns.length - 1].role !== 'user') turns.push({ role: 'user', content: '（続けてください）' });
+  return turns;
+}
+function splitSeeds(text) {
+  const clean = (s) => s.replace(/\*\*(.+?)\*\*/g, '$1').trim();
+  const m = MARK_RE.exec(text);
+  if (!m) {
+    for (let k = MARK.length - 1; k > 0; k--) if (text.endsWith(MARK.slice(0, k))) return { body: clean(text.slice(0, -k)), seeds: [] };
+    return { body: clean(text), seeds: [] };
+  }
+  const seeds = text.slice(m.index + m[0].length).split('\n')
+    .map((l) => l.replace(/^\s*(?:[-・*•]|\d+[.)．）、])\s*/, '').trim())
+    .filter(Boolean)
+    .map((l) => { const [t, ...r] = l.split(/[｜|]/); return { title: clip(t.replace(/^「(.*)」$/, '$1').replace(/\*\*/g, ''), 40), line: clip(r.join('｜').replace(/\*\*/g, ''), 60) }; })
+    .filter((s) => s.title)
+    .slice(0, 4);
+  return { body: clean(text.slice(0, m.index)), seeds };
+}
+function topicPrompt(mood) {
+  return `あなたは、会話の話題を考える名人です。ある人のおしゃべり相手として、この人と次に話したら盛り上がりそうな話題を6つ考えてください。
+
+今日は${todayLong()}です。
+${mood ? `この人の今の希望: ${mood}\n` : ''}
+## この人について覚えていること
+${memoryText(3600) || '（まだほとんどありません）'}
+
+## これまでの会話（新しい順）
+${historyText(5000) || '（まだほとんどありません）'}
+
+## 最近の会話の抜粋
+${recentExcerpt(4000) || '（なし）'}
+
+## 最近すでに出した話題（これらと同じものは避ける）
+${S.home.recentTopics.slice(0, 30).join('、') || '（なし）'}
+
+## 考え方
+- kind は次の4種類。6つの内訳は「続き」2、「つなげる」2、「寄り道」1、「いま」1。
+  - 続き: 途中で終わった話、その後どうなったか気になる話。
+  - つなげる: 別々の会話に出てきた2つのことを結びつけると面白くなる話。どれとどれをつなぐのかがはっきりわかるように。
+  - 寄り道: この人の関心の少し外側にある、意外だけれど好きそうな話。
+  - いま: 今日の日付や季節、時期に絡めた話。
+- 記録が少ないときは、少ない手がかりから想像を広げてよい。ただし、記録にない事実をこの人のこととして断定しない。
+- 「苦手」にあることは避ける。
+- ありきたりな話題（天気、趣味は何か、など）より、具体的で「それ話したい」と思える切り口にする。
+
+## 出力の形
+1行に1つ、次のキーを持つJSONオブジェクトを書く。全部で6行。前後に説明やコードブロックの記号は書かない。
+{"kind":"続き","title":"20字以内の話題名","hook":"興味をそそる紹介（1〜2文）","why":"どの会話の何から思いついたか（1文。寄り道・いまは理由でよい）","opener":"あなたがこの話を切り出す最初のひとこと（1〜3文、最後は答えやすい質問1つ）"}`;
+}
+const DIGEST_RULES = `あなたは記録係です。ある人の「おしゃべり相手」が次からの会話で使う「覚え書き」を更新します。いまの覚え書きと新しい記録を読み、更新後の覚え書きをJSONで返してください。
+
+覚え書きの項目の種類（kind）:
+- 関心: 好きなこと、興味を持っていること、詳しいこと、最近ハマっていること。
+- 途中の話: 結論が出ていない話、「今度〜する」「〜が気になる」など続きがありそうな話。いつの話かわかれば添える。
+- 覚えておくこと: 話に出た具体的なこと（していること、身の回りのこと、好みの細部）。本人が言ったことだけ。
+- 苦手: 話したくなさそうだったこと、嫌がったこと。
+
+ルール:
+- items は全部で60件まで。1件は60字以内の日本語。重複はまとめ、古くて使わなそうなものは削ってよい。すでにある項目は、変える理由がなければそのまま残す。
+- 推測で事実を作らない。
+- 健康・お金・他人の個人情報など立ち入った内容は、本人がそれを話題として楽しんでいる場合を除いて書かない。
+- title はこの記録の短い題名（15字以内）。summary はこの記録の要約（100字以内）。
+
+返す形（JSONのみ）:
+{"items":[{"kind":"関心","text":"..."}],"title":"...","summary":"..."}`;
+function digestPrompt(label, body) {
+  return `${DIGEST_RULES}\n\n今日は${todayLong()}です。\n\n## いまの覚え書き\n${JSON.stringify({ items: S.home.memory.items })}\n\n## 新しい記録（${label}）\n${body}`;
+}
+async function runDigest(label, body, signal) {
+  const opts = { modelTier: 'default', cache: false };
+  if (signal) opts.signal = signal;
+  const r = await S.sample.json(digestPrompt(label, body), opts);
+  if (!r || !Array.isArray(r.items)) throw { code: 'invalid_json' };
+  const items = r.items.map(normItem).filter(Boolean).slice(0, 60);
+  if (items.length || !S.home.memory.items.length) {
+    S.home.memory = { items, updatedAt: Date.now() };
+    saveHome();
+  }
+  return { title: clip(r.title, 30), summary: clip(r.summary, 200) };
+}
+
+/* ---------- 会話 ---------- */
+function aiOff() { S.ai = 'off'; renderAll(); }
+function send(text) {
+  text = String(text || '').trim();
+  if (!text) return false;
+  if (S.ai !== 'ok') {
+    toast(S.ai === 'wait' ? 'Claude につないでいるところです。少し待ってから送ってください。' : 'Claude につながっていないため送れません。');
+    return false;
+  }
+  if (S.busy) return false;
+  if (!S.cur) S.cur = newChat();
+  const c = S.cur;
+  c.messages.push({ r: 'u', t: text, at: Date.now(), seeds: [], note: '' });
+  if (!c.title) c.title = clip(text, 24);
+  S.lastError = null;
+  persistChat(c);
+  reply(c);
+  return true;
+}
+async function reply(c) {
+  S.busy = true; S.busyChat = c; S.streamText = '';
+  const ctl = new AbortController();
+  S.ctl = ctl;
+  if (S.cur === c) { renderTalk(); scrollEnd(true); }
+  try {
+    const res = await S.sample(chatTurns(c), {
+      cache: false, signal: ctl.signal, modelTier: S.deep ? 'default' : 'quick',
+      onText: ({ text }) => { S.streamText = splitSeeds(text).body; paintStream(); },
+    });
+    const { body, seeds } = splitSeeds(res.text);
+    c.messages.push({ r: 'a', t: body || res.text.trim(), at: Date.now(), seeds, note: res.truncated ? '返事が長すぎて途中で切れました。' : '' });
+  } catch (e) {
+    const partial = e && e.code !== 'refused' && e.text ? splitSeeds(e.text).body : '';
+    if (partial) c.messages.push({ r: 'a', t: partial, at: Date.now(), seeds: [], note: e.code === 'cancelled' ? '途中で止めました。' : '途中で切れました。' });
+    if (e && e.code !== 'cancelled') {
+      S.lastError = { chat: c, msg: errorCopy(e), retry: !partial && !isFatal(e) };
+      if (isFatal(e)) S.ai = 'off';
+    }
+  } finally {
+    S.busy = false; S.busyChat = null; S.ctl = null; S.streamText = '';
+    persistChat(c);
+    if (S.cur === c) { renderTalk(); scrollEnd(); }
+    renderHistory(); renderStatus(); renderTopics();
+    if (c.messages.length - (c.digested || 0) >= 12) queueDigest(c);
+  }
+}
+function paintStream() {
+  const b = $('streamBubble');
+  if (!b) return;
+  if (S.streamText) b.textContent = S.streamText;
+  scrollEnd();
+}
+function scrollEnd(force) {
+  const doc = document.scrollingElement || document.documentElement;
+  const near = window.innerHeight + window.scrollY >= doc.scrollHeight - 200;
+  if (force || near) window.scrollTo(0, doc.scrollHeight);
+}
+function leaveCurrent() {
+  const c = S.cur;
+  if (S.busy && S.ctl) S.ctl.abort();
+  if (c && c.messages.length) queueDigest(c);
+  S.cur = null; S.lastError = null;
+}
+function openChat(id) {
+  const c = S.chats.find((x) => x.id === id);
+  if (!c) return;
+  if (S.cur !== c) { leaveCurrent(); S.cur = c; }
+  switchTab('talk');
+  renderTalk();
+  scrollEnd(true);
+}
+function startTopic(t, isSample) {
+  leaveCurrent();
+  if (isSample || !t.opener) {
+    switchTab('talk');
+    renderTalk();
+    send(`「${t.title}」の話がしたい`);
+    return;
+  }
+  const c = newChat();
+  c.title = t.title;
+  c.topic = { kind: t.kind, title: t.title };
+  c.messages.push({ r: 'a', t: t.opener, at: Date.now(), seeds: [], note: '' });
+  S.cur = c;
+  persistChat(c);
+  switchTab('talk');
+  renderTalk(); renderHistory();
+  scrollEnd(true);
+  try { $('msg').focus({ preventScroll: true }); } catch (e) { /* 無視 */ }
+}
+
+/* ---------- 覚え書きの更新 ---------- */
+function hasUndigested(c) { return !!c && c.messages.slice(c.digested || 0).some((m) => m.r === 'u'); }
+function queueDigest(c) {
+  if (S.ai !== 'ok' || !hasUndigested(c)) return S.digestChain;
+  S.digestChain = S.digestChain.then(() => digestChat(c)).catch(() => {});
+  return S.digestChain;
+}
+async function digestChat(c) {
+  if (S.ai !== 'ok' || !hasUndigested(c)) return;
+  const from = c.digested || 0, upto = c.messages.length;
+  S.digesting++; S.digestErr = ''; renderDigestNote(); renderMemo();
+  try {
+    let body = c.messages.slice(from, upto).map((m) => (m.r === 'u' ? 'この人: ' : '相手: ') + m.t).join('\n');
+    if (body.length > 14000) body = '…' + body.slice(-14000);
+    const label = `${fmtDateLong(c.startedAt)}の会話「${c.title || '無題'}」${from ? 'の続き' : ''}`;
+    const r = await runDigest(label, body);
+    if (!c.topic && r.title && !from) c.title = r.title;
+    if (r.summary) c.summary = from && c.summary ? clip(`${c.summary} / ${r.summary}`, 240) : r.summary;
+    c.digested = upto;
+    persistChat(c, false);
+  } catch (e) {
+    if (isFatal(e)) S.ai = 'off';
+    S.digestErr = '覚え書きを更新できませんでした。次の区切りでやり直します。';
+  } finally {
+    S.digesting--;
+    renderDigestNote(); renderMemo(); renderHistory(); renderStatus();
+    if (S.cur === c) renderTalkHead();
+  }
+}
+
+/* ---------- 話題さがし ---------- */
+async function findTopics() {
+  if (S.ai !== 'ok') { toast('Claude につながっていないため、話題を考えられません。'); return; }
+  if (S.findBusy) return;
+  const mood = [S.mood !== 'おまかせ' ? S.mood : '', $('moodText').value.trim()].filter(Boolean).join('／');
+  const ctl = new AbortController();
+  S.findBusy = true; S.findCtl = ctl; S.liveDeck = []; S.deckNote = 'これまでの記録を読んで考えています（30秒〜1分ほど）'; S.deckNoteBad = false;
+  renderTopics();
+  const got = [];
+  let pending = '';
+  const add = (line) => {
+    line = line.trim().replace(/,$/, '');
+    if (!line.startsWith('{')) return;
+    try { const t = normTopic(JSON.parse(line)); if (t) { got.push(t); S.liveDeck = got.slice(); renderDeck(); } } catch (e) { /* 途中の行は読み飛ばす */ }
+  };
+  try {
+    const res = await S.sample(topicPrompt(mood), {
+      cache: false, signal: ctl.signal, modelTier: 'default',
+      onText: ({ delta }) => { const lines = (pending + delta).split('\n'); pending = lines.pop(); lines.forEach(add); },
+    });
+    add(pending);
+    if (!got.length) {
+      const t = res.text, a = t.indexOf('['), b = t.lastIndexOf(']');
+      if (a >= 0 && b > a) { try { JSON.parse(t.slice(a, b + 1)).map(normTopic).filter(Boolean).forEach((x) => got.push(x)); } catch (e) { /* 形が違う */ } }
+    }
+    S.deckNote = got.length ? '' : 'うまく話題が作れませんでした。もう一度押してください。';
+    S.deckNoteBad = !got.length;
+  } catch (e) {
+    if (e && e.code === 'cancelled') S.deckNote = got.length ? '途中で止めました。' : '';
+    else { S.deckNote = errorCopy(e); S.deckNoteBad = true; if (isFatal(e)) S.ai = 'off'; }
+  } finally {
+    if (got.length) {
+      S.home.deck = { at: Date.now(), mood, items: got.slice(0, 8) };
+      const seen = new Set();
+      S.home.recentTopics = [...got.map((t) => t.title), ...S.home.recentTopics].filter((x) => !seen.has(x) && seen.add(x)).slice(0, 40);
+      saveHome();
+    }
+    S.findBusy = false; S.findCtl = null; S.liveDeck = null;
+    renderTopics(); renderWelcomeIfShown(); renderStatus();
+  }
+}
+
+/* ---------- 取り込み ---------- */
+function msgText(m) {
+  if (typeof m.text === 'string' && m.text.trim()) return m.text.trim();
+  if (Array.isArray(m.content)) return m.content.filter((x) => x && x.type === 'text' && typeof x.text === 'string').map((x) => x.text).join('\n').trim();
+  return '';
+}
+function parseImport(raw) {
+  const t = raw.trim();
+  if (t.startsWith('[') || t.startsWith('{')) {
+    try {
+      let j = JSON.parse(t);
+      if (!Array.isArray(j)) j = Array.isArray(j.conversations) ? j.conversations : [j];
+      const convs = [];
+      let kind = null;
+      for (const c of j) {
+        if (!c || typeof c !== 'object') continue;
+        if (Array.isArray(c.chat_messages)) {
+          kind = kind || 'claude';
+          convs.push({ title: c.name || c.title || '', date: Date.parse(c.updated_at || c.created_at) || 0,
+            msgs: c.chat_messages.map((m) => ({ user: m && m.sender === 'human', text: m ? msgText(m) : '' })).filter((m) => m.text) });
+        } else if (c.mapping && typeof c.mapping === 'object') {
+          kind = kind || 'chatgpt';
+          const nodes = Object.values(c.mapping).map((n) => n && n.message)
+            .filter((m) => m && m.author && (m.author.role === 'user' || m.author.role === 'assistant') && m.content);
+          nodes.sort((a, b) => (a.create_time || 0) - (b.create_time || 0));
+          convs.push({ title: c.title || '', date: (c.update_time || c.create_time || 0) * 1000,
+            msgs: nodes.map((m) => ({ user: m.author.role === 'user', text: (m.content.parts || []).filter((p) => typeof p === 'string').join('\n').trim() })).filter((m) => m.text) });
+        }
+      }
+      const ok = convs.filter((c) => c.msgs.length);
+      if (ok.length) return { kind, convs: ok, chars: t.length };
+    } catch (e) { /* JSON でなければ文章として読む */ }
+  }
+  return { kind: 'text', text: t, chars: t.length };
+}
+function convBlock(c, per) {
+  const d = c.date ? fmtDateLong(c.date) : '';
+  let s = `■ ${clip(c.title || '無題', 40)}${d ? `（${d}）` : ''}\n`;
+  const users = c.msgs.filter((m) => m.user);
+  const src = users.length ? users : c.msgs;
+  const head = s.length;
+  for (const m of src) {
+    const line = `・${clip(m.text, 200)}\n`;
+    if (s.length + line.length > per) break;
+    s += line;
+  }
+  if (s.length === head && src.length) s += `・${clip(src[0].text, Math.max(40, per - head - 4))}\n`;
+  return s + '\n';
+}
+function buildChunks(p) {
+  const chunks = [], chunkConvs = [];
+  if (p.convs) {
+    const convs = p.convs.slice().sort((a, b) => b.date - a.date);
+    const per = Math.max(240, Math.min(1500, Math.floor((CHUNK * MAX_CHUNKS) / convs.length) - 30));
+    let cur = '', curConvs = [];
+    for (const c of convs) {
+      const block = convBlock(c, per);
+      if (cur && cur.length + block.length > CHUNK) {
+        chunks.push(cur); chunkConvs.push(curConvs); cur = ''; curConvs = [];
+        if (chunks.length >= MAX_CHUNKS) break;
+      }
+      cur += block; curConvs.push(c);
+    }
+    if (cur && chunks.length < MAX_CHUNKS) { chunks.push(cur); chunkConvs.push(curConvs); }
+    return { chunks, chunkConvs, covered: chunkConvs.reduce((a, x) => a + x.length, 0), total: convs.length, cut: false, used: 0 };
+  }
+  let body = p.text, cut = false;
+  if (body.length > CHUNK * MAX_CHUNKS) { body = body.slice(-CHUNK * MAX_CHUNKS); cut = true; }
+  let cur = '';
+  for (let line of body.split('\n')) {
+    while (line.length > CHUNK) { if (cur) { chunks.push(cur); cur = ''; } chunks.push(line.slice(0, CHUNK)); line = line.slice(CHUNK); }
+    if (cur.length + line.length + 1 > CHUNK) { chunks.push(cur); cur = ''; }
+    cur += line + '\n';
+  }
+  if (cur.trim()) chunks.push(cur);
+  return { chunks: chunks.slice(-MAX_CHUNKS), chunkConvs: null, covered: 0, total: 0, cut, used: body.length };
+}
+const KIND_LABEL = { claude: 'Claude', chatgpt: 'ChatGPT' };
+async function prepImport() {
+  S.impError = '';
+  const f = $('impFile').files && $('impFile').files[0];
+  let text = $('impText').value;
+  let name = $('impName').value.trim();
+  if (f) {
+    if (f.size > 80 * 1024 * 1024) { S.impError = 'ファイルが大きすぎます（80MBまで）。'; renderImport(); return; }
+    try { text = await f.text(); } catch (e) { S.impError = 'ファイルを読めませんでした。別のファイルで試してください。'; renderImport(); return; }
+    if (!name) name = f.name.replace(/\.[^.]+$/, '');
+  }
+  if (!text || !text.trim()) { S.impError = '取り込むファイルを選ぶか、会話を貼り付けてください。'; renderImport(); return; }
+  const parsed = parseImport(text);
+  const plan = buildChunks(parsed);
+  if (!plan.chunks.length) { S.impError = '読み取れる会話が見つかりませんでした。'; renderImport(); return; }
+  if (!name) name = parsed.convs ? `${KIND_LABEL[parsed.kind] || ''} のチャット`.trim() : '貼り付けた会話';
+  S.imp = Object.assign({ name: clip(name, 60), who: $('impWho').value.trim(), parsed, running: false, done: 0, stop: false, ctl: null, summaries: [] }, plan);
+  renderImport();
+}
+function planText(imp) {
+  const n = imp.chunks.length;
+  const cost = `Claude を ${n} 回使って読みます（1回あたり数十秒）。`;
+  if (imp.parsed.convs) {
+    const k = KIND_LABEL[imp.parsed.kind] || '';
+    return `「${imp.name}」: ${k}の会話が ${imp.total} 件ありました。` + (imp.covered < imp.total ? `新しいほうから ${imp.covered} 件を読みます。` : '') + cost;
+  }
+  return `「${imp.name}」: ${imp.parsed.chars.toLocaleString()} 文字の記録です。` + (imp.cut ? `長いので、最後（新しいほう）の ${imp.used.toLocaleString()} 文字を読みます。` : '') + cost;
+}
+async function runImport() {
+  const imp = S.imp;
+  if (!imp || imp.running) return;
+  if (S.ai !== 'ok') { S.impError = 'Claude につながっていないため読み込めません。'; renderImport(); return; }
+  imp.running = true; imp.stop = false; S.impError = '';
+  renderImport();
+  const intro = imp.parsed.convs
+    ? `（${KIND_LABEL[imp.parsed.kind] || 'チャット'}の記録から、この人の発言を会話ごとに抜き出したもの。■は会話の題名）\n`
+    : `（チャットの記録。${imp.who ? `「${imp.who}」がこの人です。` : 'どの発言者がこの人かはわからない。複数人の会話なら、特定の誰かのことをこの人のこととして決めつけない。'}）\n`;
+  for (let i = imp.done; i < imp.chunks.length && !imp.stop; i++) {
+    imp.ctl = new AbortController();
+    try {
+      const r = await runDigest(`取り込んだ記録「${imp.name}」の一部（${i + 1}/${imp.chunks.length}）`, intro + imp.chunks[i], imp.ctl.signal);
+      if (r.summary) imp.summaries.push(r.summary);
+      imp.done = i + 1;
+    } catch (e) {
+      if (!(e && e.code === 'cancelled')) { S.impError = errorCopy(e); if (isFatal(e)) S.ai = 'off'; }
+      break;
+    } finally { renderImport(); renderMemo(); }
+  }
+  imp.running = false; imp.ctl = null;
+  if (imp.done > 0) {
+    const convsDone = imp.chunkConvs ? imp.chunkConvs.slice(0, imp.done).flat() : [];
+    const doc = {
+      name: imp.name, addedAt: Date.now(), kind: imp.parsed.kind || 'text', chars: imp.parsed.chars,
+      convCount: convsDone.length, total: imp.total, summary: clip(imp.summaries.join(' '), 400),
+      titles: convsDone.map((c) => clip(c.title || '無題', 30)).slice(0, 60), partial: imp.done < imp.chunks.length,
+    };
+    const id = newId('i');
+    S.imports.unshift(Object.assign({ id }, doc));
+    if (S.store) S.store.saveImport(id, doc);
+    toast(`「${imp.name}」を取り込みました。覚え書きは ${S.home.memory.items.length} 件です。`);
+    S.imp = null;
+    $('impFile').value = ''; $('impText').value = ''; $('impName').value = ''; $('impWho').value = ''; $('impFileInfo').textContent = '';
+  }
+  renderAll();
+}
+
+/* ---------- 描画 ---------- */
+function examples() {
+  const d = new Date(), m = d.getMonth() + 1;
+  const season = m >= 3 && m <= 5 ? '春' : m >= 6 && m <= 8 ? '夏' : m >= 9 && m <= 11 ? '秋' : '冬';
+  return [
+    { kind: 'いま', title: `この${season}に一つだけやるなら`, hook: `${m}月も${d.getDate() <= 10 ? 'はじまったばかり' : d.getDate() <= 20 ? 'なかば' : '終わりが近い'}。今年の${season}のうちに叶えたい小さな計画を一つ決めてみる話。` },
+    { kind: 'つなげる', title: '子どものころの好きと、いまの好き', hook: '昔夢中だったものと、いまハマっているもの。意外なところで一本の線につながっているかもしれません。' },
+    { kind: '寄り道', title: '一日だけ別の仕事をするなら', hook: '憧れの仕事、向いていそうな仕事、絶対にやりたくない仕事。選び方にその人らしさが出ます。' },
+  ];
+}
+function topicCard(t, opt = {}) {
+  return el('article', { class: `topic ${TOPIC_KINDS[t.kind] || 'k-side'}${opt.compact ? ' compact' : ''}` },
+    el('div', { class: 'topic-top' }, el('span', { class: 'kind', text: t.kind }), opt.sample ? el('span', { class: 'tag-sample', text: '見本' }) : null),
+    el('h3', { class: 'topic-title', text: t.title }),
+    t.hook ? el('p', { class: 'topic-hook', text: t.hook }) : null,
+    !opt.compact && t.why ? el('p', { class: 'topic-why' }, el('span', { class: 'why-k', text: 'きっかけ' }), el('span', { text: t.why })) : null,
+    el('button', { class: 'topic-go', type: 'button', onclick: () => startTopic(t, !!opt.sample) }, 'この話をする →'),
+  );
+}
+function thinkingNode(label) {
+  return el('span', { class: 'thinking' }, el('i'), el('i'), el('i'), el('span', { text: label }));
+}
+function renderStatus() {
+  const s = $('status');
+  if (!S.loaded) { s.textContent = 'つないでいます…'; s.className = 'status'; return; }
+  const where = S.saveBroken ? '保存できません' : ({ db: '自分専用に保存', local: 'この端末に保存', memory: '保存されません' }[S.store.mode]);
+  s.textContent = (S.ai === 'ok' ? '' : 'Claude 未接続 · ') + where;
+  s.className = 'status ' + (S.ai === 'ok' && !S.saveBroken && S.store.mode === 'db' ? 'ok' : 'warn');
+  s.title = privacyText();
+  const nChats = S.chats.length;
+  $('histCount').textContent = nChats ? String(nChats) : '';
+  $('memoCount').textContent = S.home.memory.items.length ? String(S.home.memory.items.length) : '';
+}
+function renderTalkHead() {
+  const c = S.cur;
+  const has = !!(c && c.messages.length);
+  const ct = $('curTitle');
+  ct.replaceChildren(has ? (c.title || '無題の話') : '新しい話');
+  if (has) ct.append(el('span', { class: 'from', text: fmtWhen(c.startedAt) }));
+  $('newChat').hidden = !has;
+}
+function renderWelcome() {
+  const w = $('welcome');
+  w.replaceChildren();
+  w.append(el('h1', { text: '何の話をしよう？' }));
+  w.append(el('p', { class: 'lead', text: '話しかけると、これまでの会話を覚えたうえで返事をして、次に広げられそうな話題を3つ添えます。話すほど、話題が自分向けになっていきます。' }));
+  if (S.loaded && S.ai === 'off') w.append(el('div', { class: 'offnote', text: 'いまは Claude につながっていません。このページを claude.ai で開くと、話したり話題を見つけたりできます。記録を見ることはできます。' }));
+  const last = S.chats.find((c) => c.messages.length);
+  if (last) {
+    w.append(el('button', { class: 'resume', type: 'button', onclick: () => openChat(last.id) },
+      el('span', { class: 'resume-k', text: '前回の続き' }), el('span', { class: 'resume-t', text: last.title || '無題の話' }), el('span', { class: 'resume-d', text: fmtWhen(last.updatedAt) })));
+  }
+  const deck = S.home.deck && S.home.deck.items.length ? S.home.deck.items.slice(0, 3) : null;
+  w.append(el('div', { class: 'wsub' }, el('h2', { text: deck ? '前に見つけた話のたね' : 'たとえばこんな話から' }), deck ? null : el('span', { class: 'tag-sample', text: '見本' })));
+  const grid = el('div', { class: 'deck compact' });
+  (deck || examples()).forEach((t) => grid.append(topicCard(t, { compact: true, sample: !deck })));
+  w.append(grid);
+  w.append(el('div', { class: 'row' },
+    el('button', { class: 'btn', type: 'button', onclick: () => { switchTab('topics'); if (S.ai === 'ok' && !S.findBusy) findTopics(); } }, '話題をさがしてもらう'),
+    el('button', { class: 'btn ghost', type: 'button', onclick: () => { switchTab('history'); $('impFile').focus(); } }, 'ほかのチャットを取り込む')));
+}
+function renderWelcomeIfShown() { if (!$('welcome').hidden) renderWelcome(); }
+function msgNode(m) {
+  if (m.r === 'u') {
+    return el('li', { class: 'msg me' }, el('div', { class: 'bubble', text: m.t }), m.note ? el('div', { class: 'msgnote', text: m.note }) : null);
+  }
+  const li = el('li', { class: 'msg ai' }, el('div', { class: 'av', 'aria-hidden': 'true' }), el('div', { class: 'bubble', text: m.t }));
+  if (m.note) li.append(el('div', { class: 'msgnote', text: m.note }));
+  if (m.seeds && m.seeds.length) {
+    li.append(el('div', { class: 'seeds' },
+      el('span', { class: 'seeds-label', text: '次のたね' }),
+      m.seeds.map((s) => el('button', { class: 'seed', type: 'button', disabled: S.ai !== 'ok', onclick: () => send(`「${s.title}」の話がしたい`) },
+        el('span', { class: 'dot', 'aria-hidden': 'true' }), el('span', { class: 'seed-t', text: s.title }), s.line ? el('span', { class: 'seed-l', text: s.line }) : null))));
+  }
+  return li;
+}
+function renderLog() {
+  const log = $('log');
+  log.replaceChildren();
+  const c = S.cur;
+  if (!c) return;
+  c.messages.forEach((m) => log.append(msgNode(m)));
+  if (S.busy && S.busyChat === c) {
+    const b = el('div', { class: 'bubble', id: 'streamBubble' });
+    if (S.streamText) b.textContent = S.streamText; else b.append(thinkingNode('考えています'));
+    log.append(el('li', { class: 'msg ai' }, el('div', { class: 'av', 'aria-hidden': 'true' }), b));
+  }
+  if (S.lastError && S.lastError.chat === c) {
+    log.append(el('li', { class: 'msg ai' }, el('div', { class: 'av', 'aria-hidden': 'true' }),
+      el('div', { class: 'errrow' }, el('span', { text: S.lastError.msg }),
+        S.lastError.retry ? el('button', { class: 'btn small', type: 'button', onclick: () => { S.lastError = null; reply(c); } }, 'もう一度') : null)));
+  }
+}
+function renderComposer() {
+  const ta = $('msg'), btn = $('sendBtn');
+  ta.disabled = S.ai === 'off';
+  ta.placeholder = S.ai === 'off' ? 'Claude につながっていないため、ここでは話せません'
+    : (S.cur && S.cur.messages.length ? '返事を書く' : 'なんでも話しかけてください');
+  btn.textContent = S.busy ? '止める' : '送る';
+  btn.classList.toggle('stop', S.busy);
+  btn.classList.toggle('primary', !S.busy);
+  btn.disabled = !S.busy && S.ai !== 'ok';
+  $('deep').checked = S.deep;
+}
+function renderDigestNote() {
+  const n = $('digestNote');
+  n.replaceChildren();
+  if (S.digesting) n.append(thinkingNode('覚え書きを更新しています'));
+  else if (S.digestErr) n.textContent = S.digestErr;
+}
+function renderTalk() {
+  const has = !!(S.cur && S.cur.messages.length);
+  renderTalkHead();
+  $('welcome').hidden = has;
+  if (!has) renderWelcome();
+  renderLog();
+  renderComposer();
+  renderDigestNote();
+}
+function renderDeck() {
+  const box = $('deck');
+  box.replaceChildren();
+  const live = S.liveDeck;
+  let items, sample = false;
+  if (live) items = live;
+  else if (S.home.deck && S.home.deck.items.length) items = S.home.deck.items;
+  else { items = examples(); sample = true; }
+  items.forEach((t) => box.append(topicCard(t, { sample })));
+  if (live) for (let i = live.length; i < 6; i++) box.append(el('div', { class: 'topic pending' }, i === live.length ? thinkingNode('考えています') : null));
+  $('deckSample').hidden = !sample;
+  $('deckTitle').textContent = live ? '見つけている話題' : sample ? '話題の見本' : `${fmtWhen(S.home.deck.at)}に見つけた話題${S.home.deck.mood ? `（${S.home.deck.mood}）` : ''}`;
+}
+function renderTopics() {
+  $('findBtn').hidden = S.findBusy;
+  $('findBtn').disabled = S.ai !== 'ok';
+  $('findBtn').textContent = S.home.deck ? '別の話題を見つける' : '話題を見つける';
+  $('findStop').hidden = !S.findBusy;
+  const note = $('deckNote');
+  note.textContent = S.ai === 'off' && S.loaded && !S.deckNote ? 'Claude につながっていないため、新しい話題は考えられません。' : S.deckNote;
+  note.className = 'note' + (S.deckNoteBad ? ' bad' : '');
+  document.querySelectorAll('#moods button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mood === S.mood)));
+  renderDeck();
+}
+function confirmButton(label, onConfirm, cls = 'btn danger small') {
+  const b = el('button', { class: cls, type: 'button', text: label });
+  let armed = false, timer = null;
+  b.addEventListener('click', () => {
+    if (!armed) {
+      armed = true; b.textContent = '本当に消す'; b.classList.add('armed');
+      timer = setTimeout(() => { armed = false; b.textContent = label; b.classList.remove('armed'); }, 4000);
+      return;
+    }
+    clearTimeout(timer);
+    onConfirm();
+  });
+  return b;
+}
+function renderHistory() {
+  const list = $('chatList');
+  list.replaceChildren();
+  const chats = S.chats.filter((c) => c.messages.length);
+  $('chatCount').textContent = chats.length ? `${chats.length}件` : '';
+  if (!chats.length) list.append(el('li', { style: 'display:block' }, el('p', { class: 'empty', text: 'まだ会話はありません。「話す」で話しかけると、ここに残っていきます。' })));
+  for (const c of chats) {
+    const n = c.messages.filter((m) => m.r === 'u').length;
+    list.append(el('li', {},
+      el('div', { class: 't' }, c.title || '無題の話', S.cur === c ? el('span', { class: 'now', text: 'いま' }) : null),
+      el('div', { class: 'acts' },
+        el('button', { class: 'btn small', type: 'button', onclick: () => openChat(c.id) }, '続きを話す'),
+        confirmButton('消す', () => deleteChat(c))),
+      el('div', { class: 'meta', text: `${fmtWhen(c.startedAt)} · ${n}回話した${c.topic ? ` · 話題「${clip(c.topic.title, 20)}」から` : ''}${hasUndigested(c) ? ' · 覚え書き未反映' : ''}` }),
+      el('div', { class: 'sum', text: c.summary || userGist(c) })));
+  }
+  const il = $('impList');
+  il.replaceChildren();
+  $('impCount').textContent = S.imports.length ? `${S.imports.length}件` : '';
+  if (!S.imports.length) il.append(el('li', { style: 'display:block' }, el('p', { class: 'empty', text: 'まだありません。上の「ほかのチャットを取り込む」から追加できます。' })));
+  for (const i of S.imports) {
+    const meta = [fmtWhen(i.addedAt), i.convCount ? `会話${i.convCount}件${i.total > i.convCount ? `（全${i.total}件中）` : ''}` : `${i.chars.toLocaleString()}文字`, i.partial ? '途中まで' : ''].filter(Boolean).join(' · ');
+    il.append(el('li', {},
+      el('div', { class: 't', text: i.name }),
+      el('div', { class: 'acts' }, confirmButton('消す', () => deleteImport(i))),
+      el('div', { class: 'meta', text: meta }),
+      el('div', { class: 'sum', text: i.summary })));
+  }
+  renderStatus();
+}
+function deleteChat(c) {
+  if (S.busy && S.busyChat === c && S.ctl) S.ctl.abort();
+  S.chats = S.chats.filter((x) => x !== c);
+  if (S.cur === c) { S.cur = null; S.lastError = null; }
+  if (S.store) S.store.deleteChat(c.id);
+  toast('会話を消しました。覚え書きに残ったことは「覚え書き」から消せます。');
+  renderAll();
+}
+function deleteImport(i) {
+  S.imports = S.imports.filter((x) => x !== i);
+  if (S.store) S.store.deleteImport(i.id);
+  toast('取り込んだ記録を消しました。覚え書きに残ったことは「覚え書き」から消せます。');
+  renderAll();
+}
+function renderImport() {
+  const imp = S.imp;
+  $('impPlan').hidden = !imp || imp.running;
+  $('impProg').hidden = !imp || !imp.running;
+  if (imp) {
+    $('impPlanText').textContent = planText(imp) + (imp.done ? `（${imp.done}/${imp.chunks.length} まで読み終わっています）` : '');
+    $('impGo').textContent = imp.done ? '続きを読み込む' : '読み込む';
+    $('impBar').max = imp.chunks.length; $('impBar').value = imp.done;
+    $('impProgText').textContent = `${imp.done} / ${imp.chunks.length} を読み終わりました`;
+  }
+  $('impGo').disabled = S.ai !== 'ok';
+  $('impPrep').disabled = !!(imp && imp.running);
+  $('impErr').textContent = S.impError || (S.loaded && S.ai === 'off' ? 'Claude につながっていないため、今は読み込めません。' : '');
+}
+function renderMemo() {
+  const box = $('memoGroups');
+  box.replaceChildren();
+  const items = S.home.memory.items;
+  $('memoUpdated').textContent = S.home.memory.updatedAt ? `最後に更新: ${fmtWhen(S.home.memory.updatedAt)}` : '';
+  if (!items.length) box.append(el('p', { class: 'empty', style: 'padding:0', text: 'まだ何も覚えていません。話したり、ほかのチャットを取り込んだりすると、ここに増えていきます。' }));
+  for (const k of KINDS) {
+    const list = items.filter((i) => i.kind === k);
+    if (!list.length) continue;
+    box.append(el('section', { class: 'memo-group' },
+      el('h3', {}, k, el('span', { class: 'hint', text: `${KIND_NOTE[k]} · ${list.length}件` })),
+      el('ul', { class: 'memo-list' }, list.map((i) => el('li', {},
+        el('span', { text: i.text }),
+        el('button', { class: 'x', type: 'button', title: '消す', 'aria-label': `「${i.text}」を消す`, onclick: () => {
+          const idx = S.home.memory.items.indexOf(i);
+          if (idx >= 0) { S.home.memory.items.splice(idx, 1); S.home.memory.updatedAt = Date.now(); saveHome(); renderMemo(); renderStatus(); }
+        } }, '×'))))));
+  }
+  const dn = $('digestNow');
+  dn.disabled = S.ai !== 'ok' || S.digesting > 0 || !hasUndigested(S.cur);
+  dn.textContent = S.digesting ? '更新しています…' : 'いまの会話から覚え直す';
+  dn.title = hasUndigested(S.cur) ? '' : 'いま開いている会話は、すでに覚え書きに反映されています';
+  $('memoPrivacy').textContent = privacyText();
+  $('memoClear').hidden = !items.length;
+}
+function renderAll() {
+  renderStatus(); renderTalk(); renderTopics(); renderHistory(); renderImport(); renderMemo();
+}
+function switchTab(tab) {
+  S.tab = tab;
+  document.querySelectorAll('.tabs button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+  for (const t of ['talk', 'topics', 'history', 'memo']) $('p-' + t).hidden = t !== tab;
+  window.scrollTo(0, 0);
+  if (tab === 'talk') scrollEnd(true);
+}
+
+/* ---------- 操作 ---------- */
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => switchTab(b.dataset.tab)));
+const fine = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
+function autoGrow() { const ta = $('msg'); ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, window.innerHeight * 0.4) + 'px'; }
+$('msg').addEventListener('input', autoGrow);
+$('msg').addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' || e.shiftKey || e.isComposing || e.keyCode === 229) return;
+  if (fine || e.ctrlKey || e.metaKey) { e.preventDefault(); $('composer').requestSubmit(); }
+});
+$('composer').addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (S.busy) { if (S.ctl) S.ctl.abort(); return; }
+  if (send($('msg').value)) { $('msg').value = ''; autoGrow(); }
+});
+$('deep').addEventListener('change', (e) => { S.deep = e.target.checked; lsSet(LS_DEEP, S.deep ? '1' : '0'); });
+$('newChat').addEventListener('click', () => { leaveCurrent(); renderTalk(); renderHistory(); try { $('msg').focus(); } catch (e) { /* 無視 */ } });
+$('findBtn').addEventListener('click', findTopics);
+$('findStop').addEventListener('click', () => { if (S.findCtl) S.findCtl.abort(); });
+$('moods').addEventListener('click', (e) => { const b = e.target.closest('button[data-mood]'); if (!b) return; S.mood = b.dataset.mood; renderTopics(); });
+$('impFile').addEventListener('change', () => {
+  const f = $('impFile').files && $('impFile').files[0];
+  $('impFileInfo').textContent = f ? `${f.name}（${(f.size / 1024 / 1024).toFixed(f.size > 1048576 ? 1 : 2)} MB）` : '';
+  S.imp = null; S.impError = ''; renderImport();
+});
+$('impText').addEventListener('input', () => { if (S.imp && !S.imp.running) { S.imp = null; renderImport(); } });
+$('impPrep').addEventListener('click', prepImport);
+$('impGo').addEventListener('click', runImport);
+$('impCancel').addEventListener('click', () => { S.imp = null; S.impError = ''; renderImport(); });
+$('impStop').addEventListener('click', () => { if (S.imp) { S.imp.stop = true; if (S.imp.ctl) S.imp.ctl.abort(); } });
+$('digestNow').addEventListener('click', async () => { if (S.cur) { await queueDigest(S.cur); toast('覚え書きを更新しました。'); } });
+$('memoAdd').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const text = $('memoText').value.trim();
+  if (!text) return;
+  S.home.memory.items.push({ kind: $('memoKind').value, text: clip(text, 90) });
+  S.home.memory.updatedAt = Date.now();
+  saveHome(); $('memoText').value = ''; renderMemo(); renderStatus();
+});
+(() => {
+  const b = $('memoClear');
+  let armed = false, timer = null;
+  b.addEventListener('click', () => {
+    if (!armed) {
+      armed = true; b.textContent = '本当にすべて消す'; b.classList.add('armed');
+      timer = setTimeout(() => { armed = false; b.textContent = '覚え書きをすべて消す'; b.classList.remove('armed'); }, 4000);
+      return;
+    }
+    clearTimeout(timer); armed = false; b.textContent = '覚え書きをすべて消す'; b.classList.remove('armed');
+    S.home.memory = { items: [], updatedAt: Date.now() };
+    saveHome(); renderMemo(); renderStatus(); toast('覚え書きを消しました。');
+  });
+})();
+
+/* ---------- 起動 ---------- */
+async function boot() {
+  const h = (location.hash || '').slice(1);
+  if (['talk', 'topics', 'history', 'memo'].includes(h)) switchTab(h);
+  renderAll();
+  const c = window.claude;
+  const use = (name) => (c && typeof c.use === 'function' ? c.use(name).catch(() => null) : Promise.resolve(null));
+  const [db, user, sample] = await Promise.all([use('db'), use('user'), use('sample')]);
+  S.sample = sample;
+  S.ai = sample ? 'ok' : 'off';
+  let uid = null;
+  if (user) { try { uid = await user.id(); } catch (e) { uid = null; } }
+  let data = null;
+  if (db && uid) {
+    try { S.store = makeDbStore(db, uid); data = await S.store.load(); }
+    catch (e) { S.store = null; data = null; }
+  }
+  if (!S.store) { S.store = makeLocalStore(); data = await S.store.load(); }
+  S.home = normHome(data.home);
+  S.chats = (data.chats || []).map(normChat).filter(Boolean).sort((a, b) => b.updatedAt - a.updatedAt);
+  S.imports = (data.imports || []).map(normImport).filter(Boolean).sort((a, b) => b.addedAt - a.addedAt);
+  S.loaded = true;
+  renderAll();
+}
+boot();
+})();
+</script>
