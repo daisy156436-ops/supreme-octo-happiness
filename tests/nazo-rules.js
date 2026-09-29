@@ -6,7 +6,7 @@ const T = E.NZ_TEACH, P = id => E.NAZO.find(p => p.id === id);
 
 ok('先生用と生徒用で、謎の中身が同じ', E.sharedTeacher === E.sharedCard);
 ok('先生用と生徒用で、謎の見た目（CSS）が同じ', E.cssTeacher === E.cssCard);
-const answers = [...E.NAZO.map(p => T[p.id].answer), T.final.answer, T.final2.answer];
+const answers = [...E.NAZO.map(p => T[p.id].answer), T.final.answer, T.final2.answer, T.ex.answer, '未来も仲間'];
 ok('生徒用のファイルに答えが書かれていない', answers.every(a => !E.cardSource.includes(a)) && !E.cardSource.includes('NZ_TEACH'), answers.filter(a => E.cardSource.includes(a)).join(','));
 
 // 1 えもじの暗号
@@ -118,6 +118,31 @@ for (const id of Object.keys(variants)) {
   ok(`謎${id}：まちがいは正解にしない`, wrong[id].every(v => !E.nzCheck(p, v)) && !E.nzCheck(p, ''));
 }
 ok('ほかの謎の答えでは正解にならない', [...E.NAZO, E.NZ_FINAL, E.NZ_FINAL2].every(p => [...E.NAZO, E.NZ_FINAL, E.NZ_FINAL2].filter(q => q !== p).every(q => !E.nzCheck(p, T[q.id].answer))));
+
+// 裏ミッション（真のとびら）：絵は、これまでの謎。数字は、その謎の答えの何文字目か
+const exHtml = E.NZ_EX.html();
+const refOf = { win: 8, '🦊': 3, wd: 6, clock: 2, '🦝': 5, tt: 7, '🐜': 1 };
+const letterOf = (k, n) => [...T[refOf[k]].answer][n - 1];
+ok('裏ミッション：暗号は7つ、箱も7つ', E.NZ_EX_CODE.length === 7 && E.NZ_EX.boxes === 7 && [...T.ex.answer].length === 7 && (E.nzCard(E.NZ_EX).match(/<span class=""><\/span>/g) || []).length === 7);
+ok('裏ミッション：謎の答えから読むと「みらいもなかま」', E.NZ_EX_CODE.map(([k, n]) => letterOf(k, n)).join('') === T.ex.answer, E.NZ_EX_CODE.map(([k, n]) => letterOf(k, n)).join(''));
+ok('裏ミッション：見本の🐜①は、謎1の答えでも「あり」の名前でも「あ」', exHtml.includes('<span class="e">🐜</span><span class="n">1</span>') && letterOf('🐜', 1) === 'あ' && [...names['🐜']][0] === 'あ');
+const exNames = { '🦊': 'きつね', '🦝': 'たぬき' };
+const naive = E.NZ_EX_CODE.map(([k, n]) => exNames[k] ? [...exNames[k]][n - 1] : '？').join('');
+ok('裏ミッション：絵の名前で読むと、意味のないことば（ひっかけ）', naive !== T.ex.answer && naive.includes('？'), naive);
+ok('裏ミッション：絵は、謎の絵と同じもの', exHtml.includes('🦊') && E.nzMini('win').includes('<rect') && E.nzMini('wd').includes('>社</text>') && E.nzMini('clock').includes('viewBox="0 0 120 120"') && E.nzMini('tt').includes('>月</text>') && E.NAZO.find(p => p.id === 3).html().includes('🦊') && E.NAZO.find(p => p.id === 5).html().includes('🦝'));
+ok('裏ミッション：まどの小さな絵の穴は、謎8のカードと同じ', JSON.stringify([...E.nzMini('win').matchAll(/<rect x="([\d.]+)" y="([\d.]+)" width="10"/g)].map(m => [(+m[2] - 2) / 10, (+m[1] - 2) / 10])) === JSON.stringify(E.NZ_HOLES));
+ok('裏ミッション：答えの確かめ方（ひらがな・カタカナ・漢字）', ['みらいもなかま', 'ミライモナカマ', '未来も仲間', '未来もなかま', 'みらいも仲間', 'みらい も なかま！'].every(v => E.nzCheck(E.NZ_EX, v)));
+ok('裏ミッション：まちがいは正解にしない', ['みらいもえがお', 'ねこたきぬき', 'なかま', 'あきらめない', 'えがお', ''].every(v => !E.nzCheck(E.NZ_EX, v)));
+ok('裏ミッション：ほかの謎では、真のあいことばは正解にならない', [...E.NAZO, E.NZ_FINAL, E.NZ_FINAL2].every(p => !E.nzCheck(p, T.ex.answer)));
+ok('nzPuzzle で謎・とびら・裏ミッションが取り出せる', E.nzPuzzle(3).id === 3 && E.nzPuzzle('final') === E.NZ_FINAL && E.nzPuzzle('final2') === E.NZ_FINAL2 && E.nzPuzzle('ex') === E.NZ_EX);
+
+// 伝令タイムのひみつ情報が、謎の答えと合っている
+const R1 = E.RELAY[0].items.join(' '), R2 = E.RELAY[1].items.join(' ');
+const markOf = id => [...T[id].answer][P(id).mark - 1];
+ok('伝令タイム1回目：謎4・謎6の ○ の文字が正しい', R1.includes(`謎4の ○ の文字は「${markOf(4)}」`) && R1.includes(`謎6の ○ の文字は「${markOf(6)}」`), R1);
+ok('伝令タイム1回目：謎2は長いはり', R1.includes('長いはり') && clocks.slice(1).map(c => c.long).join('') === T[2].answer);
+ok('伝令タイム2回目：謎7・謎8・謎9の情報が正しい', R2.includes('「火」の反対は「水」') && slots[0][0] === '水' && R2.includes('うら返して') && R2.includes('🍉1個は 🍎5個分') && w['🍉'] === 5, R2);
+ok('伝令タイム：答えそのものは出さない（とびらのあいことばも）', [...E.RELAY].every(r => r.items.every(x => !Object.values(T).some(a => a.answer.length > 1 && x.includes(a.answer)))));
 
 let f = 0;
 results.forEach(r => { if (r[0] === 'FAIL') f++; console.log(r[0], r[1], r[2]); });
