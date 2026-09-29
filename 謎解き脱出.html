@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>謎解き脱出ゲーム</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#1d2330; --sub:#5b6475; --line:#d9dde5;
+  --accent:#1f6feb; --accent-weak:#e7f0ff; --good:#16803c; --good-weak:#e6f6ec;
+  --warn:#9a5b00; --warn-weak:#fff4e0; --bad:#b42318; --bad-weak:#fdecea;
+  --stage:#101828; --stage2:#1b2538; --gold:#f5c542;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:15px;line-height:1.6}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:20px}
+#ver{font-size:12px;color:var(--sub);white-space:nowrap}
+nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px 20px 0;background:var(--card);border-bottom:1px solid var(--line)}
+nav button{border:1px solid var(--line);border-bottom:none;background:var(--bg);padding:8px 14px;border-radius:8px 8px 0 0;font:inherit;cursor:pointer;color:var(--sub)}
+nav button.on{background:var(--card);color:var(--ink);font-weight:bold;border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+main{max-width:1100px;margin:0 auto;padding:16px 20px 60px}
+section.tab{display:none}
+section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 14px}
+.card h2{margin:0 0 8px;font-size:17px}
+.card h3{margin:12px 0 6px;font-size:15px}
+.card p{margin:6px 0}
+.card ul,.card ol{margin:6px 0;padding-left:1.4em}
+.hint{color:var(--sub);font-size:13px}
+.field{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 0}
+.field input[type=number],.field input[type=text]{width:80px;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+button.btn{font:inherit;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+button.btn:hover{border-color:var(--accent)}
+button.btn:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:bold}
+button.big{font-size:18px;padding:12px 22px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border-bottom:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
+.msg{padding:8px 12px;border-radius:8px;margin:6px 0;font-size:14px}
+.msg.good{background:var(--good-weak);color:var(--good)}
+.msg.warn{background:var(--warn-weak);color:var(--warn)}
+.msg.bad{background:var(--bad-weak);color:var(--bad)}
+.msg.info{background:var(--accent-weak);color:#174ea6}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+.timeline td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums;width:7em}
+.teamlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px 12px;margin:8px 0}
+.teamrow{display:flex;align-items:center;gap:6px}
+.teamrow input{flex:1;min-width:0;padding:4px 6px;font:inherit;border:1px solid var(--line);border-radius:6px}
+.sw{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:26px;border-radius:6px;font-weight:bold;font-size:14px;padding:0 4px;border:1px solid rgba(0,0,0,.15)}
+.preview{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px;align-items:start}
+.preview .nz{font-size:15px}
+.ans{font-size:20px;font-weight:900;color:var(--good)}
+.hintlist{margin:4px 0;padding-left:1.2em}
+@media (max-width:760px){.preview{grid-template-columns:1fr}}
+
+/* ===NAZO-CSS-START=== */
+.nz{color:#1d2330;line-height:1.5}
+.nz-head{display:flex;align-items:baseline;gap:.5em;margin:0 0 .3em}
+.nz-no{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.nz-title{font-weight:900;font-size:1.15em}
+.nz-lv{color:#e0a800;letter-spacing:.05em}
+.nz-q{font-weight:bold;margin:.2em 0 .5em}
+.nz-ex{display:inline-block;font-size:.9em;color:#3d4556;background:#eef1f6;border-radius:.5em;padding:.25em .7em;margin:0 0 .5em}
+.nz-ex .nz-emo{flex-direction:row;vertical-align:middle}
+.nz-ex .nz-emo .e{font-size:1.5em}
+.nz-row{display:flex;flex-wrap:wrap;gap:.5em .7em;align-items:center;justify-content:center}
+.nz-emo{display:inline-flex;flex-direction:column;align-items:center;gap:.1em}
+.nz-emo .e{font-size:2.6em;line-height:1.15;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.nz-emo .n{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;background:#1d2330;color:#fff;font-weight:bold;font-size:.9em}
+.nz-arrow{font-size:1.2em;color:#9aa3b2;font-weight:bold}
+.nz-qbox{display:inline-flex;gap:.15em}
+.nz-qbox span{width:1.5em;height:1.5em;border:2px dashed #c8102e;border-radius:.3em;display:inline-flex;align-items:center;justify-content:center;color:#c8102e;font-weight:bold}
+.nz-clocks{display:flex;flex-wrap:wrap;gap:.6em 1em;justify-content:center}
+.nz-clock{display:flex;flex-direction:column;align-items:center;font-weight:bold;gap:.1em}
+.nz-clock svg{width:7em;height:7em}
+.nz-clock.ex span{color:#3d4556;font-size:.9em}
+.nz-flick{display:flex;flex-wrap:wrap;gap:1em;align-items:center;justify-content:center}
+.nz-keys{display:grid;grid-template-columns:repeat(3,2.8em);gap:.3em;padding:.4em;background:#d7dbe3;border-radius:.6em}
+.nz-keys span{height:2.2em;border-radius:.4em;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.05em;box-shadow:0 1px 0 #9aa3b2}
+.nz-flickr{display:flex;flex-direction:column;align-items:center}
+.nz-code{display:flex;flex-wrap:wrap;gap:.4em;justify-content:center}
+.nz-code span{border:2px solid #1d2330;border-radius:.4em;padding:.1em .45em;font-weight:900;font-size:1.3em;background:#fff}
+.nz-letter{background:#fffaf0;border:1px solid #e8d7b0;border-radius:.4em;padding:.6em 1em;font-size:1.3em;line-height:1.8;letter-spacing:.06em;word-break:break-all}
+.nz-sign{text-align:right;font-size:1em;margin-top:.2em}
+.nz-wd{width:11em;height:11em}
+.nz-boxes{display:flex;gap:.3em;justify-content:center;margin:.6em 0 0}
+.nz-boxes span{position:relative;width:2em;height:2em;border:2px solid #1d2330;border-radius:.3em;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:900;background:#fff}
+.nz-boxes span.mk{border-radius:50%;border-color:#c8102e;background:#fff4d6}
+.nz-boxes span i{position:absolute;top:-.55em;right:-.55em;font-style:normal;font-size:.55em;background:#c8102e;color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}
+/* ===NAZO-CSS-END=== */
+
+/* 印刷 */
+#printPreview{zoom:.32;background:#dfe3ea;padding:30px;border-radius:10px;display:flex;flex-wrap:wrap;gap:30px}
+.page{width:210mm;height:297mm;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);overflow:hidden;position:relative;padding:10mm 13mm;display:flex;flex-direction:column;gap:4.5mm}
+.page .nz{font-size:4.3mm;border:0.5mm solid #c9d0db;border-radius:3mm;padding:3.5mm 4.5mm}
+.page .nz-emo .e{font-size:11mm}
+.page .nz-clock svg{width:34mm;height:34mm}
+.page .nz-wd{width:44mm;height:44mm}
+.ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:0.6mm solid #1d2330;padding-bottom:2mm}
+.ph h1{margin:0;font-size:8mm}
+.ph .tn{font-size:4.5mm}
+.ph .tn span{display:inline-block;width:40mm;border-bottom:0.3mm solid #1d2330}
+.story{font-size:3.8mm;line-height:1.6;background:#f3f5fa;border-radius:2mm;padding:2.5mm 4mm}
+.door{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6mm;border:0.8mm solid #1d2330;border-radius:5mm;padding:8mm}
+.door .nz{border:none;font-size:6mm;text-align:center}
+.door .nz-boxes span{width:16mm;height:16mm;font-size:10mm}
+.door .nz-head{justify-content:center;font-size:1.4em}
+.door .nz-boxes{gap:6mm}
+.stamp{font-size:5.5mm;border:0.5mm dashed #1d2330;border-radius:2mm;padding:3mm 6mm}
+.memo{height:70mm;border:0.4mm solid #c9d0db;border-radius:3mm;padding:2mm 4mm;font-size:4mm;color:#5b6475}
+.pk table{font-size:3.5mm}
+.pk td,.pk th{border:0.3mm solid #999;padding:1.4mm 2mm}
+
+/* 本番（投影画面） */
+body.staging{overflow:hidden}
+body.staging > header,body.staging > nav,body.staging > main{display:none}
+#stage{position:fixed;inset:0;background:radial-gradient(ellipse at top,#23304a,var(--stage) 70%);color:#f2f4f8;display:none;flex-direction:column;z-index:20}
+body.staging #stage{display:flex}
+.st-top{display:flex;align-items:center;gap:1.2vw;padding:1vh 1.6vw;min-height:7vh;border-bottom:1px solid rgba(255,255,255,.12)}
+#stTitle{font-size:3.2vh;font-weight:900;letter-spacing:.05em}
+.st-top .sp{flex:1}
+.st-top button,.st-bar button{font:inherit;font-size:1.9vh;padding:.7vh 1.3vh;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#f2f4f8;border-radius:.9vh;cursor:pointer;white-space:nowrap}
+.st-main{flex:1;min-height:0;padding:2vh 2vw;display:flex}
+.st-bar{display:flex;align-items:center;gap:1vw;padding:1vh 1.6vw;min-height:9vh;border-top:1px solid rgba(255,255,255,.12)}
+.st-bar .sp{flex:1}
+.st-bar .keyhint{font-size:1.6vh;color:#9aa6bd}
+#stPrimary{font-size:3vh;font-weight:900;padding:1.2vh 3vh;background:var(--gold);color:#1d2330;border-color:var(--gold);border-radius:1.4vh}
+.st-bar button:disabled{opacity:.35}
+
+.story-slide{margin:auto;max-width:78vw;text-align:center}
+.story-slide .icon{font-size:13vh;line-height:1.1}
+.story-slide h2{font-size:7vh;margin:1vh 0 2vh;letter-spacing:.08em;color:var(--gold);text-shadow:0 0 3vh rgba(245,197,66,.4)}
+.story-slide p{font-size:3.4vh;line-height:1.7;margin:1vh 0}
+.story-slide .em{color:var(--gold);font-weight:900}
+.rules-slide{margin:auto;max-width:84vw}
+.rules-slide h2{font-size:5vh;margin:0 0 2vh;color:var(--gold)}
+.rules-slide ol{font-size:3.3vh;line-height:1.6;padding-left:4vh;margin:0}
+.rules-slide li{margin:.8vh 0}
+.rules-slide .s{display:block;font-size:.72em;color:#b9c3d6}
+.rules-slide .ng{margin-top:2vh;font-size:2.8vh;background:rgba(200,16,46,.25);border:1px solid rgba(255,120,120,.5);border-radius:1.2vh;padding:1vh 2vh}
+
+.play{display:grid;grid-template-columns:30fr 40fr 30fr;gap:1.6vw;width:100%;min-height:0}
+.panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:1.6vh;padding:1.6vh 1.6vh;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.panel h3{margin:0 0 1vh;font-size:2.6vh;color:var(--gold)}
+.clock{text-align:center;margin:auto 0}
+.clock .lab{font-size:2.6vh;color:#b9c3d6}
+#bigTime{font-size:min(17vh,8.4vw);font-weight:900;font-variant-numeric:tabular-nums;line-height:1.05;letter-spacing:.02em}
+#bigTime.low{color:#ff6b6b;animation:pulse 1s ease-in-out infinite}
+#bigTime.paused{color:#9aa6bd}
+@keyframes pulse{50%{opacity:.55}}
+.clock .next{font-size:2.6vh;margin-top:1vh}
+.clock .count{font-size:3.4vh;font-weight:900;margin-top:2vh}
+.clock .count b{color:var(--gold);font-size:1.4em}
+.hints{display:flex;flex-direction:column;gap:.8vh;overflow:hidden;flex:1;min-height:0}
+.hcard{background:#fff;color:#1d2330;border-radius:1.2vh;padding:.8vh 1.4vh;line-height:1.4;animation:rise .5s ease-out}
+.hcard .t{font-size:1.8vh;font-weight:bold;color:#6d3fd6}
+.hcard .hk{font-size:var(--hs,2.1vh)}
+.hcard .t{font-size:calc(var(--hs,2.1vh) * .85)}
+.hcard.new{box-shadow:0 0 0 .5vh var(--gold)}
+.hints .none{color:#9aa6bd;font-size:2.4vh}
+.teams{display:grid;gap:.8vh;align-content:start;flex:1;min-height:0}
+.tb{display:flex;align-items:center;gap:.8vh;border-radius:1vh;border:.3vh solid rgba(255,255,255,.25);background:rgba(255,255,255,.05);color:#f2f4f8;font:inherit;font-size:2vh;padding:.7vh .8vh;cursor:pointer;min-width:0;min-height:0;text-align:left}
+.tb .sw{min-width:4vh;height:3.6vh;font-size:2.2vh;border-radius:.7vh;flex:none}
+.tb .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb .tm{font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tb.done{background:var(--gold);color:#1d2330;border-color:var(--gold)}
+.tb.done .rk{font-size:1.6vh;font-weight:900;background:#1d2330;color:var(--gold);border-radius:.6vh;padding:0 .6vh}
+.teams-hint{font-size:1.7vh;color:#9aa6bd;margin-top:.8vh}
+#banner{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:25;background:var(--gold);color:#1d2330;font-size:6vh;font-weight:900;padding:2.4vh 5vh;border-radius:2vh;box-shadow:0 2vh 6vh rgba(0,0,0,.5);text-align:center;pointer-events:none;animation:pop .5s ease-out}
+#banner small{display:block;font-size:2.6vh}
+#banner.hint{background:#fff;color:#6d3fd6}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.6);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes rise{from{transform:translateY(2vh);opacity:0}to{transform:none;opacity:1}}
+
+.timeup{margin:auto;text-align:center}
+.timeup h2{font-size:12vh;margin:0;color:var(--gold)}
+.timeup p{font-size:3.6vh}
+.explain{display:grid;grid-template-columns:58fr 42fr;gap:2vw;width:100%;min-height:0;align-items:center}
+.explain .pz{background:#fff;border-radius:2vh;padding:2.4vh 2.8vh;color:#1d2330;font-size:2.6vh;min-height:0;overflow:hidden}
+.explain .pz .nz-emo .e{font-size:3em}
+.explain .pz .nz-clock svg{width:6.5em;height:6.5em}
+.explain .pz .nz-wd{width:10em;height:10em}
+.explain .side{display:flex;flex-direction:column;gap:2vh}
+.explain .alab{font-size:2.6vh;color:#b9c3d6}
+.explain .answer{font-size:9vh;font-weight:900;color:var(--gold);line-height:1.1}
+.explain .answer .mkc{display:inline-block;border:.6vh solid var(--gold);border-radius:50%;padding:0 .12em;line-height:1.05}
+.explain .why{font-size:3vh;line-height:1.6;background:rgba(255,255,255,.08);border-radius:1.6vh;padding:1.6vh 2vh}
+.explain .collected{display:flex;gap:1vh}
+.explain .collected span{width:6.4vh;height:6.4vh;border-radius:50%;border:.4vh solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:3.6vh;font-weight:900}
+.explain .collected span.on{background:var(--gold);color:#1d2330}
+
+.result{width:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:2vh}
+.result h2{margin:0;text-align:center;font-size:6vh;color:var(--gold)}
+.podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:2vw;align-items:end;min-height:0;max-width:80vw;margin:0 auto;width:100%}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:1vh;height:100%;min-height:0}
+.pod .tmx{display:flex;flex-direction:column;align-items:center;gap:.5vh;animation:rise .6s ease-out}
+.pod .tmx .sw{min-width:10vh;height:10vh;font-size:5.4vh;border-radius:1.6vh}
+.pod .tmx .nm{font-size:3.4vh;font-weight:900}
+.pod .tmx .ct{font-size:2.8vh;color:#b9c3d6;font-variant-numeric:tabular-nums}
+.pod .q{font-size:10vh;font-weight:900;color:rgba(255,255,255,.3)}
+.pod .step{width:100%;border-radius:1.4vh 1.4vh 0 0;display:flex;justify-content:center;font-size:5vh;font-weight:900;color:#1d2330;padding-top:1vh}
+.pod.r1 .step{height:22vh;background:var(--gold)}.pod.r2 .step{height:15vh;background:#c7cfdc}.pod.r3 .step{height:10vh;background:#d9955a}
+.others{display:flex;flex-wrap:wrap;gap:1vh 2vh;justify-content:center;font-size:2.4vh}
+.others span{display:inline-flex;align-items:center;gap:.6vh}
+.others .sw{min-width:3.6vh;height:3.2vh;font-size:1.9vh}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+
+@media print{
+  body{background:#fff}
+  header,nav,.noprint,#stage{display:none!important}
+  main{padding:0;max-width:none}
+  section.tab{display:none!important}
+  section#tab-print{display:block!important}
+  #printPreview{zoom:1;background:none;padding:0;display:block}
+  .page{box-shadow:none;break-after:page;margin:0;height:296mm}
+  .page:last-child{break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@page{size:A4 portrait;margin:0}
+</style>
+</head>
+<body>
+<header>
+  <h1>謎解き脱出ゲーム「体育館からの脱出」</h1>
+  <span id="ver">版 2026-09-29</span>
+</header>
+<nav class="noprint" id="nav">
+  <button data-tab="guide">① 遊び方</button>
+  <button data-tab="setup">② 設定</button>
+  <button data-tab="answers">③ 謎と答え（先生用）</button>
+  <button data-tab="play">④ 本番</button>
+  <button data-tab="print">⑤ 印刷</button>
+</nav>
+<main>
+
+<!-- ① 遊び方 -->
+<section class="tab" id="tab-guide">
+  <div class="card">
+    <h2>どんなゲーム？</h2>
+    <p>「体育館にとじこめられた！」というお話で、5人くらいのチームが協力して<b>6つの謎</b>を解きます。6つの答えの ○ の文字をならべると、とびらの<b>あいことば</b>になります。あいことばがわかったチームから「脱出成功」。早く脱出したチームが上位です。知識よりも、ひらめきと協力で解ける謎にしてあります。</p>
+    <ul>
+      <li>人数：100人なら5人×20チーム（2〜20チーム）</li>
+      <li>時間：45分（お話とルール8分・謎解き25分・解説と表彰12分）</li>
+      <li>用意：プロジェクターかテレビ＋このファイルを開いたパソコン、⑤で印刷した「謎の紙」（1チーム1組3枚）、えんぴつ</li>
+      <li>タブレット：<b>なくてもできます</b>。あれば <b>謎解きカード.html</b> を開くと、答えがその場で正解かわかり、最後に「脱出成功」の画面が出ます</li>
+    </ul>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h2>時間の目安（45分）</h2>
+      <table class="timeline">
+        <tr><td>0〜5分</td><td>チームごとに座る。④本番の「お話」を映して読む</td></tr>
+        <tr><td>5〜8分</td><td>ルール説明。謎の紙を配る（スタートまで裏返し）</td></tr>
+        <tr><td>8〜33分</td><td>謎解き25分。7分たつと、3分ごとにヒントがスクリーンに出る</td></tr>
+        <tr><td>33〜41分</td><td>解説（1問ずつ答え合わせ）</td></tr>
+        <tr><td>41〜45分</td><td>表彰（3位→2位→1位）</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>先生の進め方</h2>
+      <ol>
+        <li>②でチームの数・制限時間を決め、⑤で謎の紙を印刷します（③で答えを確認）</li>
+        <li>④「はじめる」→ お話 → ルール →「スタート！」でタイマーが動きます</li>
+        <li>あいことばを持ってきたチームは、答えを確かめて、画面右のそのチームのボタンを押します（脱出タイムが記録されます）</li>
+        <li>時間になるか全チームが脱出したら、解説 → 表彰</li>
+      </ol>
+      <p class="hint">スペースキー（か右下のボタン）で次へ進みます。途中でページを閉じても、開き直すと続きからできます。</p>
+    </div>
+  </div>
+  <div class="card">
+    <h2>ルール（生徒への説明）</h2>
+    <ol>
+      <li>6つの謎を、チームで協力して解く（手分けしてもOK）</li>
+      <li>答えの ○ の文字を、謎の番号の順にならべると、あいことばになる</li>
+      <li>あいことばがわかったら、3枚目の紙を先生に見せる（タブレットなら「脱出成功」の画面）</li>
+      <li>ヒントは時間がたつとスクリーンに出る</li>
+      <li>ほかのチームに答えを教えない。答えは大きな声で言わない</li>
+    </ol>
+  </div>
+  <div class="two">
+    <div class="card">
+      <h2>タブレットを使うとき</h2>
+      <ul>
+        <li><b>謎解きカード.html</b> をチームのタブレットに配ります（ネットはいりません）。答えは暗号にしてあるので、ファイルを開いても答えは見えません</li>
+        <li>チームの番号を選び、先生の「スタート！」で画面のスタートを押します</li>
+        <li>謎の答えを入れると、その場で正解かどうか出ます。全部そろったら最後のとびらへ</li>
+        <li>紙の謎も一緒に配ると、チームで手分けしやすくなります</li>
+        <li><b>このファイル（謎解き脱出.html）は生徒に配らないでください。</b>答えが入っています</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>うまくいくコツ</h2>
+      <ul>
+        <li>早く脱出したチームには「まだのチームに、答えを言わずに応援しよう」と声をかける</li>
+        <li>むずかしそうなら②で制限時間をのばすか、ヒントを早めに出す（本番中も「ヒントを今出す」で出せます）</li>
+        <li>解説のとき、「どの謎が一番むずかしかった？」と聞くと盛り上がります</li>
+        <li>あいことばは「あきらめない」。表彰のあとに、最後まであきらめずに考えたことをほめてあげてください</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ② 設定 -->
+<section class="tab" id="tab-setup">
+  <div id="setupMsg"></div>
+  <div class="card">
+    <h2>チーム</h2>
+    <div class="field">
+      <label>生徒の人数 <input type="number" id="sPeople" min="2" max="1000"> 人</label>
+      <label>チームの数 <input type="number" id="sCount" min="2" max="20"> チーム</label>
+      <span id="sPer" class="muted hint"></span>
+    </div>
+    <div class="row">
+      <button class="btn" id="nameNum">1班、2班…</button>
+      <span class="hint">または</span>
+      <input type="number" id="nClass" min="1" max="10" value="4" style="width:4em"> クラス ×
+      <input type="number" id="nPerClass" min="1" max="10" value="5" style="width:4em"> 班
+      <button class="btn" id="nameClass">1組1班、1組2班…</button>
+    </div>
+    <div class="teamlist" id="teamList"></div>
+    <p class="hint">1チーム4〜6人がおすすめです。多すぎると、謎を見られない人が出ます。</p>
+  </div>
+  <div class="card">
+    <h2>時間とヒント</h2>
+    <div class="field"><label>制限時間 <input type="number" id="sMin" min="5" max="90"> 分</label></div>
+    <div class="field"><label>最初のヒントは <input type="number" id="sHint0" min="0" max="60"> 分後、そのあと <input type="number" id="sHintGap" min="1" max="20"> 分ごと</label></div>
+    <div id="hintPlan" class="hint"></div>
+  </div>
+</section>
+
+<!-- ③ 謎と答え -->
+<section class="tab" id="tab-answers">
+  <div class="msg warn">この画面には答えがのっています。プロジェクターに映さないでください。</div>
+  <div id="answerList"></div>
+</section>
+
+<!-- ④ 本番 -->
+<section class="tab" id="tab-play">
+  <div class="card">
+    <h2>本番</h2>
+    <div id="playStatus"></div>
+    <div class="row">
+      <button class="btn primary big" id="playResume">続きから</button>
+      <button class="btn big" id="playNew">はじめる</button>
+    </div>
+    <p class="hint">「はじめる」を押すと、お話の画面が出ます。プロジェクターに映してから押してください。</p>
+  </div>
+</section>
+
+<!-- ⑤ 印刷 -->
+<section class="tab" id="tab-print">
+  <div class="card noprint">
+    <h2>印刷</h2>
+    <div class="row">
+      <label><input type="radio" name="pKind" value="sheets" checked> 謎の紙（1チーム3枚）</label>
+      <label><input type="radio" name="pKind" value="key"> 先生用の答えとヒント</label>
+    </div>
+    <div class="row"><button class="btn primary" id="pPrint">印刷する</button><span class="hint" id="pHint"></span></div>
+  </div>
+  <div id="printPreview"></div>
+</section>
+</main>
+
+<!-- 投影画面 -->
+<div id="stage" aria-live="polite">
+  <div class="st-top">
+    <div id="stTitle"></div>
+    <span class="sp"></span>
+    <button id="stSound"></button>
+    <button id="stFull">全画面</button>
+    <button id="stClose">✕ 閉じる</button>
+  </div>
+  <div class="st-main" id="stMain"></div>
+  <div class="st-bar">
+    <button id="stBack">◀ もどる</button>
+    <button id="stPause">一時停止</button>
+    <button id="stPlus">＋1分</button>
+    <button id="stHintNow">ヒントを今出す</button>
+    <button id="stEnd">ここで終わる</button>
+    <span class="sp"></span>
+    <span class="keyhint">スペースキーでも進みます</span>
+    <button id="stPrimary"></button>
+  </div>
+</div>
+<div id="banner" hidden></div>
+<canvas id="confetti" hidden></canvas>
+
+<script>
+// ===NAZO-START===
+// 謎の中身（先生用・生徒用の両方で同じもの）。答えそのものは入れず、確かめ用の値だけを持つ。
+function nzNorm(s) {
+  return (s || '').normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s、。，．,.・!！?？「」『』（）()ー－\-]/g, '').toLowerCase();
+}
+function nzHash(id, s) {
+  let h = 0x811c9dc5;
+  const t = 'nazo|' + id + '|' + s;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return ('0000000' + h.toString(16)).slice(-8);
+}
+function nzDec(arr, key) { const k = [...key].map(c => c.codePointAt(0)); return arr.map((n, i) => String.fromCodePoint(n ^ k[i % k.length] ^ 0x5a)).join(''); }
+// 答えが合っていれば、その答えのひらがなを返す（ちがえば null）
+function nzCheck(p, input) {
+  const v = nzNorm(input), r = p.ok[nzHash(p.id, v)];
+  if (!r) return null;
+  return r === 1 ? v : nzDec(r, v);
+}
+function nzEmo(e, n) { return `<span class="nz-emo"><span class="e">${e}</span>${n ? `<span class="n">${n}</span>` : ''}</span>`; }
+const NZ_DIAL = ['ま', 'き', 'ち', 'あ', 'も', 'す', 'は', 'ね', 'く', 'ろ', 'ぬ', 'ほ'];   // 12時・1時・2時…11時の位置
+function nzClock(h, m) {
+  let s = '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#fff" stroke="#1d2330" stroke-width="3"/>';
+  NZ_DIAL.forEach((ch, k) => {
+    const a = (k * 30 - 90) * Math.PI / 180;
+    s += `<text x="${(60 + 44 * Math.cos(a)).toFixed(1)}" y="${(61 + 44 * Math.sin(a)).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="bold" fill="#1d2330">${ch}</text>`;
+  });
+  const hand = (deg, len, w) => { const a = (deg - 90) * Math.PI / 180; return `<line x1="60" y1="60" x2="${(60 + len * Math.cos(a)).toFixed(1)}" y2="${(60 + len * Math.sin(a)).toFixed(1)}" stroke="#1d2330" stroke-width="${w}" stroke-linecap="round"/>`; };
+  return s + hand((h % 12) * 30 + m * 0.5, 22, 7) + hand(m * 6, 34, 3.5) + '<circle cx="60" cy="60" r="4.5" fill="#1d2330"/></svg>';
+}
+function nzWadou() {
+  const k = (x, y, t, ex) => `<rect x="${x - 21}" y="${y - 21}" width="42" height="42" rx="6" fill="${ex ? '#fff4d6' : '#fff'}" stroke="${ex ? '#c8102e' : '#1d2330'}" stroke-width="${ex ? 3 : 2}" ${ex ? 'stroke-dasharray="6 4"' : ''}/><text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="middle" font-size="26" font-weight="bold" fill="${ex ? '#c8102e' : '#1d2330'}">${t}</text>`;
+  // 矢印（先を三角でかく）
+  const ar = (x1, y1, x2, y2) => {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = 11, W = 7;
+    const bx = x2 - L * Math.cos(a), by = y2 - L * Math.sin(a);
+    const p = [[x2, y2], [bx + W * Math.sin(a), by - W * Math.cos(a)], [bx - W * Math.sin(a), by + W * Math.cos(a)]].map(q => q.map(v => v.toFixed(1)).join(' ')).join(' L');
+    return `<line x1="${x1}" y1="${y1}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#1d2330" stroke-width="3.5"/><path d="M${p} Z" fill="#1d2330"/>`;
+  };
+  return '<svg viewBox="0 0 220 220" class="nz-wd" aria-hidden="true">' +
+    k(110, 28, '社') + k(28, 110, '大') + k(192, 110, '話') + k(110, 192, '議') + k(110, 110, '？', true) +
+    ar(110, 50, 110, 87) + ar(50, 110, 87, 110) + ar(133, 110, 169, 110) + ar(110, 133, 110, 169) + '</svg>';
+}
+function nzBoxes(n, mark, text, num) {
+  // mark：○をつける文字の位置（0なら全部に1〜nの番号）、num：○につける謎の番号
+  const t = [...(text || '')];
+  let h = '<div class="nz-boxes">';
+  for (let i = 0; i < n; i++) {
+    const tag = mark === 0 ? i + 1 : num && i + 1 === mark ? num : '';
+    h += `<span class="${i + 1 === mark || mark === 0 ? 'mk' : ''}">${t[i] || ''}${tag ? `<i>${tag}</i>` : ''}</span>`;
+  }
+  return h + '</div>';
+}
+const NAZO = [
+  {
+    id: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
+    q: '絵の下の数字は、名前の「何文字目か」。読むと、どんなことば？',
+    html: () => `<div class="nz-ex">見本：${nzEmo('🐱', 2)} は「ねこ」の2文字目で「こ」</div><div class="nz-row">${[['🐜', 1], ['🦒', 2], ['🏫', 1], ['🍅', 3], ['🐘', 2]].map(a => nzEmo(a[0], a[1])).join('')}</div>`,
+    ok: { '2adcc81a': [90, 90, 90, 90, 90], '73885c32': [22289, 42547, 80, 22331, 42751], '617dcc9a': [22289, 90, 42741, 116, 22293] },
+  },
+  {
+    id: 2, title: 'ふしぎな時計', level: 2, boxes: 3, mark: 1,
+    q: '見本と同じ読み方で、①②③の時計を読むと？',
+    html: () => `<div class="nz-clocks"><div class="nz-clock ex">${nzClock(6, 15)}<span>見本 → 「あ」</span></div><div class="nz-clock">${nzClock(2, 5)}<span>①</span></div><div class="nz-clock">${nzClock(7, 20)}<span>②</span></div><div class="nz-clock">${nzClock(10, 10)}<span>③</span></div></div>`,
+    ok: { '323e1f1b': [90, 90, 90], '1171b032': [23552, 21465, 90], '7b1ac627': [23552, 21465, 23596] },
+  },
+  {
+    id: 3, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
+    q: '？に入る動物は？',
+    html: () => `<div class="nz-row chain">${['🦊', '🐈', '?', '🎺', '🐼', '🍡', '🦍', '🦁'].map(e => e === '?' ? '<span class="nz-qbox"><span>？</span><span>？</span><span>？</span></span>' : nzEmo(e)).join('<span class="nz-arrow">→</span>')}</div>`,
+    ok: { '1f94369e': [90, 90, 90] },
+  },
+  {
+    id: 4, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
+    q: '暗号を読むと、答えがわかる。',
+    html: () => `<div class="nz-flick"><div class="nz-keys">${['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', '゛゜', 'わ', '、。'].map(k => `<span>${k}</span>`).join('')}</div><div class="nz-flickr"><div class="nz-ex">見本：<b>な↑</b> ＝ ぬ　<b>な・</b> ＝ な</div><div class="nz-code">${['か↓', 'た・', 'あ→', 'は・', 'や↑', 'ま→'].map(c => `<span>${c}</span>`).join('')}</div></div></div>`,
+    ok: { '45964dc8': [90, 90], '404bae05': [27134, 27129] },
+  },
+  {
+    id: 5, title: 'たぬきの手紙', level: 2, boxes: 3, mark: 1,
+    q: '手紙が伝えたい「こたえ」は？',
+    html: () => '<div class="nz-letter">たせいかたいはた、いっしたょにたがたんばたるたなかたまた</div><div class="nz-sign">🦝 たぬき より</div>',
+    ok: { '75d8b54f': [90, 90, 90], '44a248bb': [32450, 42370, 32470] },
+  },
+  {
+    id: 6, title: '漢字のかくれんぼ', level: 3, boxes: 2, mark: 2,
+    q: '矢印の向きに読むと、どれも漢字2文字のことばになる。？の漢字の読みは？（ひらがな2文字）',
+    html: () => `<div class="nz-row">${nzWadou()}</div>`,
+    ok: { 'd300aca0': [90, 90], '112d5da7': [32523, 32516] },
+  },
+];
+const NZ_FINAL = { id: 'final', title: '最後のとびら', boxes: 6, q: '6つの謎の答えの ○ の文字を、1から順にならべると…？', ok: { 'e59ee854': 1, '308c5fea': 1 } };
+function nzCard(p, o) {
+  o = o || {};
+  return `<div class="nz"><div class="nz-head"><span class="nz-no">${p.id === 'final' ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, p.id === 'final' ? 0 : p.mark, o.fill, o.num ? p.id : '')}</div>`;
+}
+// ===NAZO-END===
+
+// ---------- 先生だけが持つ答え・ヒント・解説 ----------
+const NZ_TEACH = {
+  1: {
+    answer: 'ありがとう',
+    hints: ['見本の🐱は「ねこ」。2文字目だから「こ」。ほかの絵も、名前を考えて数えよう', '🦒＝きりん、🏫＝がっこう、🍅＝とまと、🐘＝ぞう'],
+    explain: '🐜あり の1文字目「あ」、🦒きりん の2文字目「り」、🏫がっこう の1文字目「が」、🍅とまと の3文字目「と」、🐘ぞう の2文字目「う」。つなげると「ありがとう」。',
+  },
+  2: {
+    answer: 'きもち',
+    hints: ['見本の時計で「あ」をさしているのは、長いはり？ 短いはり？', '長いはりがさしている文字を読もう。①は「き」'],
+    explain: '見本は、長いはりが「あ」をさしていた。①②③も長いはりの文字を読むと、き・も・ち＝「きもち」。短いはりの文字（ち・ね・ぬ）は、ひっかけ！',
+  },
+  3: {
+    answer: 'こあら',
+    hints: ['絵の名前で、しりとりになっている', '？は「こ」で始まって「ら」で終わる、3文字の動物'],
+    explain: 'きつね→ねこ→？→らっぱ→ぱんだ→だんご→ごりら→らいおん のしりとり。「こ」で始まり「ら」で終わる動物は「こあら」。',
+  },
+  4: {
+    answer: 'ゆめ',
+    hints: ['スマホやタブレットで、ひらがなを打つときのキーボード', '矢印は指をはらう向き。「か↓」は「か」を下にはらって「こ」'],
+    explain: 'スマホのフリック入力。「か」を下にはらうと「こ」、「た」はそのまま、「あ」を右で「え」…。読むと「こたえは ゆめ」。',
+  },
+  5: {
+    answer: 'なかま',
+    hints: ['手紙を書いたのは🦝たぬき。「た」ぬき、と読むと…？', '手紙から「た」を全部消して読もう'],
+    explain: 'たぬき＝「た」ぬき。手紙から「た」をぬくと「せいかいは、いっしょにがんばるなかま」。',
+  },
+  6: {
+    answer: 'かい',
+    hints: ['「社→？」なら「社？」という2文字のことば。4つとも同じ漢字が入る', '「大？」は、運動会や大きな試合のこと'],
+    explain: '社会・大会・会話・会議。？は「会」で、読みは「かい」。',
+  },
+  final: {
+    answer: 'あきらめない',
+    hints: ['6つの答えの ○ の文字を、謎1から順にならべよう'],
+    explain: '○の文字を1から順に、あ・き・ら・め・な・い＝「あきらめない」。最後まであきらめずに考えたみんな、おつかれさま！',
+  },
+};
+// ヒントを出す順番（1回に出すヒントのまとまり）
+const HINT_PLAN = [
+  [[1, 0], [3, 0]],
+  [[2, 0], [4, 0]],
+  [[5, 0], [6, 0]],
+  [[1, 1], [2, 1], [3, 1]],
+  [[4, 1], [5, 1], [6, 1]],
+  [['final', 0]],
+];
+
+// ---------- 共通 ----------
+const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
+  '#000075', '#469990', '#800000', '#808000', '#fabed4', '#dcbeff', '#aaffc3', '#ffd8b1', '#222222', '#8c8c8c'];
+const MAX_TEAMS = 20;
+const LS_KEY = 'nazo-escape-v1';
+function inkOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const L = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2] > 0.36 ? '#1d2330' : '#ffffff';
+}
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function swHtml(t, label) { const c = TEAM_COLORS[t % TEAM_COLORS.length]; return `<span class="sw" style="background:${c};color:${inkOn(c)}">${esc(label == null ? t + 1 : label)}</span>`; }
+function mmss(ms) { const s = Math.max(0, Math.ceil(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }   // のこり時間（切り上げ）
+function lap(ms) { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }    // 脱出タイム（秒まで）
+function puzzleOf(id) { return id === 'final' ? NZ_FINAL : NAZO.find(p => p.id === id); }
+function hintLabel(id, k) { return id === 'final' ? '最後のとびら' : `謎${id}「${puzzleOf(id).title}」 ヒント${k + 1}`; }
+
+function defaultState() {
+  return { teams: { people: 100, count: 20, names: [...Array(MAX_TEAMS)].map((_, i) => `${i + 1}班`) }, opts: { minutes: 25, hint0: 7, hintGap: 3, sound: true }, game: null };
+}
+function normalizeState(s) {
+  const d = defaultState();
+  if (!s || typeof s !== 'object') return d;
+  const t = Object.assign({}, d.teams, s.teams || {});
+  t.count = Math.min(MAX_TEAMS, Math.max(2, parseInt(t.count, 10) || 20));
+  t.names = Array.isArray(t.names) ? t.names.map(String) : [];
+  for (let i = t.names.length; i < MAX_TEAMS; i++) t.names.push(`${i + 1}班`);
+  return { teams: t, opts: Object.assign({}, d.opts, s.opts || {}), game: s.game || null };
+}
+let S = (() => { try { return normalizeState(JSON.parse(lsGet(LS_KEY))); } catch (e) { return defaultState(); } })();
+let saveTimer = null;
+function saveNow() { clearTimeout(saveTimer); saveTimer = null; lsSet(LS_KEY, JSON.stringify(S)); }
+function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(saveNow, 300); }
+window.addEventListener('beforeunload', () => { if (saveTimer) saveNow(); });
+
+// ---------- タブ ----------
+function showTab(name) {
+  $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+  $$('section.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + name));
+  lsSet('nazo-escape-tab', name);
+  if (name === 'setup') renderSetup();
+  if (name === 'answers') renderAnswers();
+  if (name === 'play') renderPlayTab();
+  if (name === 'print') renderPrint();
+}
+$('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
+
+// ---------- ② 設定 ----------
+function hintTimes(o) { return HINT_PLAN.map((_, i) => (o.hint0 + i * o.hintGap) * 60000); }
+function renderSetup() {
+  const t = S.teams, o = S.opts;
+  $('#setupMsg').innerHTML = S.game && S.game.phase !== 'result' ? '<div class="msg warn">本番の途中です。ここで変えたことは、次に「はじめる」ときに入ります。</div>' : '';
+  $('#sPeople').value = t.people; $('#sCount').value = t.count;
+  $('#sMin').value = o.minutes; $('#sHint0').value = o.hint0; $('#sHintGap').value = o.hintGap;
+  const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count);
+  $('#sPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : '';
+  $('#teamList').innerHTML = t.names.slice(0, t.count).map((nm, i) => `<div class="teamrow">${swHtml(i)}<input type="text" data-i="${i}" value="${esc(nm)}" aria-label="${i + 1}番のチーム名"></div>`).join('');
+  const ts = hintTimes(o);
+  const late = ts.filter(x => x >= o.minutes * 60000).length;
+  $('#hintPlan').innerHTML = HINT_PLAN.map((g, i) => `${Math.round(ts[i] / 60000)}分：${g.map(([id, k]) => id === 'final' ? '最後のとびら' : `謎${id}のヒント${k + 1}`).join('・')}`).join('<br>') +
+    (late ? `<div class="msg warn">制限時間（${o.minutes}分）のあとになるヒントが${late}つあります。時間をのばすか、ヒントを早めてください。</div>` : '');
+}
+function numIn(sel, min, max, def, f) {
+  $(sel).addEventListener('change', e => { const v = Math.min(max, Math.max(min, parseInt(e.target.value, 10) || def)); f(v); saveSoon(); renderSetup(); });
+}
+numIn('#sPeople', 2, 1000, 100, v => { S.teams.people = v; });
+numIn('#sCount', 2, MAX_TEAMS, 20, v => { S.teams.count = v; });
+numIn('#sMin', 5, 90, 25, v => { S.opts.minutes = v; });
+numIn('#sHint0', 0, 60, 7, v => { S.opts.hint0 = v; });
+numIn('#sHintGap', 1, 20, 3, v => { S.opts.hintGap = v; });
+$('#teamList').addEventListener('input', e => { const i = +e.target.dataset.i; if (!isNaN(i)) { S.teams.names[i] = e.target.value; saveSoon(); } });
+$('#nameNum').addEventListener('click', () => { S.teams.names = [...Array(MAX_TEAMS)].map((_, i) => `${i + 1}班`); saveSoon(); renderSetup(); });
+$('#nameClass').addEventListener('click', () => {
+  const c = Math.max(1, parseInt($('#nClass').value, 10) || 1), p = Math.max(1, parseInt($('#nPerClass').value, 10) || 1);
+  S.teams.names = [...Array(MAX_TEAMS)].map((_, i) => i < c * p ? `${Math.floor(i / p) + 1}組${(i % p) + 1}班` : `${i + 1}班`);
+  S.teams.count = Math.min(MAX_TEAMS, Math.max(2, c * p));
+  saveSoon(); renderSetup();
+  if (c * p > MAX_TEAMS) alert(`チームは${MAX_TEAMS}までです。はじめの${MAX_TEAMS}チームにしました。`);
+});
+
+// ---------- ③ 謎と答え ----------
+function answerFill(p) { return p.id === 'final' ? NZ_TEACH.final.answer : NZ_TEACH[p.id].answer; }
+function renderAnswers() {
+  $('#answerList').innerHTML = [...NAZO, NZ_FINAL].map(p => {
+    const T = NZ_TEACH[p.id];
+    return `<div class="card"><div class="preview"><div>${nzCard(p, { fill: answerFill(p), num: true })}</div>
+      <div><div class="hint">答え</div><div class="ans">${esc(T.answer)}</div>
+      <h3>ヒント</h3><ol class="hintlist">${T.hints.map(h => `<li>${esc(h)}</li>`).join('')}</ol>
+      <h3>解説</h3><p>${esc(T.explain)}</p></div></div></div>`;
+  }).join('');
+}
+
+// ---------- ④ 本番 ----------
+function renderPlayTab() {
+  const g = S.game;
+  $('#playResume').hidden = !g;
+  $('#playNew').classList.toggle('primary', !g);
+  $('#playStatus').innerHTML = g ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.minutes}分）。「続きから」で戻れます。</div>` : `<p>${S.teams.count}チーム・制限時間${S.opts.minutes}分で始めます（②で変えられます）。</p>`;
+}
+function phaseText(g) {
+  return { story: 'お話の画面', rules: 'ルールの画面', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表' }[g.phase] || '';
+}
+function newGame() {
+  const n = S.teams.count;
+  S.game = {
+    n, names: S.teams.names.slice(0, n), minutes: S.opts.minutes, hint0: S.opts.hint0, hintGap: S.opts.hintGap,
+    phase: 'story', startAt: null, pausedAt: null, pausedTotal: 0, extra: 0, released: [], escapes: {}, exIdx: 0, finalStep: 0,
+  };
+  saveNow();
+}
+$('#playNew').addEventListener('click', () => {
+  if (S.game && S.game.phase !== 'result' && !confirm('本番の途中です。記録を消して、はじめからにしますか？')) return;
+  newGame(); openStage();
+});
+$('#playResume').addEventListener('click', () => { if (S.game) openStage(); });
+
+function elapsed(g) {
+  if (!g.startAt) return 0;
+  const now = g.pausedAt || Date.now();
+  return Math.max(0, now - g.startAt - g.pausedTotal);
+}
+function limitMs(g) { return (g.minutes + g.extra) * 60000; }
+function remaining(g) { return Math.max(0, limitMs(g) - elapsed(g)); }
+function escapedList(g) { return Object.entries(g.escapes).map(([t, ms]) => ({ t: +t, ms })).sort((a, b) => a.ms - b.ms || a.t - b.t); }
+
+// 音
+let AC = null;
+function tone(freq, dur, type, vol, delay) {
+  if (!S.opts.sound) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = AC.currentTime + (delay || 0), o = AC.createOscillator(), gn = AC.createGain();
+    o.type = type || 'sine'; o.frequency.value = freq;
+    gn.gain.setValueAtTime(vol || 0.2, t0); gn.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(gn); gn.connect(AC.destination); o.start(t0); o.stop(t0 + dur + 0.02);
+  } catch (e) { /* 音が出せない環境 */ }
+}
+const SND = {
+  start: () => [523, 784, 1047].forEach((f, i) => tone(f, 0.25, 'triangle', 0.22, i * 0.12)),
+  hint: () => { tone(988, 0.2, 'sine', 0.22); tone(1319, 0.4, 'sine', 0.22, 0.18); },
+  escape: () => [784, 988, 1175, 1568].forEach((f, i) => tone(f, i === 3 ? 0.6 : 0.16, 'square', 0.12, i * 0.1)),
+  tick: () => tone(880, 0.1, 'square', 0.1),
+  end: () => tone(196, 0.9, 'sawtooth', 0.2),
+  fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i === 3 ? 0.9 : 0.2, 'triangle', 0.22, i * 0.16)),
+};
+
+function openStage() {
+  document.body.classList.add('staging');
+  renderStage();
+  startTick();
+}
+function closeStage() {
+  document.body.classList.remove('staging');
+  stopTick();
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  showTab('play');
+}
+$('#stClose').addEventListener('click', closeStage);
+$('#stFull').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+});
+$('#stSound').addEventListener('click', () => { S.opts.sound = !S.opts.sound; saveSoon(); renderBar(); });
+
+// タイマー
+let tickId = null, lastSec = null;
+function startTick() { stopTick(); tickId = setInterval(tick, 250); }
+function stopTick() { if (tickId) clearInterval(tickId); tickId = null; }
+function tick() {
+  const g = S.game;
+  if (!g || g.phase !== 'play') return;
+  const rem = remaining(g), el = elapsed(g);
+  // ヒントの時刻
+  const ts = hintTimes(g);
+  for (let i = 0; i < HINT_PLAN.length; i++) if (!g.released.includes(i) && el >= ts[i] && !g.pausedAt) releaseHint(i);
+  const sec = Math.ceil(rem / 1000);
+  if (sec !== lastSec && sec <= 10 && sec > 0 && !g.pausedAt) SND.tick();
+  lastSec = sec;
+  if (rem <= 0) { timeUp(); return; }
+  updateClock();
+}
+function releaseHint(i) {
+  const g = S.game;
+  if (g.released.includes(i)) return;
+  g.released.push(i);
+  saveNow();
+  SND.hint();
+  showBanner('💡 ヒントが出ました！', HINT_PLAN[i].map(([id]) => id === 'final' ? '最後のとびら' : `謎${id}`).join('・'), 'hint');
+  renderStage();
+}
+function timeUp() {
+  const g = S.game;
+  if (g.phase !== 'play') return;
+  if (!g.pausedAt) g.pausedAt = Date.now();
+  const over = elapsed(g) - limitMs(g);   // 時間ちょうどで止める（＋1分で、ちゃんと1分のこる）
+  if (over > 0) g.pausedTotal += over;
+  g.phase = 'timeup';
+  saveNow(); SND.end(); renderStage();
+}
+let bannerTimer = null;
+function showBanner(text, small, cls) {
+  const b = $('#banner');
+  b.className = cls || '';
+  b.innerHTML = esc(text) + (small ? `<small>${esc(small)}</small>` : '');
+  b.hidden = false;
+  b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(() => { b.hidden = true; }, 2600);
+}
+
+// 進行
+function primary() {
+  const g = S.game;
+  if (!g) return;
+  switch (g.phase) {
+    case 'story': g.phase = 'rules'; break;
+    case 'rules': g.phase = 'play'; g.startAt = Date.now(); g.pausedAt = null; g.pausedTotal = 0; SND.start(); showBanner('スタート！', '謎の紙を表にしよう'); break;
+    case 'play': return;
+    case 'timeup': g.phase = 'explain'; g.exIdx = 0; break;
+    case 'explain': if (g.exIdx < NAZO.length) g.exIdx++; else { g.phase = 'result'; g.finalStep = 0; } break;
+    case 'result': {
+      const G = podiumRanks(g);
+      if (g.finalStep < G.length) { g.finalStep++; if (g.finalStep === G.length) celebrate(); }
+      break;
+    }
+  }
+  saveNow(); renderStage();
+}
+function back() {
+  const g = S.game;
+  if (g.phase === 'rules') g.phase = 'story';
+  else if (g.phase === 'explain') { if (g.exIdx > 0) g.exIdx--; else g.phase = 'timeup'; }
+  else if (g.phase === 'result') { g.phase = 'explain'; g.exIdx = NAZO.length; }
+  saveNow(); renderStage();
+}
+$('#stPrimary').addEventListener('click', primary);
+$('#stBack').addEventListener('click', back);
+$('#stPause').addEventListener('click', () => {
+  const g = S.game;
+  if (g.phase !== 'play') return;
+  if (g.pausedAt) { g.pausedTotal += Date.now() - g.pausedAt; g.pausedAt = null; }
+  else g.pausedAt = Date.now();
+  saveNow(); renderStage();
+});
+$('#stPlus').addEventListener('click', () => {
+  const g = S.game;
+  g.extra += 1;
+  if (g.phase === 'timeup') { g.phase = 'play'; if (g.pausedAt) { g.pausedTotal += Date.now() - g.pausedAt; g.pausedAt = null; } }
+  saveNow(); renderStage();
+});
+$('#stHintNow').addEventListener('click', () => {
+  const g = S.game;
+  const i = HINT_PLAN.findIndex((_, k) => !g.released.includes(k));
+  if (i >= 0) releaseHint(i);
+});
+$('#stEnd').addEventListener('click', () => { if (confirm('謎解きを終わりにして、解説に進みますか？')) timeUp(); });
+$('#stage').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTimeout(() => b.blur(), 0); });
+document.addEventListener('keydown', e => {
+  if (!document.body.classList.contains('staging')) return;
+  if (e.target.matches && e.target.matches('input,textarea,select')) return;
+  if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    if (!e.repeat) primary();
+  }
+});
+document.addEventListener('keyup', e => { if (document.body.classList.contains('staging') && e.key === ' ') e.preventDefault(); });
+
+function toggleEscape(t) {
+  const g = S.game;
+  if (g.phase !== 'play') return;
+  if (g.escapes[t] != null) {
+    if (!confirm(`${g.names[t]} の脱出の記録を取り消しますか？`)) return;
+    delete g.escapes[t];
+  } else {
+    g.escapes[t] = Math.floor(elapsed(g) / 1000) * 1000;   // 秒までで記録（同じ秒なら同じ順位）
+    SND.escape();
+    const L = escapedList(g), rank = rankAt(L, L.findIndex(x => x.t === t));
+    showBanner(`🎉 ${g.names[t]} 脱出成功！`, `${rank}番目・タイム ${lap(g.escapes[t])}`);
+  }
+  saveNow(); renderStage();
+  if (Object.keys(g.escapes).length === g.n) setTimeout(() => { if (S.game.phase === 'play') { showBanner('全チーム脱出！', 'おめでとう！'); timeUp(); } }, 1500);
+}
+
+// 描画
+function renderBar() {
+  const g = S.game, p = g.phase;
+  const btn = $('#stPrimary');
+  let label = '';
+  if (p === 'story') label = 'ルール説明へ ▶';
+  else if (p === 'rules') label = '▶ スタート！';
+  else if (p === 'timeup') label = '解説へ ▶';
+  else if (p === 'explain') label = g.exIdx < NAZO.length ? (g.exIdx === NAZO.length - 1 ? '最後のとびらの解説へ ▶' : '次の解説へ ▶') : '結果発表へ ▶';
+  else if (p === 'result') { const G = podiumRanks(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : ''; }
+  btn.textContent = label;
+  btn.hidden = !label;
+  $('#stBack').hidden = !['rules', 'explain', 'result'].includes(p);
+  $('#stPause').hidden = p !== 'play';
+  $('#stPause').textContent = g.pausedAt ? '▶ 再開' : '一時停止';
+  $('#stPlus').hidden = !['play', 'timeup'].includes(p);
+  $('#stHintNow').hidden = p !== 'play' || g.released.length >= HINT_PLAN.length;
+  $('#stEnd').hidden = p !== 'play';
+  $('.st-bar .keyhint').hidden = p === 'play';
+  $('#stSound').textContent = S.opts.sound ? '音 ON' : '音 OFF';
+}
+function renderStage() {
+  const g = S.game;
+  if (!g) return;
+  $('#stTitle').textContent = { story: '体育館からの脱出', rules: 'ルール', play: '謎解きタイム', timeup: 'タイムアップ', explain: '解説', result: '結果発表' }[g.phase];
+  const m = $('#stMain');
+  if (g.phase === 'story') m.innerHTML = storyHtml(g);
+  else if (g.phase === 'rules') m.innerHTML = rulesHtml(g);
+  else if (g.phase === 'play') { m.innerHTML = playHtml(g); bindTeams(); updateClock(); fitHints(); }
+  else if (g.phase === 'timeup') m.innerHTML = timeupHtml(g);
+  else if (g.phase === 'explain') m.innerHTML = explainHtml(g);
+  else if (g.phase === 'result') m.innerHTML = resultHtml(g);
+  renderBar();
+}
+function storyHtml(g) {
+  return `<div class="story-slide"><div class="icon">🚪🔒</div><h2>体育館からの脱出</h2>
+    <p>ある日の学年集会。ふと気がつくと、体育館のとびらが<span class="em">すべて閉まっていた</span>……。</p>
+    <p>とびらの画面には、こう書かれている。<br><span class="em">「あいことばを入れよ。制限時間は${g.minutes}分」</span></p>
+    <p>あいことばを知る方法はただ一つ。<span class="em">6つの謎</span>を解くこと。<br>チームで力を合わせて、体育館から脱出せよ！</p></div>`;
+}
+function rulesHtml(g) {
+  return `<div class="rules-slide"><h2>ルール</h2><ol>
+    <li>6つの謎を、チームで協力して解く<span class="s">手分けしてもOK。むずかしい謎は、みんなで考えよう</span></li>
+    <li>答えの <b>○</b> の文字を、謎の番号の順にならべると「あいことば」になる</li>
+    <li>あいことばがわかったら、<b>3枚目の紙</b>を先生に見せる<span class="s">タブレットのチームは「脱出成功」の画面を見せる</span></li>
+    <li>${g.hint0}分たつと、${g.hintGap}分ごとにヒントがスクリーンに出る</li>
+    <li>制限時間は <b>${g.minutes}分</b>。早く脱出したチームが上位！</li>
+  </ol><div class="ng">🤫 ほかのチームに答えを教えない。答えは小さな声で！</div></div>`;
+}
+function playHtml(g) {
+  const got = {}, newest = g.released[g.released.length - 1];
+  g.released.forEach(i => HINT_PLAN[i].forEach(([id, k]) => { (got[id] = got[id] || []).push([k, i === newest]); }));
+  const hints = [...NAZO.map(p => p.id), 'final'].filter(id => got[id]).map(id => {
+    const list = got[id].sort((a, b) => a[0] - b[0]);
+    return `<div class="hcard${list.some(x => x[1]) ? ' new' : ''}"><div class="t">${id === 'final' ? '🚪 最後のとびら' : `謎${id}「${esc(puzzleOf(id).title)}」`}</div>${list.map(([k]) => `<div class="hk">${list.length > 1 ? `<b>${k + 1}.</b> ` : ''}${esc(NZ_TEACH[id].hints[k])}</div>`).join('')}</div>`;
+  });
+  const cols = g.n > 12 ? 2 : 1;
+  const done = escapedList(g), rankOf = {};
+  done.forEach((x, i) => { rankOf[x.t] = rankAt(done, i); });
+  return `<div class="play">
+    <div class="panel"><div class="clock"><div class="lab">のこり時間</div><div id="bigTime"></div><div class="next" id="nextHint"></div>
+      <div class="count">脱出 <b>${done.length}</b> / ${g.n} チーム</div></div></div>
+    <div class="panel"><h3>💡 ヒント</h3><div class="hints">${hints.length ? hints.join('') : `<div class="none">${g.hint0}分たつと、最初のヒントが出ます</div>`}</div></div>
+    <div class="panel"><h3>🏁 脱出したチーム</h3><div class="teams" style="grid-template-columns:repeat(${cols},minmax(0,1fr));grid-template-rows:repeat(${Math.ceil(g.n / cols)},minmax(0,1fr))">${g.names.map((nm, t) =>
+      `<button class="tb${g.escapes[t] != null ? ' done' : ''}" data-t="${t}">${swHtml(t)}<span class="nm">${esc(nm)}</span>${g.escapes[t] != null ? `<span class="rk">${rankOf[t]}位</span><span class="tm">${lap(g.escapes[t])}</span>` : ''}</button>`).join('')}</div>
+      <div class="teams-hint">あいことばを確かめたら、そのチームを押す（もう一度押すと取り消し）</div></div></div>`;
+}
+function fitHints() {
+  const box = $('#stMain .hints');
+  if (!box) return;
+  for (let f = 2.1; f >= 1.3; f -= 0.1) {
+    box.style.setProperty('--hs', f.toFixed(1) + 'vh');
+    if (box.scrollHeight <= box.clientHeight + 1) break;
+  }
+}
+window.addEventListener('resize', () => { if (S.game && S.game.phase === 'play') fitHints(); });
+function bindTeams() { $$('#stMain .tb').forEach(b => b.addEventListener('click', () => toggleEscape(+b.dataset.t))); }
+function updateClock() {
+  const g = S.game, el = $('#bigTime');
+  if (!el) return;
+  const rem = remaining(g);
+  el.textContent = mmss(rem);
+  el.className = g.pausedAt ? 'paused' : rem <= 60000 ? 'low' : '';
+  const ts = hintTimes(g), i = HINT_PLAN.findIndex((_, k) => !g.released.includes(k));
+  $('#nextHint').textContent = g.pausedAt ? '一時停止中' : i < 0 ? 'ヒントはすべて出ました' : ts[i] >= limitMs(g) ? '' : `次のヒントまで ${mmss(ts[i] - elapsed(g))}`;
+}
+function timeupHtml(g) {
+  const n = Object.keys(g.escapes).length;
+  return `<div class="timeup"><h2>${n === g.n ? '全チーム脱出！' : 'タイムアップ！'}</h2><p>脱出できたのは <b>${n}</b> / ${g.n} チーム</p><p>では、答えを見ていこう！</p></div>`;
+}
+function explainHtml(g) {
+  const i = g.exIdx, p = i < NAZO.length ? NAZO[i] : NZ_FINAL, T = NZ_TEACH[p.id];
+  const ans = [...T.answer].map((c, k) => p.mark === k + 1 ? `<span class="mkc">${c}</span>` : c).join('');
+  const got = NAZO.map((q, k) => k <= i || p === NZ_FINAL ? [...NZ_TEACH[q.id].answer][q.mark - 1] : '');
+  return `<div class="explain"><div class="pz">${nzCard(p, { fill: T.answer, num: true })}</div>
+    <div class="side"><div class="alab">${p.id === 'final' ? 'あいことば' : `謎${p.id}の答え`}</div><div class="answer">${ans}</div>
+    <div class="why">${esc(T.explain)}</div>
+    <div class="collected">${got.map(c => `<span class="${c ? 'on' : ''}">${c}</span>`).join('')}</div></div></div>`;
+}
+function podiumRanks(g) {
+  const L = escapedList(g);
+  return [...new Set(L.map((x, i) => rankAt(L, i)))].filter(r => r <= 3).sort((a, b) => a - b);
+}
+function rankAt(L, i) { return 1 + L.filter(y => y.ms < L[i].ms).length; }
+function resultHtml(g) {
+  const L = escapedList(g), G = podiumRanks(g), shown = new Set(G.slice(G.length - g.finalStep));
+  const pod = r => {
+    const ts = L.filter((x, i) => rankAt(L, i) === r);
+    const inner = !G.includes(r) ? '' : shown.has(r) ? ts.map(x => `<div class="tmx">${swHtml(x.t)}<div class="nm">${esc(g.names[x.t])}</div><div class="ct">${lap(x.ms)}</div></div>`).join('') : '<div class="q">？</div>';
+    return `<div class="pod r${r}"><div>${inner}</div><div class="step">${G.includes(r) ? r + '位' : ''}</div></div>`;
+  };
+  const rest = L.filter((x, i) => rankAt(L, i) > 3);
+  const not = g.names.map((_, t) => t).filter(t => g.escapes[t] == null);
+  const all = g.finalStep >= G.length;
+  return `<div class="result"><h2>${!L.length ? 'みんな、よくがんばった！' : all ? '🏆 脱出おめでとう！' : '結果発表'}</h2>
+    <div class="podium">${pod(2)}${pod(1)}${pod(3)}</div>
+    <div class="others">${rest.map(x => `<span>${rankAt(L, L.indexOf(x))}位 ${swHtml(x.t)} ${esc(g.names[x.t])} ${lap(x.ms)}</span>`).join('')}
+    ${not.length ? `<span>あと一歩！ ${not.map(t => swHtml(t)).join('')}</span>` : ''}</div></div>`;
+}
+function celebrate() {
+  SND.fanfare();
+  const cv = $('#confetti');
+  cv.hidden = false;
+  const ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const P = [];
+  for (let i = 0; i < 180; i++) P.push({ x: Math.random() * cv.width, y: -Math.random() * cv.height * 0.6, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, s: 6 + Math.random() * 8, c: TEAM_COLORS[i % 10], a: Math.random() * 6 });
+  const t0 = performance.now();
+  (function frame(now) {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += 0.1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); });
+    if (now - t0 < 4500) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
+  })(t0);
+}
+
+// ---------- ⑤ 印刷 ----------
+function printKind() { return ($('input[name=pKind]:checked') || {}).value || 'sheets'; }
+function renderPrint() {
+  let h = '';
+  if (printKind() === 'sheets') {
+    const head = n => `<div class="ph"><h1>体育館からの脱出 <small style="font-size:4.5mm">${n}/3</small></h1><div class="tn">チーム名 <span></span></div></div>`;
+    h += `<div class="page">${head(1)}<div class="story">とびらの画面には「あいことばを入れよ」。6つの謎を解いて、答えの ○ の文字を、謎の番号の順にならべよう。それが、あいことばだ！</div>${NAZO.slice(0, 3).map(p => nzCard(p, { num: true })).join('')}</div>`;
+    h += `<div class="page">${head(2)}${NAZO.slice(3).map(p => nzCard(p, { num: true })).join('')}</div>`;
+    h += `<div class="page">${head(3)}<div class="door">${nzCard(NZ_FINAL)}<div style="font-size:5mm">あいことばがわかったら、この紙を先生に見せよう！</div><div class="stamp">脱出タイム　　　分　　　秒</div></div><div class="memo">メモ</div></div>`;
+    $('#pHint').textContent = '3ページで1チーム分です。印刷の画面で、部数をチームの数（' + S.teams.count + '）にしてください。';
+  } else {
+    h = `<div class="page pk"><div class="ph"><h1>先生用：答えとヒント（生徒に見せない）</h1></div><table><thead><tr><th>謎</th><th>答え</th><th>ヒント</th><th>解説</th></tr></thead><tbody>${[...NAZO, NZ_FINAL].map(p => {
+      const T = NZ_TEACH[p.id];
+      return `<tr><td>${p.id === 'final' ? '最後' : p.id}. ${esc(p.title)}</td><td><b>${esc(T.answer)}</b></td><td>${T.hints.map((x, k) => `${k + 1}. ${esc(x)}`).join('<br>')}</td><td>${esc(T.explain)}</td></tr>`;
+    }).join('')}</tbody></table><p style="font-size:3.5mm">ヒントの時刻：${HINT_PLAN.map((grp, i) => `${S.opts.hint0 + i * S.opts.hintGap}分（${grp.map(([id, k]) => id === 'final' ? '最後' : `謎${id}-${k + 1}`).join('・')}）`).join('、')}</p></div>`;
+    $('#pHint').textContent = '1ページ。';
+  }
+  $('#printPreview').innerHTML = h;
+}
+$$('input[name=pKind]').forEach(r => r.addEventListener('change', renderPrint));
+$('#pPrint').addEventListener('click', () => { renderPrint(); window.print(); });
+
+// ---------- はじめ ----------
+showTab(lsGet('nazo-escape-tab') || 'guide');
+</script>
+</body>
+</html>

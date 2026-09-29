@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>謎解きカード</title>
+<style>
+:root{--bg:#101828;--card:#ffffff;--ink:#1d2330;--sub:#5b6475;--line:#d9dde5;--gold:#f5c542;--team:#888;--teamInk:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(ellipse at top,#23304a,var(--bg) 70%);color:#f2f4f8;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:clamp(15px,2.4vmin,22px)}
+.screen{display:none;min-height:100%;padding:max(3vmin,env(safe-area-inset-top)) 3.5vmin 4vmin;flex-direction:column;gap:2.4vmin}
+.screen.on{display:flex}
+button{font:inherit;cursor:pointer;color:inherit}
+h1{margin:0;font-size:1.8em;color:var(--gold)}
+p{margin:0}
+.sub{color:#b9c3d6}
+.teams{display:grid;grid-template-columns:repeat(5,1fr);gap:2vmin}
+.teams button{aspect-ratio:1/1;border:none;border-radius:2.4vmin;font-size:2.2em;font-weight:900;font-family:Arial,sans-serif}
+.big{font-size:1.2em;font-weight:900;padding:.8em 1.6em;border:none;border-radius:.6em;background:var(--gold);color:#1d2330}
+.ghost{font-size:.85em;padding:.5em 1em;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06);border-radius:.5em}
+.bar{display:flex;align-items:center;gap:2vmin;flex-wrap:wrap}
+.bar .sp{flex:1}
+.tbadge{display:inline-flex;align-items:center;justify-content:center;min-width:2.2em;height:2.2em;padding:0 .3em;border-radius:.4em;background:var(--team);color:var(--teamInk);font-weight:900;font-size:1.2em;font-family:Arial,sans-serif}
+.time{font-size:1.4em;font-weight:900;font-variant-numeric:tabular-nums}
+.wait{margin:auto;text-align:center;display:flex;flex-direction:column;gap:3vmin;align-items:center}
+.wait .icon{font-size:5em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14em,1fr));gap:2vmin}
+.pz{display:flex;align-items:center;gap:.8em;background:var(--card);color:var(--ink);border:none;border-radius:.8em;padding:.8em 1em;text-align:left;min-height:4.4em}
+.pz .no{display:inline-flex;align-items:center;justify-content:center;min-width:1.9em;height:1.9em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.pz .tt{flex:1;font-weight:bold}
+.pz .tt small{display:block;color:#e0a800;font-weight:normal}
+.pz .st{font-size:1.4em;font-weight:900;color:#c3c9d4}
+.pz.done{background:#e6f6ec}
+.pz.done .st{color:#16803c}
+.door{background:rgba(255,255,255,.08);border:2px solid var(--gold);border-radius:1em;padding:1em;display:flex;flex-direction:column;align-items:center;gap:.8em}
+.door .nz-boxes span{background:transparent;color:#fff;border-color:var(--gold)}
+.door .nz-boxes span.mk{background:rgba(245,197,66,.15)}
+.sheet{background:var(--card);color:var(--ink);border-radius:1em;padding:1em 1.1em}
+.sheet .nz{font-size:clamp(15px,2.9vmin,26px)}
+.answer{display:flex;gap:.6em;flex-wrap:wrap}
+.answer input{flex:1;min-width:8em;font:inherit;font-size:1.3em;padding:.5em .7em;border:2px solid var(--line);border-radius:.5em;color:var(--ink)}
+.answer button{font-size:1.2em;font-weight:900;padding:.5em 1.2em;border:none;border-radius:.5em;background:var(--gold);color:#1d2330}
+.res{font-size:1.2em;font-weight:900;min-height:1.5em;text-align:center}
+.res.ng{color:#ff8a8a;animation:shake .35s}
+.res.ok{color:#7ee2a0}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#escaped{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
+#escaped .icon{font-size:5em;line-height:1}
+#escaped h2{font-size:3.4em;margin:.1em 0}
+#escaped .tn{font-size:2.4em;font-weight:900}
+#escaped .tm{font-size:2em;font-weight:900;font-variant-numeric:tabular-nums}
+#escaped .note{font-size:1.1em;opacity:.85}
+@media (orientation:landscape){.teams{grid-template-columns:repeat(10,1fr)}}
+
+/* ===NAZO-CSS-START=== */
+.nz{color:#1d2330;line-height:1.5}
+.nz-head{display:flex;align-items:baseline;gap:.5em;margin:0 0 .3em}
+.nz-no{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.nz-title{font-weight:900;font-size:1.15em}
+.nz-lv{color:#e0a800;letter-spacing:.05em}
+.nz-q{font-weight:bold;margin:.2em 0 .5em}
+.nz-ex{display:inline-block;font-size:.9em;color:#3d4556;background:#eef1f6;border-radius:.5em;padding:.25em .7em;margin:0 0 .5em}
+.nz-ex .nz-emo{flex-direction:row;vertical-align:middle}
+.nz-ex .nz-emo .e{font-size:1.5em}
+.nz-row{display:flex;flex-wrap:wrap;gap:.5em .7em;align-items:center;justify-content:center}
+.nz-emo{display:inline-flex;flex-direction:column;align-items:center;gap:.1em}
+.nz-emo .e{font-size:2.6em;line-height:1.15;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.nz-emo .n{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;background:#1d2330;color:#fff;font-weight:bold;font-size:.9em}
+.nz-arrow{font-size:1.2em;color:#9aa3b2;font-weight:bold}
+.nz-qbox{display:inline-flex;gap:.15em}
+.nz-qbox span{width:1.5em;height:1.5em;border:2px dashed #c8102e;border-radius:.3em;display:inline-flex;align-items:center;justify-content:center;color:#c8102e;font-weight:bold}
+.nz-clocks{display:flex;flex-wrap:wrap;gap:.6em 1em;justify-content:center}
+.nz-clock{display:flex;flex-direction:column;align-items:center;font-weight:bold;gap:.1em}
+.nz-clock svg{width:7em;height:7em}
+.nz-clock.ex span{color:#3d4556;font-size:.9em}
+.nz-flick{display:flex;flex-wrap:wrap;gap:1em;align-items:center;justify-content:center}
+.nz-keys{display:grid;grid-template-columns:repeat(3,2.8em);gap:.3em;padding:.4em;background:#d7dbe3;border-radius:.6em}
+.nz-keys span{height:2.2em;border-radius:.4em;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.05em;box-shadow:0 1px 0 #9aa3b2}
+.nz-flickr{display:flex;flex-direction:column;align-items:center}
+.nz-code{display:flex;flex-wrap:wrap;gap:.4em;justify-content:center}
+.nz-code span{border:2px solid #1d2330;border-radius:.4em;padding:.1em .45em;font-weight:900;font-size:1.3em;background:#fff}
+.nz-letter{background:#fffaf0;border:1px solid #e8d7b0;border-radius:.4em;padding:.6em 1em;font-size:1.3em;line-height:1.8;letter-spacing:.06em;word-break:break-all}
+.nz-sign{text-align:right;font-size:1em;margin-top:.2em}
+.nz-wd{width:11em;height:11em}
+.nz-boxes{display:flex;gap:.3em;justify-content:center;margin:.6em 0 0}
+.nz-boxes span{position:relative;width:2em;height:2em;border:2px solid #1d2330;border-radius:.3em;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:900;background:#fff}
+.nz-boxes span.mk{border-radius:50%;border-color:#c8102e;background:#fff4d6}
+.nz-boxes span i{position:absolute;top:-.55em;right:-.55em;font-style:normal;font-size:.55em;background:#c8102e;color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}
+/* ===NAZO-CSS-END=== */
+</style>
+</head>
+<body>
+
+<div class="screen" id="pick">
+  <h1>🔒 謎解きカード</h1>
+  <p class="sub">自分のチームの番号をタップしてください。</p>
+  <div class="teams" id="teams"></div>
+  <div class="bar"><span class="sp"></span><button class="ghost" id="reset">記録を消して最初から</button></div>
+</div>
+
+<div class="screen" id="wait">
+  <div class="bar"><span class="tbadge" id="wTeam"></span><span class="sp"></span><button class="ghost" id="wChange">チームを変える</button></div>
+  <div class="wait"><div class="icon">🚪🔒</div><h1>体育館からの脱出</h1><p>先生の「スタート！」の合図で、ボタンを押そう</p><button class="big" id="start">▶ スタート</button></div>
+</div>
+
+<div class="screen" id="list">
+  <div class="bar"><span class="tbadge" id="lTeam"></span><span class="time" id="lTime"></span><span class="sp"></span><span class="sub" id="lCount"></span></div>
+  <div class="grid" id="pzList"></div>
+  <div class="door"><div style="font-weight:900;color:var(--gold)">🚪 最後のとびら</div><div id="doorBoxes"></div><button class="big" id="toFinal">最後のとびらへ</button></div>
+</div>
+
+<div class="screen" id="puzzle">
+  <div class="bar"><button class="ghost" id="pBack">← 謎の一覧</button><span class="sp"></span><span class="time" id="pTime"></span></div>
+  <div class="sheet" id="pSheet"></div>
+  <form class="answer" id="pForm"><input id="pIn" placeholder="答えを入れよう（ひらがな）" autocomplete="off" enterkeyhint="done"><button type="submit">こたえる</button></form>
+  <div class="res" id="pRes"></div>
+</div>
+
+<div class="screen" id="escaped">
+  <div class="icon">🎉🚪</div>
+  <h2>脱出成功！</h2>
+  <div class="tn" id="eTeam"></div>
+  <div class="tm" id="eTime"></div>
+  <div class="note">この画面を先生に見せよう</div>
+  <button class="ghost" id="eBack" style="color:inherit;border-color:currentColor">謎の一覧にもどる</button>
+</div>
+
+<script>
+// ===NAZO-START===
+// 謎の中身（先生用・生徒用の両方で同じもの）。答えそのものは入れず、確かめ用の値だけを持つ。
+function nzNorm(s) {
+  return (s || '').normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s、。，．,.・!！?？「」『』（）()ー－\-]/g, '').toLowerCase();
+}
+function nzHash(id, s) {
+  let h = 0x811c9dc5;
+  const t = 'nazo|' + id + '|' + s;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return ('0000000' + h.toString(16)).slice(-8);
+}
+function nzDec(arr, key) { const k = [...key].map(c => c.codePointAt(0)); return arr.map((n, i) => String.fromCodePoint(n ^ k[i % k.length] ^ 0x5a)).join(''); }
+// 答えが合っていれば、その答えのひらがなを返す（ちがえば null）
+function nzCheck(p, input) {
+  const v = nzNorm(input), r = p.ok[nzHash(p.id, v)];
+  if (!r) return null;
+  return r === 1 ? v : nzDec(r, v);
+}
+function nzEmo(e, n) { return `<span class="nz-emo"><span class="e">${e}</span>${n ? `<span class="n">${n}</span>` : ''}</span>`; }
+const NZ_DIAL = ['ま', 'き', 'ち', 'あ', 'も', 'す', 'は', 'ね', 'く', 'ろ', 'ぬ', 'ほ'];   // 12時・1時・2時…11時の位置
+function nzClock(h, m) {
+  let s = '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#fff" stroke="#1d2330" stroke-width="3"/>';
+  NZ_DIAL.forEach((ch, k) => {
+    const a = (k * 30 - 90) * Math.PI / 180;
+    s += `<text x="${(60 + 44 * Math.cos(a)).toFixed(1)}" y="${(61 + 44 * Math.sin(a)).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="bold" fill="#1d2330">${ch}</text>`;
+  });
+  const hand = (deg, len, w) => { const a = (deg - 90) * Math.PI / 180; return `<line x1="60" y1="60" x2="${(60 + len * Math.cos(a)).toFixed(1)}" y2="${(60 + len * Math.sin(a)).toFixed(1)}" stroke="#1d2330" stroke-width="${w}" stroke-linecap="round"/>`; };
+  return s + hand((h % 12) * 30 + m * 0.5, 22, 7) + hand(m * 6, 34, 3.5) + '<circle cx="60" cy="60" r="4.5" fill="#1d2330"/></svg>';
+}
+function nzWadou() {
+  const k = (x, y, t, ex) => `<rect x="${x - 21}" y="${y - 21}" width="42" height="42" rx="6" fill="${ex ? '#fff4d6' : '#fff'}" stroke="${ex ? '#c8102e' : '#1d2330'}" stroke-width="${ex ? 3 : 2}" ${ex ? 'stroke-dasharray="6 4"' : ''}/><text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="middle" font-size="26" font-weight="bold" fill="${ex ? '#c8102e' : '#1d2330'}">${t}</text>`;
+  // 矢印（先を三角でかく）
+  const ar = (x1, y1, x2, y2) => {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = 11, W = 7;
+    const bx = x2 - L * Math.cos(a), by = y2 - L * Math.sin(a);
+    const p = [[x2, y2], [bx + W * Math.sin(a), by - W * Math.cos(a)], [bx - W * Math.sin(a), by + W * Math.cos(a)]].map(q => q.map(v => v.toFixed(1)).join(' ')).join(' L');
+    return `<line x1="${x1}" y1="${y1}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#1d2330" stroke-width="3.5"/><path d="M${p} Z" fill="#1d2330"/>`;
+  };
+  return '<svg viewBox="0 0 220 220" class="nz-wd" aria-hidden="true">' +
+    k(110, 28, '社') + k(28, 110, '大') + k(192, 110, '話') + k(110, 192, '議') + k(110, 110, '？', true) +
+    ar(110, 50, 110, 87) + ar(50, 110, 87, 110) + ar(133, 110, 169, 110) + ar(110, 133, 110, 169) + '</svg>';
+}
+function nzBoxes(n, mark, text, num) {
+  // mark：○をつける文字の位置（0なら全部に1〜nの番号）、num：○につける謎の番号
+  const t = [...(text || '')];
+  let h = '<div class="nz-boxes">';
+  for (let i = 0; i < n; i++) {
+    const tag = mark === 0 ? i + 1 : num && i + 1 === mark ? num : '';
+    h += `<span class="${i + 1 === mark || mark === 0 ? 'mk' : ''}">${t[i] || ''}${tag ? `<i>${tag}</i>` : ''}</span>`;
+  }
+  return h + '</div>';
+}
+const NAZO = [
+  {
+    id: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
+    q: '絵の下の数字は、名前の「何文字目か」。読むと、どんなことば？',
+    html: () => `<div class="nz-ex">見本：${nzEmo('🐱', 2)} は「ねこ」の2文字目で「こ」</div><div class="nz-row">${[['🐜', 1], ['🦒', 2], ['🏫', 1], ['🍅', 3], ['🐘', 2]].map(a => nzEmo(a[0], a[1])).join('')}</div>`,
+    ok: { '2adcc81a': [90, 90, 90, 90, 90], '73885c32': [22289, 42547, 80, 22331, 42751], '617dcc9a': [22289, 90, 42741, 116, 22293] },
+  },
+  {
+    id: 2, title: 'ふしぎな時計', level: 2, boxes: 3, mark: 1,
+    q: '見本と同じ読み方で、①②③の時計を読むと？',
+    html: () => `<div class="nz-clocks"><div class="nz-clock ex">${nzClock(6, 15)}<span>見本 → 「あ」</span></div><div class="nz-clock">${nzClock(2, 5)}<span>①</span></div><div class="nz-clock">${nzClock(7, 20)}<span>②</span></div><div class="nz-clock">${nzClock(10, 10)}<span>③</span></div></div>`,
+    ok: { '323e1f1b': [90, 90, 90], '1171b032': [23552, 21465, 90], '7b1ac627': [23552, 21465, 23596] },
+  },
+  {
+    id: 3, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
+    q: '？に入る動物は？',
+    html: () => `<div class="nz-row chain">${['🦊', '🐈', '?', '🎺', '🐼', '🍡', '🦍', '🦁'].map(e => e === '?' ? '<span class="nz-qbox"><span>？</span><span>？</span><span>？</span></span>' : nzEmo(e)).join('<span class="nz-arrow">→</span>')}</div>`,
+    ok: { '1f94369e': [90, 90, 90] },
+  },
+  {
+    id: 4, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
+    q: '暗号を読むと、答えがわかる。',
+    html: () => `<div class="nz-flick"><div class="nz-keys">${['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', '゛゜', 'わ', '、。'].map(k => `<span>${k}</span>`).join('')}</div><div class="nz-flickr"><div class="nz-ex">見本：<b>な↑</b> ＝ ぬ　<b>な・</b> ＝ な</div><div class="nz-code">${['か↓', 'た・', 'あ→', 'は・', 'や↑', 'ま→'].map(c => `<span>${c}</span>`).join('')}</div></div></div>`,
+    ok: { '45964dc8': [90, 90], '404bae05': [27134, 27129] },
+  },
+  {
+    id: 5, title: 'たぬきの手紙', level: 2, boxes: 3, mark: 1,
+    q: '手紙が伝えたい「こたえ」は？',
+    html: () => '<div class="nz-letter">たせいかたいはた、いっしたょにたがたんばたるたなかたまた</div><div class="nz-sign">🦝 たぬき より</div>',
+    ok: { '75d8b54f': [90, 90, 90], '44a248bb': [32450, 42370, 32470] },
+  },
+  {
+    id: 6, title: '漢字のかくれんぼ', level: 3, boxes: 2, mark: 2,
+    q: '矢印の向きに読むと、どれも漢字2文字のことばになる。？の漢字の読みは？（ひらがな2文字）',
+    html: () => `<div class="nz-row">${nzWadou()}</div>`,
+    ok: { 'd300aca0': [90, 90], '112d5da7': [32523, 32516] },
+  },
+];
+const NZ_FINAL = { id: 'final', title: '最後のとびら', boxes: 6, q: '6つの謎の答えの ○ の文字を、1から順にならべると…？', ok: { 'e59ee854': 1, '308c5fea': 1 } };
+function nzCard(p, o) {
+  o = o || {};
+  return `<div class="nz"><div class="nz-head"><span class="nz-no">${p.id === 'final' ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, p.id === 'final' ? 0 : p.mark, o.fill, o.num ? p.id : '')}</div>`;
+}
+// ===NAZO-END===
+
+const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
+  '#000075', '#469990', '#800000', '#808000', '#fabed4', '#dcbeff', '#aaffc3', '#ffd8b1', '#222222', '#8c8c8c'];
+function inkOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const L = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2] > 0.36 ? '#1d2330' : '#ffffff';
+}
+const $ = s => document.querySelector(s);
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 保存できなくても遊べる */ } }
+const LS = 'nazo-card-v1';
+let C = (() => { try { return Object.assign({ team: 0, startAt: null, solved: {}, escapedAt: null }, JSON.parse(lsGet(LS)) || {}); } catch (e) { return { team: 0, startAt: null, solved: {}, escapedAt: null }; } })();
+function save() { lsSet(LS, JSON.stringify(C)); }
+function mmss(ms) { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+let current = null;
+
+function screen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); window.scrollTo(0, 0); }
+function setTeamColor() {
+  const c = TEAM_COLORS[(C.team || 1) - 1];
+  document.documentElement.style.setProperty('--team', c);
+  document.documentElement.style.setProperty('--teamInk', inkOn(c));
+  ['#wTeam', '#lTeam'].forEach(s => { $(s).textContent = C.team; });
+}
+function letters() { return NAZO.map(p => C.solved[p.id] ? [...C.solved[p.id]][p.mark - 1] : '').join(''); }
+function renderList() {
+  $('#pzList').innerHTML = NAZO.map(p => `<button class="pz${C.solved[p.id] ? ' done' : ''}" data-id="${p.id}"><span class="no">${p.id}</span><span class="tt">${p.title}<small>${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</small></span><span class="st">${C.solved[p.id] ? '✓ ' + [...C.solved[p.id]][p.mark - 1] : '？'}</span></button>`).join('');
+  const n = Object.keys(C.solved).length;
+  $('#lCount').textContent = `解いた謎 ${n} / ${NAZO.length}`;
+  const L = [...letters()];
+  $('#doorBoxes').innerHTML = nzBoxes(6, 0, NAZO.map((p, i) => L[i] || '　').join(''));
+}
+function openPuzzle(p) {
+  current = p;
+  const fill = p.id === 'final' ? '' : C.solved[p.id] || '';
+  $('#pSheet').innerHTML = nzCard(p, { fill, num: p.id !== 'final' });
+  $('#pIn').value = '';
+  $('#pRes').className = 'res';
+  $('#pRes').textContent = fill ? `正解ずみ！ ○の文字は「${[...fill][p.mark - 1]}」` : '';
+  screen('puzzle');
+}
+$('#pzList').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openPuzzle(NAZO.find(p => p.id === +b.dataset.id)); });
+$('#toFinal').addEventListener('click', () => openPuzzle(NZ_FINAL));
+$('#pBack').addEventListener('click', () => { renderList(); screen('list'); });
+$('#pForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const p = current, v = $('#pIn').value;
+  if (!p || !v.trim()) return;
+  $('#pIn').blur();
+  const res = $('#pRes');
+  const ok = nzCheck(p, v);
+  if (!ok) {
+    res.className = 'res'; void res.offsetWidth;
+    res.className = 'res ng';
+    res.textContent = 'ちがうみたい…もう一度考えよう';
+    return;
+  }
+  if (p.id === 'final') {
+    if (!C.escapedAt) C.escapedAt = Date.now();
+    save(); showEscaped();
+    return;
+  }
+  C.solved[p.id] = ok;
+  save();
+  $('#pSheet').innerHTML = nzCard(p, { fill: ok, num: true });
+  res.className = 'res ok';
+  res.textContent = `⭕ 正解！ ○の文字は「${[...ok][p.mark - 1]}」`;
+});
+function showEscaped() {
+  $('#eTeam').textContent = C.team + '番のチーム';
+  $('#eTime').textContent = 'タイム ' + mmss(C.escapedAt - C.startAt);
+  screen('escaped');
+}
+$('#eBack').addEventListener('click', () => { renderList(); screen('list'); });
+
+$('#teams').innerHTML = TEAM_COLORS.map((c, i) => `<button data-t="${i + 1}" style="background:${c};color:${inkOn(c)}">${i + 1}</button>`).join('');
+$('#teams').addEventListener('click', e => {
+  const b = e.target.closest('button[data-t]');
+  if (!b) return;
+  C.team = +b.dataset.t; save(); setTeamColor();
+  if (C.startAt) { renderList(); screen('list'); } else screen('wait');
+});
+$('#wChange').addEventListener('click', () => screen('pick'));
+$('#start').addEventListener('click', () => { C.startAt = Date.now(); save(); renderList(); screen('list'); });
+$('#reset').addEventListener('click', () => {
+  if (!confirm('解いた謎とタイムを消して、最初からにしますか？')) return;
+  C = { team: 0, startAt: null, solved: {}, escapedAt: null }; save();
+});
+setInterval(() => {
+  if (!C.startAt) return;
+  const t = mmss((C.escapedAt || Date.now()) - C.startAt);
+  $('#lTime').textContent = '⏱ ' + t; $('#pTime').textContent = '⏱ ' + t;
+}, 500);
+
+if (!C.team) screen('pick');
+else { setTeamColor(); if (!C.startAt) screen('wait'); else if (C.escapedAt) showEscaped(); else { renderList(); screen('list'); } }
+</script>
+</body>
+</html>
