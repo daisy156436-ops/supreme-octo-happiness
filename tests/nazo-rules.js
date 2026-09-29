@@ -100,6 +100,9 @@ ok('○の文字を1から順にならべると「あきらめない」', letter
 const letters2 = E.NZ_STAGE2.map(p => [...T[p.id].answer][p.mark - 1]).join('');
 ok('青い○の文字を7から順にならべると「えがお」', letters2 === T.final2.answer, letters2);
 ok('答えの文字数と箱の数が合う', E.NAZO.every(p => [...T[p.id].answer].length === p.boxes && p.mark >= 1 && p.mark <= p.boxes) && E.NZ_FINAL.boxes === [...T.final.answer].length && E.NZ_FINAL2.boxes === [...T.final2.answer].length);
+ok('縦割り：どの学年も3つずつ担当（第1ステージに2つ、第2ステージに1つ）', [1, 2, 3].every(y => E.NZ_STAGE1.filter(p => p.grade === y).length === 2 && E.NZ_STAGE2.filter(p => p.grade === y).length === 1), E.NAZO.map(p => p.id + ':' + p.grade).join(' '));
+ok('縦割り：1年生の担当は★1〜2の謎', E.NAZO.filter(p => p.grade === 1).every(p => p.level <= 2));
+ok('縦割り：謎に学年マークが出る', E.NAZO.every(p => E.nzCard(p).includes(`${p.grade}年生から`)) && !E.nzCard(E.NAZO[0], { grade: false }).includes('年生から'));
 ok('謎1〜6は第1ステージ、謎7〜9は第2ステージ', E.NZ_STAGE1.map(p => p.id).join() === '1,2,3,4,5,6' && E.NZ_STAGE2.map(p => p.id).join() === '7,8,9');
 
 // 答えの確かめ方

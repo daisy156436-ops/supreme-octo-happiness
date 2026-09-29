@@ -108,6 +108,10 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .nz-grid.wcard span{background:#8c95a6;border-color:#6b7385}
 .nz-grid.wcard span.hole{background:#fff}
 .nz-bal{width:12em;height:5.5em}
+.nz-gr{margin-left:auto;font-size:.8em;font-weight:bold;border-radius:1em;padding:.05em .7em;white-space:nowrap;align-self:center}
+.nz-gr.g1{background:#e6f6ec;color:#16803c;border:1px solid #9fd3b0}
+.nz-gr.g2{background:#fff4e0;color:#9a5b00;border:1px solid #f0c889}
+.nz-gr.g3{background:#f3eeff;color:#6d3fd6;border:1px solid #cdbdf5}
 /* ===NAZO-CSS-END=== */
 
 /* 印刷 */
@@ -138,6 +142,17 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .stamp{font-size:5.5mm;border:0.5mm dashed #1d2330;border-radius:2mm;padding:3mm 6mm}
 .memo{height:70mm;border:0.4mm solid #c9d0db;border-radius:3mm;padding:2mm 4mm;font-size:4mm;color:#5b6475}
 .pk table{font-size:3.5mm}
+.tsheet{gap:3mm}
+.tsheet .tn{font-size:6mm;display:flex;align-items:center;gap:2mm}
+.tsheet .tn .sw{min-width:10mm;width:auto;height:9mm;font-size:5.5mm;border-bottom:none}
+.tsheet h3{margin:2mm 0 0;font-size:5.5mm}
+.tname{font-size:6mm}.tname span{display:inline-block;width:120mm;border-bottom:0.4mm solid #1d2330}
+.mem{font-size:5mm}.mem td,.mem th{border:0.3mm solid #999;padding:1.8mm 3mm;height:10mm}
+.mem td:first-child{width:18mm;text-align:center}.mem td:last-child{width:32mm}
+.rnote{font-size:3.6mm;color:#5b6475;margin:0}
+.rbox{border:0.4mm solid #c9d0db;border-radius:2mm;padding:2.5mm 4mm;font-size:4.5mm;min-height:14mm}
+.rbox.tall{min-height:34mm}
+.rbox .l{display:inline-block;width:40mm;border-bottom:0.3mm solid #1d2330;margin-right:3mm}
 .pk td,.pk th{border:0.3mm solid #999;padding:1.4mm 2mm}
 
 /* 本番（投影画面） */
@@ -166,6 +181,21 @@ body.staging #stage{display:flex}
 .rules-slide ol{font-size:3.3vh;line-height:1.6;padding-left:4vh;margin:0}
 .rules-slide li{margin:.8vh 0}
 .rules-slide .s{display:block;font-size:.72em;color:#b9c3d6}
+.form-slide{margin:auto;display:grid;grid-template-columns:32fr 68fr;gap:3vw;align-items:center;width:min(92vw,170vh)}
+.form-slide .ft{text-align:center}
+.form-slide .ft .lab{font-size:3vh;color:#b9c3d6}
+#formTime{font-size:min(16vh,11vw);font-weight:900;font-variant-numeric:tabular-nums;line-height:1.05}
+#formTime.low{color:#ff6b6b}
+.fsteps h2{font-size:5vh;margin:0 0 1.6vh;color:var(--gold)}
+.fsteps ol{font-size:3.2vh;line-height:1.55;padding-left:4vh;margin:0}
+.fsteps li{margin:1vh 0}
+.fsteps .s{display:block;font-size:.72em;color:#b9c3d6}
+.rtab{border-collapse:collapse;margin-top:1vh;width:100%}
+.rtab td{border:none;padding:.6vh 1vh;font-size:2.6vh;color:#f2f4f8;vertical-align:middle}
+.rtab td:first-child{font-weight:900;white-space:nowrap;border-radius:.8vh;text-align:center;width:1%}
+.rtab td.g3{background:#6d3fd6}.rtab td.g2{background:#b97800}.rtab td.g1{background:#16803c}
+.reflect .win{font-size:3vh;margin-top:2.4vh;color:var(--gold);font-weight:bold}
+table.roles td,table.roles th{font-size:13px}
 .rules-slide .ng{margin-top:2vh;font-size:2.8vh;background:rgba(200,16,46,.25);border:1px solid rgba(255,120,120,.5);border-radius:1.2vh;padding:1vh 2vh}
 
 .play{display:grid;grid-template-columns:30fr 40fr 30fr;gap:1.6vw;width:100%;min-height:0}
@@ -291,34 +321,47 @@ body.staging #stage{display:flex}
     </ul>
     <p>早く脱出したチームが上位です。脱出できなかったチームも、第1のとびらまでの早さで順位がつきます。早いチームにも最後まで考える謎があり、ゆっくりのチームも第1のとびらで達成感を味わえるようにしてあります。</p>
     <ul>
-      <li>人数：100人なら5人×20チーム（2〜20チーム）</li>
-      <li>時間：45分（お話とルール5分・<b>謎解き32分</b>・解説と表彰8分）</li>
+      <li>人数：縦割りなら<b>6人（各学年2人ずつ）</b>×17チームくらい（2〜20チーム）</li>
+      <li>時間：50分（お話3分・チーム結成5分・ルール2分・<b>謎解き32分</b>・解説4分・表彰とふりかえり4分）</li>
       <li>用意：プロジェクターかテレビ＋このファイルを開いたパソコン、⑤で印刷した「謎の紙」（1チーム3ページ）と「第2ステージの紙」（1チーム2ページ・両面なら1枚）、えんぴつ</li>
       <li>タブレット：<b>なくてもできます</b>。あれば <b>謎解きカード.html</b> を開くと、答えがその場で正解かわかり、第2ステージもタブレットで続けられます</li>
     </ul>
   </div>
   <div class="two">
     <div class="card">
-      <h2>時間の目安（45分）</h2>
+      <h2>時間の目安（50分）</h2>
       <table class="timeline">
-        <tr><td>0〜5分</td><td>チームごとに座る。④本番の「お話」と「ルール」を映す。謎の紙を配る（スタートまで裏返し）</td></tr>
-        <tr><td>5〜37分</td><td>謎解き32分。6分たつと、3分ごとにヒントがスクリーンに出る（第2ステージのヒントは24分から）</td></tr>
-        <tr><td>37〜42分</td><td>解説。まず答えの一覧、時間があれば1問ずつ</td></tr>
-        <tr><td>42〜45分</td><td>表彰（3位→2位→1位）</td></tr>
+        <tr><td>0〜3分</td><td>チームごとに座る。④本番の「お話」を映す</td></tr>
+        <tr><td>3〜8分</td><td>チーム結成タイム（自己紹介・チーム名・役割）。チームシートと謎の紙を配る（スタートまで裏返し）</td></tr>
+        <tr><td>8〜10分</td><td>ルール説明</td></tr>
+        <tr><td>10〜42分</td><td>謎解き32分。6分たつと、3分ごとにヒントがスクリーンに出る（第2ステージのヒントは24分から）</td></tr>
+        <tr><td>42〜46分</td><td>解説。まず答えの一覧、時間があれば1問ずつ</td></tr>
+        <tr><td>46〜50分</td><td>表彰（3位→2位→1位）とふりかえり</td></tr>
       </table>
       <p class="hint">早いチームは15分ほどで第1のとびら、25分ほどで脱出。ゆっくりのチームも、ヒントを見ながら第1のとびらまでは行ける、くらいの難しさです。</p>
     </div>
     <div class="card">
       <h2>先生の進め方</h2>
       <ol>
-        <li>②でチームの数・制限時間を決め、⑤で「謎の紙」と「第2ステージの紙」を印刷します（③で答えを確認）</li>
-        <li>④「はじめる」→ お話 → ルール →「スタート！」でタイマーが動きます</li>
+        <li>②でチームの数・制限時間を決め、⑤で「謎の紙」「第2ステージの紙」「チームシート」を印刷します（③で答えを確認）</li>
+        <li>④「はじめる」→ お話 → チーム結成タイム → ルール →「スタート！」でタイマーが動きます</li>
         <li>第1のあいことばを持ってきたチームは、答えを確かめて、画面右のそのチームを押し、<b>第2ステージの紙をわたします</b></li>
         <li>第2のあいことばを持ってきたら、もう一度押します（脱出タイムと順位が出ます）</li>
-        <li>時間になるか全チームが脱出したら、解説 → 表彰</li>
+        <li>時間になるか全チームが脱出したら、解説 → 表彰 → ふりかえり</li>
       </ol>
       <p class="hint">押しまちがえたら「記録を取り消す」を押してから、そのチームを押します。スペースキー（か右下のボタン）で次へ進みます。途中でページを閉じても、開き直すと続きからできます。</p>
     </div>
+  </div>
+  <div class="card">
+    <h2>縦割り活動として行うとき</h2>
+    <p>②設定の「縦割り活動モード」を入れると（はじめから入っています）、次のしくみが加わります。</p>
+    <ul>
+      <li><b>学年ごとの担当</b>：謎に「1年生から」「2年生から」「3年生から」のマークがつきます。まずその学年の人が考え、わからなければみんなで考えます。どの学年も3つずつ（第1ステージに2つ、第2ステージに1つ）担当します。1年生の担当は、とっつきやすい謎（えもじ・しりとり・時間割）です</li>
+      <li><b>役割</b>：3年生＝リーダー（答えは言わずに、ヒントで下級生を導く）、2年生＝記録係、1年生＝伝令（あいことばを先生に伝えに行く）。1年生が先生のところへ来るので、全員に出番があります</li>
+      <li><b>チーム結成タイム</b>（5分）：自己紹介・チーム名・役割決め。タイマーつきの画面を映します</li>
+      <li><b>ふりかえり</b>：表彰のあとに、MVP・上級生から下級生へ・下級生から上級生への一言。⑤で印刷する「チームシート」に書けます</li>
+    </ul>
+    <p class="hint">チーム分けは、6人（各学年2人ずつ）がおすすめです。7人以上になると、謎を見られない人が出やすくなります。表彰とは別に、先生が見ていて「チームワーク賞」を伝えるのもおすすめです。</p>
   </div>
   <div class="card">
     <h2>ルール（生徒への説明）</h2>
@@ -371,7 +414,17 @@ body.staging #stage{display:flex}
       <button class="btn" id="nameClass">1組1班、1組2班…</button>
     </div>
     <div class="teamlist" id="teamList"></div>
-    <p class="hint">1チーム4〜6人がおすすめです。多すぎると、謎を見られない人が出ます。</p>
+    <p class="hint">縦割り活動なら、<b>1チーム6人（各学年2人ずつ）</b>がおすすめです（100人なら17チーム）。7人以上になると、謎を見られない人が出やすくなります。</p>
+  </div>
+  <div class="card">
+    <h2>縦割り活動</h2>
+    <div class="field"><label><input type="checkbox" id="sTate"> 縦割り活動モード</label></div>
+    <p class="hint">入れると、はじめに「チーム結成タイム」（自己紹介・チーム名・役割）、最後に「ふりかえり」の画面が出ます。謎には「1年生から」などのマークがつき、学年ごとに3つずつ担当します。</p>
+    <div class="field"><label>チーム結成タイム <input type="number" id="sForm" min="1" max="15"> 分</label></div>
+    <table class="roles"><tr><th>学年</th><th>役割</th><th>最初に考える謎</th></tr>
+      <tr><td>3年生</td><td>リーダー：意見をまとめる。答えは言わずに、ヒントで下級生を導く</td><td>謎5・謎6・謎8</td></tr>
+      <tr><td>2年生</td><td>記録係：答えを紙に書く。時間を見る</td><td>謎2・謎4・謎9</td></tr>
+      <tr><td>1年生</td><td>伝令：あいことばを先生に伝えに行く</td><td>謎1・謎3・謎7</td></tr></table>
   </div>
   <div class="card">
     <h2>時間とヒント</h2>
@@ -407,6 +460,7 @@ body.staging #stage{display:flex}
     <div class="row">
       <label><input type="radio" name="pKind" value="sheets" checked> 謎の紙（はじめに配る3枚）</label>
       <label><input type="radio" name="pKind" value="stage2"> 第2ステージの紙（第1のとびらを開けたチームにわたす2ページ）</label>
+      <label><input type="radio" name="pKind" value="team"> チームシート（メンバー・役割・ふりかえり）</label>
       <label><input type="radio" name="pKind" value="key"> 先生用の答えとヒント</label>
     </div>
     <div class="row"><button class="btn primary" id="pPrint">印刷する</button><span class="hint" id="pHint"></span></div>
@@ -518,55 +572,55 @@ function nzBalance(left, right) {
 
 const NAZO = [
   {
-    id: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
+    id: 1, grade: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
     q: '絵の下の数字は、名前の「何文字目か」。読むと、どんなことば？',
     html: () => `<div class="nz-ex">見本：${nzEmo('🐱', 2)} は「ねこ」の2文字目で「こ」</div><div class="nz-row">${[['🐜', 1], ['🦒', 2], ['🏫', 1], ['🍅', 3], ['🐘', 2]].map(a => nzEmo(a[0], a[1])).join('')}</div>`,
     ok: { '2adcc81a': [90, 90, 90, 90, 90], '73885c32': [22289, 42547, 80, 22331, 42751], '617dcc9a': [22289, 90, 42741, 116, 22293] },
   },
   {
-    id: 2, title: 'ふしぎな時計', level: 2, boxes: 3, mark: 1,
+    id: 2, grade: 2, title: 'ふしぎな時計', level: 2, boxes: 3, mark: 1,
     q: '見本と同じ読み方で、①②③の時計を読むと？',
     html: () => `<div class="nz-clocks"><div class="nz-clock ex">${nzClock(6, 15)}<span>見本 → 「あ」</span></div><div class="nz-clock">${nzClock(2, 5)}<span>①</span></div><div class="nz-clock">${nzClock(7, 20)}<span>②</span></div><div class="nz-clock">${nzClock(10, 10)}<span>③</span></div></div>`,
     ok: { '323e1f1b': [90, 90, 90], '1171b032': [23552, 21465, 90], '7b1ac627': [23552, 21465, 23596] },
   },
   {
-    id: 3, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
+    id: 3, grade: 1, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
     q: '？に入る動物は？',
     html: () => `<div class="nz-row chain">${['🦊', '🐈', '?', '🎺', '🐼', '🍡', '🦍', '🦁'].map(e => e === '?' ? '<span class="nz-qbox"><span>？</span><span>？</span><span>？</span></span>' : nzEmo(e)).join('<span class="nz-arrow">→</span>')}</div>`,
     ok: { '1f94369e': [90, 90, 90] },
   },
   {
-    id: 4, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
+    id: 4, grade: 2, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
     q: '暗号を読むと、答えがわかる。',
     html: () => `<div class="nz-flick"><div class="nz-keys">${['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', '゛゜', 'わ', '、。'].map(k => `<span>${k}</span>`).join('')}</div><div class="nz-flickr"><div class="nz-ex">見本：<b>な↑</b> ＝ ぬ　<b>な・</b> ＝ な</div><div class="nz-code">${['か↓', 'た・', 'あ→', 'は・', 'や↑', 'ま→'].map(c => `<span>${c}</span>`).join('')}</div></div></div>`,
     ok: { '45964dc8': [90, 90], '404bae05': [27134, 27129] },
   },
   {
-    id: 5, title: 'たぬきの手紙', level: 2, boxes: 3, mark: 1,
+    id: 5, grade: 3, title: 'たぬきの手紙', level: 2, boxes: 3, mark: 1,
     q: '手紙が伝えたい「こたえ」は？',
     html: () => '<div class="nz-letter">たせいかたいはた、いっしたょにたがたんばたるたなかたまた</div><div class="nz-sign">🦝 たぬき より</div>',
     ok: { '75d8b54f': [90, 90, 90], '44a248bb': [32450, 42370, 32470] },
   },
   {
-    id: 6, title: '漢字のかくれんぼ', level: 3, boxes: 2, mark: 2,
+    id: 6, grade: 3, title: '漢字のかくれんぼ', level: 3, boxes: 2, mark: 2,
     q: '矢印の向きに読むと、どれも漢字2文字のことばになる。？の漢字の読みは？（ひらがな2文字）',
     html: () => `<div class="nz-row">${nzWadou()}</div>`,
     ok: { 'd300aca0': [90, 90], '112d5da7': [32523, 32516] },
   },
   {
-    id: 7, stage: 2, title: '時間割のなぞ', level: 2, boxes: 3, mark: 2,
+    id: 7, grade: 1, stage: 2, title: '時間割のなぞ', level: 2, boxes: 3, mark: 2,
     q: '①②③の時間の教科の、最初の文字を順につなげると？',
     html: () => nzTimetable(),
     ok: { 'e065d1d5': [90, 90, 90], '7a570808': [28193, 152, 28384] },
   },
   {
-    id: 8, stage: 2, title: 'まどの謎', level: 3, boxes: 3, mark: 2,
+    id: 8, grade: 3, stage: 2, title: 'まどの謎', level: 3, boxes: 3, mark: 2,
     q: 'まどのカードを文字の表に重ねて、あいた所の文字を、上の段から読もう。',
     html: () => nzWindow(),
     ok: { '7a4dddf3': [90, 90, 90], '51b3a9f8': [41968, 41975, 41924] },
   },
   {
-    id: 9, stage: 2, title: '天びんの謎', level: 2, boxes: 2, mark: 2,
+    id: 9, grade: 2, stage: 2, title: '天びんの謎', level: 2, boxes: 2, mark: 2,
     q: '🍉2個は、🍎何個分？ その数を「ひとつ、ふたつ…」の数え方で読むと？（ひらがな2文字）',
     html: () => `<div class="nz-row">${nzBalance(['🍌'], ['🍎', '🍎'])}${nzBalance(['🍉'], ['🍌', '🍌', '🍎'])}</div><div class="nz-ex nz-center">🍉🍉 ＝ 🍎 × ？</div>`,
     ok: { '48b068b6': [90, 90], '54b07b9a': [90, 86], '2d7385a9': [12291, 12320], '34b81e13': [25459, 25425] },
@@ -576,10 +630,12 @@ const NZ_FINAL = { id: 'final', title: '第1のとびら', boxes: 6, labels: [1,
 const NZ_FINAL2 = { id: 'final2', stage: 2, title: '第2のとびら', boxes: 3, labels: [7, 8, 9], q: '謎7〜9の答えの 青い○ の文字を、7から順にならべると…？', ok: { 'c40c5f0d': 1, '351ae2dc': 1 } };
 const NZ_STAGE1 = NAZO.filter(p => !p.stage), NZ_STAGE2 = NAZO.filter(p => p.stage === 2);
 function nzDoor(id) { return id === 'final' || id === 'final2'; }
+// 縦割り活動：まずこの学年の人が考える謎
+function nzGrade(p) { return p.grade ? `<span class="nz-gr g${p.grade}">${p.grade}年生から</span>` : ''; }
 function nzCard(p, o) {
   o = o || {};
   const door = nzDoor(p.id);
-  return `<div class="nz${p.stage === 2 ? ' st2' : ''}"><div class="nz-head"><span class="nz-no">${door ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
+  return `<div class="nz${p.stage === 2 ? ' st2' : ''}"><div class="nz-head"><span class="nz-no">${door ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}${o.grade === false ? '' : nzGrade(p)}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
 }
 // ===NAZO-END===
 
@@ -679,7 +735,7 @@ function shortLabel(id) { return id === 'final' ? '第1のとびら' : id === 'f
 function sec(ms) { return Math.floor(ms / 1000) * 1000; }   // 秒までで記録（同じ秒なら同じ順位）
 
 function defaultState() {
-  return { teams: { people: 100, count: 20, names: [...Array(MAX_TEAMS)].map((_, i) => `${i + 1}班`) }, opts: { v: 2, minutes: 32, hint0: 6, hintGap: 3, sound: true }, game: null };
+  return { teams: { people: 100, count: 17, names: [...Array(MAX_TEAMS)].map((_, i) => `${i + 1}班`) }, opts: { v: 3, minutes: 32, hint0: 6, hintGap: 3, sound: true, tate: true, formMin: 5 }, game: null };
 }
 function normalizeState(s) {
   const d = defaultState();
@@ -692,8 +748,12 @@ function normalizeState(s) {
   if (!s.opts || !s.opts.v) {   // 前の版（謎6つ・25分）の設定のままなら、新しい目安にする
     if (o.minutes === 25) o.minutes = d.opts.minutes;
     if (o.hint0 === 7) o.hint0 = d.opts.hint0;
-    o.v = 2;
   }
+  if (!s.opts || !(s.opts.v >= 3)) {   // 縦割り活動モードを追加した版
+    if (t.count === 20) t.count = d.teams.count;
+    o.tate = true; o.formMin = d.opts.formMin;
+  }
+  o.v = 3;
   const g = s.game && s.game.rec ? s.game : null;   // 前の版の本番の途中は引きつがない
   return { teams: t, opts: o, game: g };
 }
@@ -722,6 +782,7 @@ function renderSetup() {
   $('#setupMsg').innerHTML = S.game && S.game.phase !== 'result' ? '<div class="msg warn">本番の途中です。ここで変えたことは、次に「はじめる」ときに入ります。</div>' : '';
   $('#sPeople').value = t.people; $('#sCount').value = t.count;
   $('#sMin').value = o.minutes; $('#sHint0').value = o.hint0; $('#sHintGap').value = o.hintGap;
+  $('#sTate').checked = o.tate !== false; $('#sForm').value = o.formMin; $('#sForm').disabled = o.tate === false;
   const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count);
   $('#sPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : '';
   $('#teamList').innerHTML = t.names.slice(0, t.count).map((nm, i) => `<div class="teamrow">${swHtml(i)}<input type="text" data-i="${i}" value="${esc(nm)}" aria-label="${i + 1}番のチーム名"></div>`).join('');
@@ -738,6 +799,8 @@ numIn('#sCount', 2, MAX_TEAMS, 20, v => { S.teams.count = v; });
 numIn('#sMin', 5, 90, 32, v => { S.opts.minutes = v; });
 numIn('#sHint0', 0, 60, 6, v => { S.opts.hint0 = v; });
 numIn('#sHintGap', 1, 20, 3, v => { S.opts.hintGap = v; });
+numIn('#sForm', 1, 15, 5, v => { S.opts.formMin = v; });
+$('#sTate').addEventListener('change', e => { S.opts.tate = e.target.checked; saveSoon(); renderSetup(); });
 $('#teamList').addEventListener('input', e => { const i = +e.target.dataset.i; if (!isNaN(i)) { S.teams.names[i] = e.target.value; saveSoon(); } });
 $('#nameNum').addEventListener('click', () => { S.teams.names = [...Array(MAX_TEAMS)].map((_, i) => `${i + 1}班`); saveSoon(); renderSetup(); });
 $('#nameClass').addEventListener('click', () => {
@@ -769,12 +832,13 @@ function renderPlayTab() {
   $('#playStatus').innerHTML = g ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.minutes}分）。「続きから」で戻れます。</div>` : `<p>${S.teams.count}チーム・制限時間${S.opts.minutes}分で始めます（②で変えられます）。</p>`;
 }
 function phaseText(g) {
-  return { story: 'お話の画面', rules: 'ルールの画面', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表' }[g.phase] || '';
+  return { story: 'お話の画面', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルールの画面', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表' }[g.phase] || '';
 }
 function newGame() {
   const n = S.teams.count;
   S.game = {
     n, names: S.teams.names.slice(0, n), minutes: S.opts.minutes, hint0: S.opts.hint0, hintGap: S.opts.hintGap,
+    tate: S.opts.tate !== false, formMin: S.opts.formMin, formEnd: null,
     phase: 'story', startAt: null, pausedAt: null, pausedTotal: 0, extra: 0, released: [], rec: {}, exIdx: 0, finalStep: 0,
   };
   saveNow();
@@ -845,8 +909,15 @@ $('#stSound').addEventListener('click', () => { S.opts.sound = !S.opts.sound; sa
 let tickId = null, lastSec = null;
 function startTick() { stopTick(); tickId = setInterval(tick, 250); }
 function stopTick() { if (tickId) clearInterval(tickId); tickId = null; }
+let formRang = false;
 function tick() {
   const g = S.game;
+  if (g && g.phase === 'form') {
+    const el = $('#formTime'), rem = Math.max(0, g.formEnd - Date.now());
+    if (el) { el.textContent = mmss(rem); el.classList.toggle('low', rem <= 30000); }
+    if (rem <= 0 && !formRang) { formRang = true; SND.end(); }
+    return;
+  }
   if (!g || g.phase !== 'play') return;
   const rem = remaining(g), el = elapsed(g);
   // ヒントの時刻
@@ -892,7 +963,11 @@ function primary() {
   const g = S.game;
   if (!g) return;
   switch (g.phase) {
-    case 'story': g.phase = 'rules'; break;
+    case 'story':
+      if (g.tate) { g.phase = 'form'; g.formEnd = Date.now() + g.formMin * 60000; formRang = false; } else g.phase = 'rules';
+      break;
+    case 'form': g.phase = 'rules'; break;
+    case 'reflect': return;
     case 'rules': g.phase = 'play'; g.startAt = Date.now(); g.pausedAt = null; g.pausedTotal = 0; SND.start(); showBanner('スタート！', '謎の紙を表にしよう'); break;
     case 'play': return;
     case 'timeup': g.phase = 'explain'; g.exIdx = 0; break;
@@ -900,6 +975,7 @@ function primary() {
     case 'result': {
       const G = podiumRanks(g);
       if (g.finalStep < G.length) { g.finalStep++; if (g.finalStep === G.length) celebrate(); }
+      else if (g.tate) g.phase = 'reflect';
       break;
     }
   }
@@ -907,7 +983,9 @@ function primary() {
 }
 function back() {
   const g = S.game;
-  if (g.phase === 'rules') g.phase = 'story';
+  if (g.phase === 'rules') g.phase = g.tate ? 'form' : 'story';
+  else if (g.phase === 'form') g.phase = 'story';
+  else if (g.phase === 'reflect') g.phase = 'result';
   else if (g.phase === 'explain') { if (g.exIdx > 0) g.exIdx--; else g.phase = 'timeup'; }
   else if (g.phase === 'result') { g.phase = 'explain'; g.exIdx = EX_ORDER.length - 1; }
   saveNow(); renderStage();
@@ -978,14 +1056,15 @@ function renderBar() {
   const g = S.game, p = g.phase;
   const btn = $('#stPrimary');
   let label = '';
-  if (p === 'story') label = 'ルール説明へ ▶';
+  if (p === 'story') label = g.tate ? 'チーム結成タイムへ ▶' : 'ルール説明へ ▶';
+  else if (p === 'form') label = 'ルール説明へ ▶';
   else if (p === 'rules') label = '▶ スタート！';
   else if (p === 'timeup') label = '解説へ ▶';
   else if (p === 'explain') { const nx = EX_ORDER[g.exIdx + 1]; label = nx == null ? '結果発表へ ▶' : nzDoor(nx) ? `${shortLabel(nx)}の解説へ ▶` : `謎${nx}の解説へ ▶`; }
-  else if (p === 'result') { const G = podiumRanks(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : ''; }
+  else if (p === 'result') { const G = podiumRanks(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : g.tate ? 'ふりかえりへ ▶' : ''; }
   btn.textContent = label;
   btn.hidden = !label;
-  $('#stBack').hidden = !['rules', 'explain', 'result'].includes(p);
+  $('#stBack').hidden = !['form', 'rules', 'explain', 'result', 'reflect'].includes(p);
   $('#stPause').hidden = p !== 'play';
   $('#stPause').textContent = g.pausedAt ? '▶ 再開' : '一時停止';
   $('#stPlus').hidden = !['play', 'timeup'].includes(p);
@@ -1001,10 +1080,12 @@ function renderBar() {
 function renderStage() {
   const g = S.game;
   if (!g) return;
-  $('#stTitle').textContent = { story: '体育館からの脱出', rules: 'ルール', play: '謎解きタイム', timeup: 'タイムアップ', explain: '解説', result: '結果発表' }[g.phase];
+  $('#stTitle').textContent = { story: '体育館からの脱出', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルール', play: '謎解きタイム', timeup: 'タイムアップ', explain: '解説', result: '結果発表' }[g.phase];
   const m = $('#stMain');
   if (g.phase === 'story') m.innerHTML = storyHtml(g);
   else if (g.phase === 'rules') m.innerHTML = rulesHtml(g);
+  else if (g.phase === 'form') { m.innerHTML = formHtml(g); tick(); }
+  else if (g.phase === 'reflect') m.innerHTML = reflectHtml(g);
   else if (g.phase === 'play') { m.innerHTML = playHtml(g); bindTeams(); updateClock(); fitHints(); }
   else if (g.phase === 'timeup') m.innerHTML = timeupHtml(g);
   else if (g.phase === 'explain') m.innerHTML = explainHtml(g);
@@ -1013,14 +1094,33 @@ function renderStage() {
 }
 function storyHtml(g) {
   return `<div class="story-slide"><div class="icon">🚪🔒</div><h2>体育館からの脱出</h2>
-    <p>ある日の学年集会。ふと気がつくと、体育館のとびらが<span class="em">すべて閉まっていた</span>……。</p>
+    <p>ある日の${g.tate ? '縦割り活動' : '学年集会'}。ふと気がつくと、体育館のとびらが<span class="em">すべて閉まっていた</span>……。</p>
     <p>とびらの画面には、こう書かれている。<br><span class="em">「あいことばを入れよ。制限時間は${g.minutes}分」</span></p>
-    <p>しかも、とびらは<span class="em">2つ</span>。1つ目は<span class="em">6つの謎</span>、2つ目はさらに<span class="em">3つの謎</span>で開く。<br>チームで力を合わせて、体育館から脱出せよ！</p></div>`;
+    <p>しかも、とびらは<span class="em">2つ</span>。1つ目は<span class="em">6つの謎</span>、2つ目はさらに<span class="em">3つの謎</span>で開く。<br>${g.tate ? '1年生から3年生まで' : 'チームで'}力を合わせて、体育館から脱出せよ！</p></div>`;
+}
+function formHtml(g) {
+  return `<div class="form-slide"><div class="ft"><div class="lab">のこり</div><div id="formTime"></div></div>
+    <div class="fsteps"><h2>チーム結成タイム</h2><ol>
+      <li><b>自己紹介</b>：学年・名前・好きなもの（1人20秒）<span class="s">1年生から順番に</span></li>
+      <li><b>チーム名</b>を決めて、謎の紙に書く</li>
+      <li><b>役割</b>を決める
+        <table class="rtab"><tr><td class="g3">3年生</td><td>リーダー　みんなの意見をまとめる。答えは言わずに、ヒントで導こう</td></tr>
+        <tr><td class="g2">2年生</td><td>記録係　答えを紙に書く・時間を見る</td></tr>
+        <tr><td class="g1">1年生</td><td>伝令　あいことばを先生に伝えに行く</td></tr></table></li>
+    </ol></div></div>`;
+}
+function reflectHtml(g) {
+  return `<div class="rules-slide reflect"><h2>ふりかえり</h2><ol>
+    <li>チームで「今日のMVP」を1人えらんで、みんなで拍手！</li>
+    <li><b>3年生から</b>：1・2年生のよかったところを1つ伝えよう</li>
+    <li><b>1・2年生から</b>：先輩に「ありがとう」を1つ伝えよう</li>
+    <li>チームシートに、よかったことを書こう</li>
+  </ol><div class="win">あいことばは「あきらめない」と「えがお」。今日のチームワークを、これからの活動にも！</div></div>`;
 }
 function rulesHtml(g) {
   return `<div class="rules-slide"><h2>ルール</h2><ol>
-    <li><b>第1のとびら</b>：謎1〜6の答えの <b>○</b> の文字をならべると、あいことば<span class="s">手分けしてもOK。むずかしい謎は、みんなで考えよう</span></li>
-    <li>あいことばを先生に見せると、<b>第2ステージの紙</b>がもらえる<span class="s">タブレットのチームは画面を見せる</span></li>
+    <li><b>第1のとびら</b>：謎1〜6の答えの <b>○</b> の文字をならべると、あいことば<span class="s">${g.tate ? '謎の「◯年生から」マーク：まずその学年の人が考える。わからなければ、みんなで！' : '手分けしてもOK。むずかしい謎は、みんなで考えよう'}</span></li>
+    <li>${g.tate ? '<b>1年生（伝令）</b>が' : ''}あいことばを先生に見せると、<b>第2ステージの紙</b>がもらえる<span class="s">タブレットのチームは画面を見せる</span></li>
     <li><b>第2のとびら</b>：謎7〜9の答えの <b style="color:#7fb0ff">青い○</b> の文字で、最後のあいことば。先生に見せたら脱出成功！</li>
     <li>${g.hint0}分たつと、${g.hintGap}分ごとにヒントがスクリーンに出る</li>
     <li>制限時間は <b>${g.minutes}分</b>。早く脱出したチームが上位！<span class="s">脱出できなくても、第1のとびらまでの早さで順位がつく</span></li>
@@ -1125,15 +1225,28 @@ function celebrate() {
 function printKind() { return ($('input[name=pKind]:checked') || {}).value || 'sheets'; }
 function renderPrint() {
   let h = '';
+  const gr = S.opts.tate !== false;
   const head = (n, of) => `<div class="ph"><h1>体育館からの脱出 <small style="font-size:4.5mm">${of ? `${n}/${of}` : n}</small></h1><div class="tn">チーム名 <span></span></div></div>`;
   if (printKind() === 'sheets') {
-    h += `<div class="page">${head(1, 3)}<div class="story">とびらの画面には「あいことばを入れよ」。謎1〜6を解いて、答えの ○ の文字を、謎の番号の順にならべよう。それが第1のとびらのあいことばだ！</div>${NZ_STAGE1.slice(0, 3).map(p => nzCard(p, { num: true })).join('')}</div>`;
-    h += `<div class="page">${head(2, 3)}${NZ_STAGE1.slice(3).map(p => nzCard(p, { num: true })).join('')}</div>`;
+    h += `<div class="page">${head(1, 3)}<div class="story">とびらの画面には「あいことばを入れよ」。謎1〜6を解いて、答えの ○ の文字を、謎の番号の順にならべよう。それが第1のとびらのあいことばだ！</div>${NZ_STAGE1.slice(0, 3).map(p => nzCard(p, { num: true, grade: gr })).join('')}</div>`;
+    h += `<div class="page">${head(2, 3)}${NZ_STAGE1.slice(3).map(p => nzCard(p, { num: true, grade: gr })).join('')}</div>`;
     h += `<div class="page">${head(3, 3)}<div class="door">${nzCard(NZ_FINAL)}<div style="font-size:5mm">あいことばがわかったら、この紙を先生に見せよう！<br>第2ステージの紙がもらえるよ。</div><div class="stamp">第1のとびら　　　分　　　秒</div></div><div class="memo">メモ</div></div>`;
     $('#pHint').textContent = '3ページで1チーム分です。印刷の画面で、部数をチームの数（' + S.teams.count + '）にしてください。第2ステージの紙は別に印刷します。';
+  } else if (printKind() === 'team') {
+    const rows = [3, 3, 2, 2, 1, 1, 0].map(y => `<tr><td>${y ? y + '年' : ''}</td><td></td><td>${y === 3 ? 'リーダー' : y === 2 ? '記録係' : y === 1 ? '伝令' : ''}</td></tr>`).join('');
+    h = S.teams.names.slice(0, S.teams.count).map((nm, t) => `<div class="page tsheet"><div class="ph"><h1>チームシート</h1><div class="tn">${swHtml(t)} ${esc(nm)}</div></div>
+      <div class="tname">チーム名 <span></span></div>
+      <h3>メンバー</h3><table class="mem"><tr><th>学年</th><th>名前</th><th>役割</th></tr>${rows}</table>
+      <p class="rnote">3年生＝リーダー（答えは言わずにヒントで導く）　2年生＝記録係　1年生＝伝令（あいことばを先生に伝える）</p>
+      <h3>ふりかえり</h3>
+      <div class="rbox"><b>今日のMVP</b>　　　年　　名前<span class="l"></span>　理由</div>
+      <div class="rbox tall"><b>チームでよかったこと</b></div>
+      <div class="rbox tall"><b>3年生から1・2年生へ／1・2年生から3年生へ</b></div>
+      <div class="rbox"><b>記録</b>　第1のとびら　　分　　秒　　／　脱出　　分　　秒</div></div>`).join('');
+    $('#pHint').textContent = `${S.teams.count}ページ（1チーム1枚）。チーム結成タイムに名前と役割を書き、最後にふりかえりを書きます。`;
   } else if (printKind() === 'stage2') {
-    h += `<div class="page s2">${head('第2ステージ 1/2')}<div class="story">第1のとびらが開いた！ でも、その先にもう1つのとびらが……。謎7〜9を解いて、答えの 青い○ の文字をならべよう。</div>${NZ_STAGE2.slice(0, 2).map(p => nzCard(p, { num: true })).join('')}</div>`;
-    h += `<div class="page s2">${head('第2ステージ 2/2')}${NZ_STAGE2.slice(2).map(p => nzCard(p, { num: true })).join('')}<div class="door d2">${nzCard(NZ_FINAL2)}<div style="font-size:5mm">最後のあいことばがわかったら、この紙を先生に見せよう！</div><div class="stamp">脱出タイム　　　分　　　秒</div></div><div class="memo">メモ</div></div>`;
+    h += `<div class="page s2">${head('第2ステージ 1/2')}<div class="story">第1のとびらが開いた！ でも、その先にもう1つのとびらが……。謎7〜9を解いて、答えの 青い○ の文字をならべよう。</div>${NZ_STAGE2.slice(0, 2).map(p => nzCard(p, { num: true, grade: gr })).join('')}</div>`;
+    h += `<div class="page s2">${head('第2ステージ 2/2')}${NZ_STAGE2.slice(2).map(p => nzCard(p, { num: true, grade: gr })).join('')}<div class="door d2">${nzCard(NZ_FINAL2)}<div style="font-size:5mm">最後のあいことばがわかったら、この紙を先生に見せよう！</div><div class="stamp">脱出タイム　　　分　　　秒</div></div><div class="memo">メモ</div></div>`;
     $('#pHint').textContent = '2ページで1チーム分です（両面印刷なら1枚）。部数をチームの数（' + S.teams.count + '）にして印刷し、第1のとびらを開けたチームにわたします。';
   } else {
     const table = list => `<table><thead><tr><th>謎</th><th>答え</th><th>ヒント</th><th>解説</th></tr></thead><tbody>${list.map(p => {
