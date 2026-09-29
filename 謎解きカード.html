@@ -45,12 +45,19 @@ p{margin:0}
 .res.ng{color:#ff8a8a;animation:shake .35s}
 .res.ok{color:#7ee2a0}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-#escaped{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
-#escaped .icon{font-size:5em;line-height:1}
-#escaped h2{font-size:3.4em;margin:.1em 0}
-#escaped .tn{font-size:2.4em;font-weight:900}
-#escaped .tm{font-size:2em;font-weight:900;font-variant-numeric:tabular-nums}
-#escaped .note{font-size:1.1em;opacity:.85}
+#escaped,#door1{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
+#door1{background:#2f5fb0;color:#fff}
+#escaped .icon,#door1 .icon{font-size:5em;line-height:1}
+#escaped h2,#door1 h2{font-size:3em;margin:.1em 0}
+#escaped .tn,#door1 .tn{font-size:2.4em;font-weight:900}
+#escaped .tm,#door1 .tm{font-size:2em;font-weight:900;font-variant-numeric:tabular-nums}
+#escaped .note,#door1 .note{font-size:1.1em;opacity:.85}
+.stage-h{font-weight:900;color:var(--gold);font-size:1.1em;margin-top:.4em}
+.stage-h.s2{color:#7fb0ff}
+.door.s2{border-color:#7fb0ff}
+.door.s2 .nz-boxes span{border-color:#7fb0ff}
+.door.s2 .nz-boxes span.mk{background:rgba(127,176,255,.15)}
+.pz.s2 .no{background:#1f6feb}
 @media (orientation:landscape){.teams{grid-template-columns:repeat(10,1fr)}}
 
 /* ===NAZO-CSS-START=== */
@@ -87,6 +94,24 @@ p{margin:0}
 .nz-boxes span{position:relative;width:2em;height:2em;border:2px solid #1d2330;border-radius:.3em;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:900;background:#fff}
 .nz-boxes span.mk{border-radius:50%;border-color:#c8102e;background:#fff4d6}
 .nz-boxes span i{position:absolute;top:-.55em;right:-.55em;font-style:normal;font-size:.55em;background:#c8102e;color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}
+.nz-boxes span.mk2{border-color:#1f6feb;background:#e7f0ff}
+.nz-boxes span.mk2 i{background:#1f6feb}
+.nz.st2 .nz-no{background:#1f6feb}
+.nz-center{display:block;text-align:center;width:max-content;margin:.5em auto 0;font-size:1.2em;font-weight:bold}
+.nz-tt{display:flex;flex-wrap:wrap;gap:.6em 1.2em;align-items:center;justify-content:center}
+.nz-tt table{border-collapse:collapse;font-size:.92em;width:auto}
+.nz-tt th,.nz-tt td{border:1px solid #9aa3b2;padding:.15em .45em;text-align:center;white-space:nowrap}
+.nz-tt th{background:#eef1f6}
+.nz-clue{margin:0;padding-left:1.6em;font-weight:bold;list-style:none;counter-reset:c}
+.nz-clue li{counter-increment:c;margin:.25em 0;position:relative}
+.nz-clue li::before{content:counter(c);position:absolute;left:-1.6em;top:.1em;width:1.3em;height:1.3em;border-radius:50%;background:#1d2330;color:#fff;font-size:.85em;display:flex;align-items:center;justify-content:center}
+.nz-win{display:flex;flex-wrap:wrap;gap:1.4em;justify-content:center;align-items:flex-start}
+.nz-win .cap{text-align:center;font-size:.85em;font-weight:bold;margin-bottom:.2em}
+.nz-grid{display:inline-grid;grid-template-columns:repeat(4,2em);grid-template-rows:repeat(4,2em);gap:0;border:2px solid #1d2330}
+.nz-grid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.1em}
+.nz-grid.wcard span{background:#8c95a6;border-color:#6b7385}
+.nz-grid.wcard span.hole{background:#fff}
+.nz-bal{width:12em;height:5.5em}
 /* ===NAZO-CSS-END=== */
 </style>
 </head>
@@ -106,8 +131,23 @@ p{margin:0}
 
 <div class="screen" id="list">
   <div class="bar"><span class="tbadge" id="lTeam"></span><span class="time" id="lTime"></span><span class="sp"></span><span class="sub" id="lCount"></span></div>
+  <div class="stage-h">第1ステージ</div>
   <div class="grid" id="pzList"></div>
-  <div class="door"><div style="font-weight:900;color:var(--gold)">🚪 最後のとびら</div><div id="doorBoxes"></div><button class="big" id="toFinal">最後のとびらへ</button></div>
+  <div class="door" id="door1Box"><div style="font-weight:900;color:var(--gold)">🚪 第1のとびら</div><div id="doorBoxes"></div><button class="big" id="toFinal">第1のとびらへ</button></div>
+  <div id="stage2" hidden>
+    <div class="stage-h s2">第2ステージ</div>
+    <div class="grid" id="pzList2"></div>
+    <div class="door s2"><div style="font-weight:900;color:#7fb0ff">🚪 第2のとびら</div><div id="doorBoxes2"></div><button class="big" id="toFinal2">第2のとびらへ</button></div>
+  </div>
+</div>
+
+<div class="screen" id="door1">
+  <div class="icon">🚪✨</div>
+  <h2>第1のとびら 突破！</h2>
+  <div class="tn" id="dTeam"></div>
+  <div class="tm" id="dTime"></div>
+  <div class="note">この画面を先生に見せて、第2ステージへ進もう</div>
+  <button class="big" id="toStage2">第2ステージへ ▶</button>
 </div>
 
 <div class="screen" id="puzzle">
@@ -120,6 +160,7 @@ p{margin:0}
 <div class="screen" id="escaped">
   <div class="icon">🎉🚪</div>
   <h2>脱出成功！</h2>
+  <div class="note">第2のとびらが開いた！</div>
   <div class="tn" id="eTeam"></div>
   <div class="tm" id="eTime"></div>
   <div class="note">この画面を先生に見せよう</div>
@@ -170,16 +211,37 @@ function nzWadou() {
     k(110, 28, '社') + k(28, 110, '大') + k(192, 110, '話') + k(110, 192, '議') + k(110, 110, '？', true) +
     ar(110, 50, 110, 87) + ar(50, 110, 87, 110) + ar(133, 110, 169, 110) + ar(110, 133, 110, 169) + '</svg>';
 }
-function nzBoxes(n, mark, text, num) {
-  // mark：○をつける文字の位置（0なら全部に1〜nの番号）、num：○につける謎の番号
+function nzBoxes(n, mark, text, num, stage, labels) {
+  // mark：○をつける文字の位置（0なら全部に labels の番号）、num：○につける謎の番号、stage：2なら青い○
   const t = [...(text || '')];
   let h = '<div class="nz-boxes">';
   for (let i = 0; i < n; i++) {
-    const tag = mark === 0 ? i + 1 : num && i + 1 === mark ? num : '';
-    h += `<span class="${i + 1 === mark || mark === 0 ? 'mk' : ''}">${t[i] || ''}${tag ? `<i>${tag}</i>` : ''}</span>`;
+    const tag = mark === 0 ? (labels ? labels[i] : i + 1) : num && i + 1 === mark ? num : '';
+    const mk = i + 1 === mark || mark === 0 ? (stage === 2 ? 'mk mk2' : 'mk') : '';
+    h += `<span class="${mk}">${t[i] || ''}${tag ? `<i>${tag}</i>` : ''}</span>`;
   }
   return h + '</div>';
 }
+function nzTimetable() {
+  const days = ['月', '火', '水', '木', '金'];
+  const tt = [['国語', '数学', '社会', '理科', '英語'], ['数学', '英語', '家庭科', '国語', '体育'], ['理科', '体育', '数学', '社会', '国語'],
+    ['英語', '国語', '音楽', '数学', '理科'], ['体育', '社会', '英語', '美術', '数学'], ['学活', '理科', '国語', '英語', '総合']];
+  return `<div class="nz-tt"><table><tr><th></th>${days.map(d => `<th>${d}</th>`).join('')}</tr>${tt.map((r, i) => `<tr><th>${i + 1}</th>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>
+    <ol class="nz-clue"><li>「火」の反対の曜日の、2時間目</li><li>金よう日の前の日の、最後の時間</li><li>「日」と「火」のあいだの曜日の、3時間目</li></ol></div>`;
+}
+const NZ_GRID = [['ぬ', 'は', 'か', 'そ'], ['が', 'て', 'ほ', 'ず'], ['ろ', 'い', 'け', 'も'], ['れ', 'う', 'な', 'み']];
+const NZ_HOLES = [[0, 1], [1, 3], [3, 0]];   // まどのカードの穴（うらから見た位置）
+function nzWindow() {
+  const grid = (f, cls) => `<div class="nz-grid ${cls}">${[0, 1, 2, 3].map(r => [0, 1, 2, 3].map(c => f(r, c)).join('')).join('')}</div>`;
+  const hole = (r, c) => NZ_HOLES.some(h => h[0] === r && h[1] === c);
+  return `<div class="nz-win"><div><div class="cap">文字の表</div>${grid((r, c) => `<span>${NZ_GRID[r][c]}</span>`, 'letters')}</div>
+    <div><div class="cap">まどのカード（うら）</div>${grid((r, c) => `<span class="${hole(r, c) ? 'hole' : ''}"></span>`, 'wcard')}</div></div>`;
+}
+function nzBalance(left, right) {
+  const pan = (x, items) => `<text x="${x}" y="30" text-anchor="middle" font-size="${items.length > 2 ? 17 : 20}">${items.join('')}</text><path d="M${x - 30} 38 L${x + 30} 38 L${x + 22} 48 L${x - 22} 48 Z" fill="#c9d0db"/><line x1="${x}" y1="48" x2="${x}" y2="58" stroke="#5b6475" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 200 92" class="nz-bal" aria-hidden="true">${pan(45, left)}${pan(155, right)}<line x1="30" y1="58" x2="170" y2="58" stroke="#1d2330" stroke-width="4" stroke-linecap="round"/><path d="M100 58 L88 84 L112 84 Z" fill="#1d2330"/><text x="100" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#16803c">つりあう</text></svg>`;
+}
+
 const NAZO = [
   {
     id: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
@@ -217,11 +279,33 @@ const NAZO = [
     html: () => `<div class="nz-row">${nzWadou()}</div>`,
     ok: { 'd300aca0': [90, 90], '112d5da7': [32523, 32516] },
   },
+  {
+    id: 7, stage: 2, title: '時間割のなぞ', level: 2, boxes: 3, mark: 2,
+    q: '①②③の時間の教科の、最初の文字を順につなげると？',
+    html: () => nzTimetable(),
+    ok: { 'e065d1d5': [90, 90, 90], '7a570808': [28193, 152, 28384] },
+  },
+  {
+    id: 8, stage: 2, title: 'まどの謎', level: 3, boxes: 3, mark: 2,
+    q: 'まどのカードを文字の表に重ねて、あいた所の文字を、上の段から読もう。',
+    html: () => nzWindow(),
+    ok: { '7a4dddf3': [90, 90, 90], '51b3a9f8': [41968, 41975, 41924] },
+  },
+  {
+    id: 9, stage: 2, title: '天びんの謎', level: 2, boxes: 2, mark: 2,
+    q: '🍉2個は、🍎何個分？ その数を「ひとつ、ふたつ…」の数え方で読むと？（ひらがな2文字）',
+    html: () => `<div class="nz-row">${nzBalance(['🍌'], ['🍎', '🍎'])}${nzBalance(['🍉'], ['🍌', '🍌', '🍎'])}</div><div class="nz-ex nz-center">🍉🍉 ＝ 🍎 × ？</div>`,
+    ok: { '48b068b6': [90, 90], '54b07b9a': [90, 86], '2d7385a9': [12291, 12320], '34b81e13': [25459, 25425] },
+  },
 ];
-const NZ_FINAL = { id: 'final', title: '最後のとびら', boxes: 6, q: '6つの謎の答えの ○ の文字を、1から順にならべると…？', ok: { 'e59ee854': 1, '308c5fea': 1 } };
+const NZ_FINAL = { id: 'final', title: '第1のとびら', boxes: 6, labels: [1, 2, 3, 4, 5, 6], q: '謎1〜6の答えの ○ の文字を、1から順にならべると…？', ok: { 'e59ee854': 1, '308c5fea': 1 } };
+const NZ_FINAL2 = { id: 'final2', stage: 2, title: '第2のとびら', boxes: 3, labels: [7, 8, 9], q: '謎7〜9の答えの 青い○ の文字を、7から順にならべると…？', ok: { 'c40c5f0d': 1, '351ae2dc': 1 } };
+const NZ_STAGE1 = NAZO.filter(p => !p.stage), NZ_STAGE2 = NAZO.filter(p => p.stage === 2);
+function nzDoor(id) { return id === 'final' || id === 'final2'; }
 function nzCard(p, o) {
   o = o || {};
-  return `<div class="nz"><div class="nz-head"><span class="nz-no">${p.id === 'final' ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, p.id === 'final' ? 0 : p.mark, o.fill, o.num ? p.id : '')}</div>`;
+  const door = nzDoor(p.id);
+  return `<div class="nz${p.stage === 2 ? ' st2' : ''}"><div class="nz-head"><span class="nz-no">${door ? '🚪' : p.id}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
 }
 // ===NAZO-END===
 
@@ -236,7 +320,8 @@ const $ = s => document.querySelector(s);
 function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 保存できなくても遊べる */ } }
 const LS = 'nazo-card-v1';
-let C = (() => { try { return Object.assign({ team: 0, startAt: null, solved: {}, escapedAt: null }, JSON.parse(lsGet(LS)) || {}); } catch (e) { return { team: 0, startAt: null, solved: {}, escapedAt: null }; } })();
+const blankC = () => ({ team: 0, startAt: null, solved: {}, door1At: null, escapedAt: null });
+let C = (() => { try { return Object.assign(blankC(), JSON.parse(lsGet(LS)) || {}); } catch (e) { return blankC(); } })();
 function save() { lsSet(LS, JSON.stringify(C)); }
 function mmss(ms) { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
 let current = null;
@@ -248,25 +333,33 @@ function setTeamColor() {
   document.documentElement.style.setProperty('--teamInk', inkOn(c));
   ['#wTeam', '#lTeam'].forEach(s => { $(s).textContent = C.team; });
 }
-function letters() { return NAZO.map(p => C.solved[p.id] ? [...C.solved[p.id]][p.mark - 1] : '').join(''); }
+function mark(p) { return C.solved[p.id] ? [...C.solved[p.id]][p.mark - 1] : ''; }
+function cards(list) {
+  return list.map(p => `<button class="pz${C.solved[p.id] ? ' done' : ''}${p.stage === 2 ? ' s2' : ''}" data-id="${p.id}"><span class="no">${p.id}</span><span class="tt">${p.title}<small>${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</small></span><span class="st">${C.solved[p.id] ? '✓ ' + mark(p) : '？'}</span></button>`).join('');
+}
 function renderList() {
-  $('#pzList').innerHTML = NAZO.map(p => `<button class="pz${C.solved[p.id] ? ' done' : ''}" data-id="${p.id}"><span class="no">${p.id}</span><span class="tt">${p.title}<small>${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</small></span><span class="st">${C.solved[p.id] ? '✓ ' + [...C.solved[p.id]][p.mark - 1] : '？'}</span></button>`).join('');
-  const n = Object.keys(C.solved).length;
-  $('#lCount').textContent = `解いた謎 ${n} / ${NAZO.length}`;
-  const L = [...letters()];
-  $('#doorBoxes').innerHTML = nzBoxes(6, 0, NAZO.map((p, i) => L[i] || '　').join(''));
+  $('#pzList').innerHTML = cards(NZ_STAGE1);
+  $('#doorBoxes').innerHTML = nzBoxes(6, 0, NZ_STAGE1.map(p => mark(p) || '　').join(''), '', 1, NZ_FINAL.labels);
+  $('#door1Box').classList.toggle('opened', !!C.door1At);
+  $('#toFinal').textContent = C.door1At ? '✓ 第1のとびら 突破ずみ' : '第1のとびらへ';
+  $('#stage2').hidden = !C.door1At;
+  $('#pzList2').innerHTML = cards(NZ_STAGE2);
+  $('#doorBoxes2').innerHTML = nzBoxes(3, 0, NZ_STAGE2.map(p => mark(p) || '　').join(''), '', 2, NZ_FINAL2.labels);
+  const list = C.door1At ? NAZO : NZ_STAGE1;
+  $('#lCount').textContent = `解いた謎 ${list.filter(p => C.solved[p.id]).length} / ${list.length}`;
 }
 function openPuzzle(p) {
   current = p;
-  const fill = p.id === 'final' ? '' : C.solved[p.id] || '';
-  $('#pSheet').innerHTML = nzCard(p, { fill, num: p.id !== 'final' });
+  const fill = nzDoor(p.id) ? '' : C.solved[p.id] || '';
+  $('#pSheet').innerHTML = nzCard(p, { fill, num: !nzDoor(p.id) });
   $('#pIn').value = '';
   $('#pRes').className = 'res';
   $('#pRes').textContent = fill ? `正解ずみ！ ○の文字は「${[...fill][p.mark - 1]}」` : '';
   screen('puzzle');
 }
-$('#pzList').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openPuzzle(NAZO.find(p => p.id === +b.dataset.id)); });
-$('#toFinal').addEventListener('click', () => openPuzzle(NZ_FINAL));
+['#pzList', '#pzList2'].forEach(s => $(s).addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openPuzzle(NAZO.find(p => p.id === +b.dataset.id)); }));
+$('#toFinal').addEventListener('click', () => { if (C.door1At) showDoor1(); else openPuzzle(NZ_FINAL); });
+$('#toFinal2').addEventListener('click', () => openPuzzle(NZ_FINAL2));
 $('#pBack').addEventListener('click', () => { renderList(); screen('list'); });
 $('#pForm').addEventListener('submit', e => {
   e.preventDefault();
@@ -282,6 +375,11 @@ $('#pForm').addEventListener('submit', e => {
     return;
   }
   if (p.id === 'final') {
+    if (!C.door1At) C.door1At = Date.now();
+    save(); showDoor1();
+    return;
+  }
+  if (p.id === 'final2') {
     if (!C.escapedAt) C.escapedAt = Date.now();
     save(); showEscaped();
     return;
@@ -292,6 +390,12 @@ $('#pForm').addEventListener('submit', e => {
   res.className = 'res ok';
   res.textContent = `⭕ 正解！ ○の文字は「${[...ok][p.mark - 1]}」`;
 });
+function showDoor1() {
+  $('#dTeam').textContent = C.team + '番のチーム';
+  $('#dTime').textContent = 'タイム ' + mmss(C.door1At - C.startAt);
+  screen('door1');
+}
+$('#toStage2').addEventListener('click', () => { renderList(); screen('list'); setTimeout(() => $('#stage2').scrollIntoView({ behavior: 'smooth' }), 50); });
 function showEscaped() {
   $('#eTeam').textContent = C.team + '番のチーム';
   $('#eTime').textContent = 'タイム ' + mmss(C.escapedAt - C.startAt);
@@ -310,7 +414,7 @@ $('#wChange').addEventListener('click', () => screen('pick'));
 $('#start').addEventListener('click', () => { C.startAt = Date.now(); save(); renderList(); screen('list'); });
 $('#reset').addEventListener('click', () => {
   if (!confirm('解いた謎とタイムを消して、最初からにしますか？')) return;
-  C = { team: 0, startAt: null, solved: {}, escapedAt: null }; save();
+  C = blankC(); save();
 });
 setInterval(() => {
   if (!C.startAt) return;

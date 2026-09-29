@@ -4,7 +4,7 @@ const read = f => fs.readFileSync(path.join(__dirname, '..', f), 'utf8');
 const block = (src, a, b) => src.split(a)[1].split(b)[0];
 const teacher = read('謎解き脱出.html'), card = read('謎解きカード.html');
 const shared = block(teacher, '// ===NAZO-START===', '// ===NAZO-END===');
-const E = new Function(shared + ';return {nzNorm,nzHash,nzCheck,nzClock,nzWadou,nzBoxes,nzCard,NAZO,NZ_FINAL,NZ_DIAL};')();
+const E = new Function(shared + ';return {nzNorm,nzHash,nzCheck,nzClock,nzWadou,nzBoxes,nzCard,nzDoor,nzTimetable,nzWindow,nzBalance,NAZO,NZ_FINAL,NZ_FINAL2,NZ_STAGE1,NZ_STAGE2,NZ_DIAL,NZ_GRID,NZ_HOLES};')();
 const teach = teacher.split('const NZ_TEACH = ')[1].split('\n};\n')[0] + '\n}';
 E.NZ_TEACH = new Function('return ' + teach)();
 E.sharedTeacher = shared;

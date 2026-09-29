@@ -6,7 +6,7 @@ const T = E.NZ_TEACH, P = id => E.NAZO.find(p => p.id === id);
 
 ok('先生用と生徒用で、謎の中身が同じ', E.sharedTeacher === E.sharedCard);
 ok('先生用と生徒用で、謎の見た目（CSS）が同じ', E.cssTeacher === E.cssCard);
-const answers = [...E.NAZO.map(p => T[p.id].answer), T.final.answer];
+const answers = [...E.NAZO.map(p => T[p.id].answer), T.final.answer, T.final2.answer];
 ok('生徒用のファイルに答えが書かれていない', answers.every(a => !E.cardSource.includes(a)) && !E.cardSource.includes('NZ_TEACH'), answers.filter(a => E.cardSource.includes(a)).join(','));
 
 // 1 えもじの暗号
@@ -63,22 +63,58 @@ const words = ['社会', '大会', '会話', '会議'];
 ok('謎6：会を入れると 社会・大会・会話・会議（読みは かい）', words.every(w => w.includes('会')) && T[6].answer === 'かい');
 ok('謎6：矢印は4本（社→？ 大→？ ？→話 ？→議）', (svg6.match(/<path d="M/g) || []).length === 4);
 
+// 7 時間割のなぞ：時間割の表となぞなぞから
+const days = ['月', '火', '水', '木', '金'];
+const tt = E.nzTimetable();
+const rows = [...tt.matchAll(/<tr><th>(\d)<\/th>(.*?)<\/tr>/g)].map(m => [...m[2].matchAll(/<td>(.+?)<\/td>/g)].map(x => x[1]));
+const yomi = { 国語: 'こくご', 数学: 'すうがく', 社会: 'しゃかい', 理科: 'りか', 英語: 'えいご', 家庭科: 'かていか', 体育: 'たいいく', 音楽: 'おんがく', 美術: 'びじゅつ', 学活: 'がっかつ', 総合: 'そうごう' };
+const clues = [...tt.matchAll(/<li>(.+?)<\/li>/g)].map(m => m[1]);
+// なぞなぞの答え：「火」の反対＝水、金よう日の前の日＝木（最後＝6時間目）、「日」と「火」のあいだ＝月
+const slots = [['水', 2], ['木', rows.length], ['月', 3]];
+ok('謎7：時間割は月〜金×6時間、なぞなぞは3つ', rows.length === 6 && rows.every(r => r.length === 5) && clues.length === 3 && clues[0].includes('火') && clues[1].includes('最後') && clues[2].includes('3時間目'));
+const p7 = slots.map(([d, n]) => rows[n - 1][days.indexOf(d)]);
+ok('謎7：水2・木6・月3の教科の最初の文字で「かえり」', p7.map(x => yomi[x][0]).join('') === T[7].answer, p7.join('・'));
+ok('謎7：表の教科はどれも読み方がわかる', rows.flat().every(x => yomi[x]));
+
+// 8 まどの謎：まどのカードを重ねたとき
+const holesOnPage = [...E.nzWindow().matchAll(/<span class="(hole)?"><\/span>/g)].map((m, i) => m[1] ? [Math.floor(i / 4), i % 4] : null).filter(Boolean);
+const read8 = hs => hs.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(([r, c]) => E.NZ_GRID[r][c]).join('');
+ok('謎8：絵のまどの穴は3つ', holesOnPage.length === 3 && JSON.stringify(holesOnPage) === JSON.stringify(E.NZ_HOLES));
+ok('謎8：そのまま重ねると「はずれ」', read8(holesOnPage) === 'はずれ', read8(holesOnPage));
+ok('謎8：左右を反対にすると「かがみ」', read8(holesOnPage.map(([r, c]) => [r, 3 - c])) === T[8].answer);
+const others = { 上下反対: ([r, c]) => [3 - r, c], '180度': ([r, c]) => [3 - r, 3 - c], '90度': ([r, c]) => [c, 3 - r], '270度': ([r, c]) => [3 - c, r] };
+ok('謎8：ほかの重ね方では答えにならない', Object.values(others).every(f => read8(holesOnPage.map(f)) !== T[8].answer), Object.entries(others).map(([k, f]) => k + ':' + read8(holesOnPage.map(f))).join(' '));
+
+// 9 天びんの謎
+const bal = [...E.NAZO.find(p => p.id === 9).html().matchAll(/<svg viewBox="0 0 200 92"[\s\S]*?<\/svg>/g)].map(m => [...m[0].matchAll(/<text x="\d+" y="30"[^>]*>(.+?)<\/text>/g)].map(x => [...x[1]]));
+const w = { '🍎': 1 };
+// 1つ目：🍌＝🍎🍎、2つ目：🍉＝🍌🍌🍎 から重さを決める
+const solve = ([l, r]) => { const u = l.filter(e => w[e] == null); if (u.length === 1 && r.every(e => w[e] != null)) w[u[0]] = r.reduce((a, e) => a + w[e], 0) / l.length; };
+bal.forEach(solve);
+ok('謎9：🍌は🍎2個、🍉は🍎5個', w['🍌'] === 2 && w['🍉'] === 5, JSON.stringify(w));
+ok('謎9：🍉2個は🍎10個 → 「とお」', 2 * w['🍉'] === 10 && T[9].answer === 'とお');
+
 // ○の文字 → あいことば
-const letters = E.NAZO.map(p => [...T[p.id].answer][p.mark - 1]).join('');
+const letters = E.NZ_STAGE1.map(p => [...T[p.id].answer][p.mark - 1]).join('');
 ok('○の文字を1から順にならべると「あきらめない」', letters === T.final.answer, letters);
-ok('答えの文字数と箱の数が合う', E.NAZO.every(p => [...T[p.id].answer].length === p.boxes && p.mark >= 1 && p.mark <= p.boxes) && E.NZ_FINAL.boxes === [...T.final.answer].length);
+const letters2 = E.NZ_STAGE2.map(p => [...T[p.id].answer][p.mark - 1]).join('');
+ok('青い○の文字を7から順にならべると「えがお」', letters2 === T.final2.answer, letters2);
+ok('答えの文字数と箱の数が合う', E.NAZO.every(p => [...T[p.id].answer].length === p.boxes && p.mark >= 1 && p.mark <= p.boxes) && E.NZ_FINAL.boxes === [...T.final.answer].length && E.NZ_FINAL2.boxes === [...T.final2.answer].length);
+ok('謎1〜6は第1ステージ、謎7〜9は第2ステージ', E.NZ_STAGE1.map(p => p.id).join() === '1,2,3,4,5,6' && E.NZ_STAGE2.map(p => p.id).join() === '7,8,9');
 
 // 答えの確かめ方
-const variants = { 1: ['ありがとう', 'アリガトウ', 'ありがとう。', '有難う', 'あり がとう'], 2: ['きもち', 'キモチ', '気持ち'], 3: ['こあら', 'コアラ', 'ｺｱﾗ'], 4: ['ゆめ', 'ユメ', '夢'], 5: ['なかま', 'ナカマ', '仲間'], 6: ['かい', 'カイ', '会'], final: ['あきらめない', 'アキラメナイ', '諦めない', 'あきらめない！'] };
-const wrong = { 1: ['ありがと', 'あがとう'], 2: ['ちねぬ', 'きもちい'], 3: ['こうら', 'らっこ'], 4: ['こたえはゆめ', 'ゆ'], 5: ['なかまたち', 'せいかい'], 6: ['かいぎ', '社'], final: ['あきらめ', 'ありがとう'] };
+const variants = { 1: ['ありがとう', 'アリガトウ', 'ありがとう。', '有難う', 'あり がとう'], 2: ['きもち', 'キモチ', '気持ち'], 3: ['こあら', 'コアラ', 'ｺｱﾗ'], 4: ['ゆめ', 'ユメ', '夢'], 5: ['なかま', 'ナカマ', '仲間'], 6: ['かい', 'カイ', '会'],
+  7: ['かえり', 'カエリ', '帰り'], 8: ['かがみ', 'カガミ', '鏡'], 9: ['とお', 'とう', 'トオ', '10', '１０', '十'], final: ['あきらめない', 'アキラメナイ', '諦めない', 'あきらめない！'], final2: ['えがお', 'エガオ', '笑顔'] };
+const wrong = { 1: ['ありがと', 'あがとう'], 2: ['ちねぬ', 'きもちい'], 3: ['こうら', 'らっこ'], 4: ['こたえはゆめ', 'ゆ'], 5: ['なかまたち', 'せいかい'], 6: ['かいぎ', '社'],
+  7: ['かえ', 'りかえ', 'かすり'], 8: ['はずれ', 'ぬもう', 'かがみみ'], 9: ['5', 'ご', 'じゅう', 'いつつ'], final: ['あきらめ', 'ありがとう'], final2: ['えが', 'かがみ', 'あきらめない'] };
 for (const id of Object.keys(variants)) {
-  const p = id === 'final' ? E.NZ_FINAL : P(+id);
+  const p = id === 'final' ? E.NZ_FINAL : id === 'final2' ? E.NZ_FINAL2 : P(+id);
   const good = variants[id].map(v => [v, E.nzCheck(p, v)]);
   ok(`謎${id}：正しい答え（ひらがな・カタカナ・漢字）を正解にする`, good.every(([, r]) => !!r), good.filter(([, r]) => !r).map(x => x[0]).join(','));
-  if (id !== 'final') ok(`謎${id}：正解したら、ひらがなの答えがわかる`, good.every(([, r]) => r === T[id].answer), good.map(x => x[1]).join(','));
+  if (!E.nzDoor(id)) ok(`謎${id}：正解したら、ひらがなの答えがわかる`, good.every(([, r]) => r === T[id].answer), good.map(x => x[1]).join(','));
   ok(`謎${id}：まちがいは正解にしない`, wrong[id].every(v => !E.nzCheck(p, v)) && !E.nzCheck(p, ''));
 }
-ok('ほかの謎の答えでは正解にならない', E.NAZO.every(p => E.NAZO.filter(q => q !== p).every(q => !E.nzCheck(p, T[q.id].answer))));
+ok('ほかの謎の答えでは正解にならない', [...E.NAZO, E.NZ_FINAL, E.NZ_FINAL2].every(p => [...E.NAZO, E.NZ_FINAL, E.NZ_FINAL2].filter(q => q !== p).every(q => !E.nzCheck(p, T[q.id].answer))));
 
 let f = 0;
 results.forEach(r => { if (r[0] === 'FAIL') f++; console.log(r[0], r[1], r[2]); });
