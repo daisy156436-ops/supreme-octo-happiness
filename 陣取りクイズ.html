@@ -65,6 +65,8 @@ details summary{cursor:pointer;color:var(--accent)}
 /* 問題 */
 .qcard{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 10px;background:#fff}
 .qcard.practice{background:#f8f9fb}
+.qcard.mission{background:#f7f3ff;border-color:#cdbdf5}
+.qhead .flag{white-space:nowrap;font-size:14px}
 .qhead{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px}
 .qno{font-size:16px;min-width:4.5em}
 .qhead select,.qhead input{font:inherit;padding:3px 6px;border:1px solid var(--line);border-radius:6px}
@@ -108,7 +110,7 @@ body.staging #stage{display:flex}
 #stTitle{font-size:3.6vh;font-weight:bold;white-space:nowrap}
 #stTitle small{font-size:2.3vh;color:var(--sub);font-weight:normal}
 .badge{display:inline-block;font-size:2.3vh;padding:.2vh 1vh;border-radius:1vh;vertical-align:middle;margin-left:.6vw;color:#fff;font-weight:bold}
-.badge.b2{background:#e07b00}.badge.b3{background:#c8102e}.badge.bp{background:#6b7280}
+.badge.b2{background:#e07b00}.badge.b3{background:#c8102e}.badge.bp{background:#6b7280}.badge.bm{background:#6d3fd6}
 #stTimer{margin:0 auto;font-size:5.4vh;font-weight:900;font-variant-numeric:tabular-nums;min-width:12vh;text-align:center;padding:0 2vh;border-radius:1.2vh}
 #stTimer.low{color:#fff;background:#c8102e}
 #stTimer.paused{color:var(--sub);background:#eef0f4}
@@ -119,6 +121,7 @@ body.staging #stage{display:flex}
 .st-main.final{grid-template-columns:62fr 38fr 0fr}
 .st-main.intro{grid-template-columns:56fr 44fr 0fr}
 .st-main.reveal{grid-template-columns:50fr 32fr 18fr}
+.st-main.spin{grid-template-columns:46fr 36fr 18fr}
 #stLeft > *{flex:none}
 #stLeft > .toggles{flex:1 1 0;min-height:0}
 .st-main.reveal .choice{min-height:7vh;padding:.8vh 1.4vh}
@@ -177,6 +180,37 @@ body.staging #stage{display:flex}
 .rules li{margin:.5vh 0}
 .rules .win{font-size:3.2vh;font-weight:bold;margin-top:1.2vh}
 .rules .tiny{font-size:2vh;color:var(--sub);margin-top:.8vh}
+.rules ol.fun{list-style:none;padding-left:0}
+.rules ol.fun li{margin:1.2vh 0}
+.spinhead{font-size:4.6vh;font-weight:900;color:#c8102e;text-align:center;line-height:1.2}
+.spinhead small{display:block;font-size:2.3vh;color:var(--sub);font-weight:normal}
+.wheelbox{flex:1 1 0 !important;min-height:0;display:flex;justify-content:center}
+.wheel{height:100%;max-width:100%;filter:drop-shadow(0 .6vh 1vh rgba(0,0,0,.2))}
+.evcard{display:flex;align-items:center;gap:2vh;color:#fff;border-radius:1.6vh;padding:1.6vh 2.4vh;animation:rise .5s ease-out}
+.evcard .i{font-size:7vh;line-height:1}
+.evcard b{display:block;font-size:4.4vh;line-height:1.2}
+.evcard small{display:block;font-size:2.6vh}
+.evline{border:.4vh solid;border-radius:1.2vh;padding:.8vh 1.4vh;font-size:2.4vh;background:#fff}
+.lastcall{text-align:center;font-size:5.4vh;font-weight:900;color:#fff;background:linear-gradient(90deg,#c8102e,#e07b00);border-radius:1.4vh;padding:1vh;line-height:1.2;animation:bounce .8s ease-in-out infinite alternate}
+.lastcall small{display:block;font-size:2.4vh;font-weight:bold}
+.qtext.mission{background:#f3eeff;border-color:#b9a3f0}
+.mtag{display:inline-block;font-size:.6em;background:#6d3fd6;color:#fff;border-radius:.8vh;padding:.1em .5em;margin-right:.4em;vertical-align:middle}
+.free.mission{border-color:#b9a3f0;color:#6d3fd6;font-weight:bold}
+.banner.drum{color:#1d2330;animation:shake .12s linear infinite}
+@keyframes shake{0%{transform:translateX(-.3vh)}50%{transform:translateX(.3vh)}100%{transform:translateX(-.3vh)}}
+.result ul{list-style:none;padding-left:0}
+.result li{margin:.5vh 0}
+.result .sw{min-width:3.2vh;height:2.9vh;font-size:1.8vh;vertical-align:middle;margin:0 .15vh}
+.live{background:#1d2330;color:#fff;border-radius:1.2vh;padding:1vh 1.4vh;font-size:2.3vh;line-height:1.5;margin-top:1vh}
+.live .livetag{display:inline-block;background:#c8102e;color:#fff;font-size:1.7vh;font-weight:bold;border-radius:.6vh;padding:0 .8vh;margin-bottom:.4vh}
+.live b{font-weight:bold}
+#stLeft.tight .qtext{font-size:2.6vh;padding:1vh 1.4vh}
+#stLeft.tight .choice{min-height:6vh;padding:.8vh 1.2vh}
+#stLeft.tight .result ul,#stLeft.tight .live{font-size:1.9vh}
+#stLeft.tight .result h3{font-size:2.6vh}
+#stLeft.tight .note,#stLeft.tight .evline{font-size:1.9vh;padding:.6vh 1vh}
+#stLeft.tighter .qtext{display:none}
+#stLeft.tighter .rules ol{font-size:2.4vh}
 
 .rk{display:flex;align-items:center;gap:.7vh;background:#fff;border-radius:.8vh;padding:0 .8vh;border:1px solid var(--line);flex:1;min-height:0;max-height:6vh;font-size:2.2vh;position:relative}
 .rk .no{width:3.2vh;text-align:right;font-weight:bold;color:var(--sub);font-variant-numeric:tabular-nums}
@@ -185,6 +219,9 @@ body.staging #stage{display:flex}
 .rk .ct{font-weight:900;font-variant-numeric:tabular-nums;font-size:2.6vh}
 .rk .dl{font-size:1.9vh;font-weight:bold;min-width:3.8vh;text-align:right}
 .rk .dl.up{color:#16803c}.rk .dl.down{color:#c8102e}
+.rk .fire{font-size:1.8vh;white-space:nowrap}
+.rk .mv{font-size:1.7vh;font-weight:bold;white-space:nowrap}
+.rk .mv.up{color:#16803c}.rk .mv.down{color:#c8102e}
 .rk.top{border-color:#e0b100;box-shadow:inset .6vh 0 0 #e0b100}
 
 .hexmap .cell polygon{stroke:var(--stage);stroke-width:1.4;transition:fill .35s}
@@ -192,6 +229,9 @@ body.staging #stage{display:flex}
 .hexmap .cell.pop{animation:pop .75s ease-out}
 .hexmap .cell.stolen polygon{animation:flash .75s ease-out}
 .hexmap .cell{transform-box:fill-box;transform-origin:center}
+.hexmap .cell .gem{display:none;fill:#ffd23f;stroke:#a86b00;stroke-width:.9;transform-box:fill-box;transform-origin:center}
+.hexmap .cell.has-gem .gem{display:block;animation:shine 1.4s ease-in-out infinite alternate}
+@keyframes shine{from{transform:scale(.88);filter:brightness(1)}to{transform:scale(1.08);filter:brightness(1.25)}}
 @keyframes pop{0%{transform:scale(1.45)}60%{transform:scale(.92)}100%{transform:scale(1)}}
 @keyframes flash{0%{stroke:#fff;stroke-width:5}100%{stroke-width:1.4}}
 
@@ -242,7 +282,7 @@ body.staging #stage{display:flex}
 <body>
 <header>
   <h1>陣取りクイズ</h1>
-  <span id="ver">版 2026-09-28</span>
+  <span id="ver">版 2026-09-29</span>
 </header>
 <nav class="noprint" id="nav">
   <button data-tab="guide">① 遊び方</button>
@@ -311,9 +351,20 @@ body.staging #stage{display:flex}
         <li>1問でうばわれるのは、1チーム最大2マス（ボーナス問題は4マス、逆転チャンスは6マス）。一度のまちがいで大きく減りすぎないようにしています</li>
         <li>となりにとれるマスがないときは、いちばん近くのとれるマスをとります（飛び地）。それもないときは増えません</li>
         <li>②チームの「うばい合い」を切ると、空きマスがなくなったあとは増えなくなります</li>
-        <li>この決まりは、16チーム・20問の対戦を何百回も試して決めました。うばわれて3マスより少なくなることはなく、いちばん少ないチームも平均3マスほど残ります。15問目で1位のチームが最後に入れかわることが、半分以上ありました</li>
+        <li>この決まりは、16チーム・20問の対戦を何百回も試して決めました。うばわれて3マスより少なくなることはなく、いちばん少ないチームも平均3マスほど残ります。15問目で1位のチームが最後に入れかわることが、半分以上ありました（おたのしみルールを全部入れたときも同じくらいです）</li>
       </ul>
     </details>
+  </div>
+  <div class="card">
+    <h2>おたのしみルール（入れるかどうかは②と③で選べます）</h2>
+    <table>
+      <tr><th>💎 お宝マス</th><td>地図のところどころに💎があります。とったチームは、その場でもう1マスとれます。チームの半分の数だけ置かれ、陣地が💎に向かってのびていきます</td></tr>
+      <tr><th>🔥 連続正解</th><td>3問続けて正解するたびに ＋1マス（3問目・6問目・9問目…）。まちがえると1から数え直し。順位表に🔥と連続の数が出ます</td></tr>
+      <tr><th>🎯 少数正解</th><td>正解したのが少ない（16チームなら4チーム以下）むずかしい問題は、正解チームに ＋1マス</td></tr>
+      <tr><th>🎰 チャンスタイム</th><td>ルーレットをつけた問題の前に、ルーレットを回します。<br>🎉 ダブル：正解で2倍のマス　⚡ 下剋上：順位が下半分のチームは正解で＋2マス<br>💣 ハイリスク：まちがえたチームは1マス失う（3マス以下のチームは大丈夫）　🍀 ラッキー：全チームいますぐ＋1マス<br>同じものが2回続けて出ることはありません。サンプル問題では第8問と第14問についています</td></tr>
+      <tr><th>🎭 ミッション</th><td>クイズではなく、チームで力を合わせる課題です。できたチームを正解にします。サンプル問題の2つ：<br>・以心伝心：相談なしで「せーの」、チーム全員が指で同じ数（1〜5）を出せたら成功<br>・先生とじゃんけん：チームの代表が前に出て、先生と一斉にじゃんけん。勝ったチームが成功<br>ほかにも「チーム全員で同じポーズ」「10秒で誕生日の早い順に並ぶ」など、見てすぐわかる課題が向いています</td></tr>
+      <tr><th>実況・演出</th><td>正解発表のドラムロール、順位の上がり下がり（▲▼）、「◯班が単独1位に！」などの実況が自動で出ます。司会の先生は読み上げるだけで盛り上がります</td></tr>
+    </table>
   </div>
   <div class="two">
     <div class="card">
@@ -322,7 +373,7 @@ body.staging #stage{display:flex}
         <li>②でチームの数と名前、③で問題を用意します（サンプル問題20問＋練習1問入り）</li>
         <li>⑤で回答カードを印刷します（タブレットや指で答えるなら不要）</li>
         <li>④で「はじめる」→ ルール画面が出ます。地図の★の番号が各チームのスタート地点です</li>
-        <li><b>スペースキー</b>（か右下の大きいボタン）で進みます：<br>問題を出す → 読み上げて「スタート」 → 時間切れで「せーの！」 → 「正解発表」 → 正解チームをタップ → 「陣地を広げる」</li>
+        <li><b>スペースキー</b>（か右下の大きいボタン）で進みます：<br>問題を出す → 読み上げて「スタート」 → 時間切れで「せーの！」 → 「正解発表」（ドラムロール） → 正解チームをタップ → 「陣地を広げる」<br>ルーレットつきの問題は、問題の前に「ルーレットを回す」が出ます</li>
         <li>タップをまちがえたら「1問もどす」でやり直せます</li>
       </ol>
       <p class="hint">パソコンの画面をそのまま映します。正解は「正解発表」を押すまで出ません。途中でページを閉じても、開き直すと続きからできます。</p>
@@ -378,15 +429,20 @@ body.staging #stage{display:flex}
       <p class="hint">正解チームをタップするボタンが、この並びで出ます。体育館でもこの図と同じ順（1班から横に並べる）で座ってもらうと、カードを見ながらすばやく押せます。</p>
     </div>
     <div class="card">
-      <h2>地図の広さ</h2>
+      <h2>地図とルール</h2>
       <div class="field">
         <select id="tSize">
-          <option value="small">せまい（1チーム7マス・早くからうばい合い）</option>
-          <option value="normal">ふつう（1チーム10マス・おすすめ）</option>
-          <option value="large">ひろい（1チーム13マス・うばい合いは最後だけ）</option>
+          <option value="small">せまい（1チーム8マス・早くからうばい合い）</option>
+          <option value="normal">ふつう（1チーム12マス・おすすめ）</option>
+          <option value="large">ひろい（1チーム15マス・うばい合いは最後だけ）</option>
         </select>
       </div>
       <div class="field"><label><input type="checkbox" id="tSteal"> うばい合いあり（おすすめ）</label></div>
+      <h3>おたのしみルール</h3>
+      <div class="field"><label><input type="checkbox" id="tGem"> 💎 お宝マス（とったチームは、もう1マス）</label></div>
+      <div class="field"><label><input type="checkbox" id="tStreak"> 🔥 3問連続で正解するたびに ＋1マス</label></div>
+      <div class="field"><label><input type="checkbox" id="tFew"> 🎯 正解が <span id="fewN"></span>チーム以下のむずかしい問題は ＋1マス</label></div>
+      <p class="hint">🎰 ルーレットと 🎭 ミッションは、③問題で問題ごとにつけます。</p>
       <svg id="boardPreview" class="hexmap"></svg>
       <p class="hint" id="boardInfo"></p>
     </div>
@@ -415,7 +471,7 @@ body.staging #stage{display:flex}
     <details id="pasteBox">
       <summary>Excel・スプレッドシートからまとめて貼り付ける</summary>
       <p class="hint">1行に1問。列の順番：<b>問題 ／ A ／ B ／ C ／ D ／ 正解 ／ 種類 ／ 秒 ／ 解説</b>（種類・秒・解説はなくてもOK）。<br>
-      正解は A〜D、1〜4、ア〜エ、選択肢の文字そのもの、のどれでも読みとります。種類は「1」「2（ボーナス）」「3（逆転）」「練習」。Excel以外では「|」で区切っても大丈夫です。</p>
+      正解は A〜D、1〜4、ア〜エ、選択肢の文字そのもの、のどれでも読みとります。種類は「1」「2（ボーナス）」「3（逆転）」「練習」。「ルーレット」「ミッション」も書けます（例：「2・ルーレット」）。Excel以外では「|」で区切っても大丈夫です。</p>
       <textarea id="qPaste" placeholder="日本でいちばん長い川は？	利根川	石狩川	北上川	信濃川	D	1	20	信濃川は約367km"></textarea>
       <div class="row">
         <button class="btn" id="qPasteAdd">下に追加する</button>
@@ -519,7 +575,7 @@ body.staging #stage{display:flex}
 
 <script>
 // ===ENGINE-START===
-const SIZE_PER = { small: 7, normal: 10, large: 13 };
+const SIZE_PER = { small: 8, normal: 12, large: 15 };
 const LOSS_CAP = 2;   // 1問でうばわれる上限（×倍率）
 const PROTECT = 3;    // このマス数以下のチームはうばわれない
 
@@ -585,22 +641,83 @@ function counts(owners, n) {
 }
 function ranksOf(cnt) { return cnt.map(c => 1 + cnt.filter(d => d > c).length); }
 
-// 正解チームが陣地を広げる。correct: 正解したチーム番号の配列、mult: 1チームがとるマス数
+const STREAK_EVERY = 3;  // 連続正解ボーナス（3問ごと）
+function minorityLimit(n) { return Math.max(1, Math.floor(n / 4)); }  // 少数正解ボーナス：正解がこのチーム数以下
+
+// お宝マス：スタート地点やほかのお宝から、なるべく離れた場所に置く
+function placeTreasures(board, k, seed) {
+  const R = rng(seed ^ 0x5bd1e995);
+  const md = board.cells.map(c => Math.min(...board.homes.map(h => hexDist(c, board.cells[h]))));
+  const jit = board.cells.map(() => R());
+  const out = [];
+  while (out.length < k) {
+    let best = -1, bs = -1e9;
+    board.cells.forEach((c, i) => {
+      if (md[i] < 2) return;
+      const s = md[i] * 10 + jit[i] * 8 - (c.edge ? 3 : 0);
+      if (s > bs) { bs = s; best = i; }
+    });
+    if (best < 0) break;
+    out.push(best);
+    board.cells.forEach((c, i) => { md[i] = Math.min(md[i], hexDist(c, board.cells[best])); });
+  }
+  return out;
+}
+
+// 1問の結果から、チームごとにとれるマス数を決める
+// info: { n, mult, correct, streak（この問題の前の連続正解数）, counts, event, opts: { streak, minority } }
+function planGains(info) {
+  const n = info.n, ok = new Set(info.correct), rk = ranksOf(info.counts);
+  const gains = new Array(n).fill(0), why = [...Array(n)].map(() => []), streak = info.streak.slice();
+  const few = info.opts.minority !== false && info.correct.length > 0 && info.correct.length <= minorityLimit(n);
+  for (let t = 0; t < n; t++) {
+    if (!ok.has(t)) { streak[t] = 0; continue; }
+    streak[t]++;
+    let g = info.mult;
+    if (info.event === 'double') g *= 2;
+    if (info.event === 'underdog' && rk[t] > n / 2) { g += 2; why[t].push('下剋上'); }
+    if (few) { g += 1; why[t].push('少数正解'); }
+    if (info.opts.streak !== false && streak[t] % STREAK_EVERY === 0) { g += 1; why[t].push(streak[t] + '連続'); }
+    gains[t] = g;
+  }
+  return { gains, why, streak, few };
+}
+
+// 正解チームが陣地を広げる。correct: 正解したチーム番号の配列、mult: とれるマス数（全チーム共通の数か、チームごとの配列）
+// opts: steal（うばい合い）, treasure（お宝マスの配列）, penalty（まちがえたチームが1マス失う）, capMult（うばわれる上限の倍率）
 function resolveRound(board, owners0, correct, mult, opts, seed) {
   opts = opts || {};
   const owners = owners0.slice(), n = board.homes.length, R = rng(seed);
   const isHome = new Set(board.homes), ok = new Set(correct);
   const cap = opts.cap == null ? LOSS_CAP : opts.cap, protect = opts.protect == null ? PROTECT : opts.protect;
+  const capMult = opts.capMult || (typeof mult === 'number' ? mult : 1);
+  const want = t => typeof mult === 'number' ? mult : (mult[t] || 0);
+  const treasure = new Set(opts.treasure || []);
   const cnt = counts(owners, n), lost = new Array(n).fill(0);
+  const changes = [], missed = [], gems = [];
+  const nb = (i, t) => board.nbr[i].filter(j => owners[j] === t).length;
+  // ハイリスク：まちがえたチームは、本拠地から遠いはしのマスを1つ失う（空きマスにもどる）
+  if (opts.penalty) {
+    for (let t = 0; t < n; t++) {
+      if (ok.has(t) || cnt[t] <= protect) continue;
+      let b = -1, bs = -1e9;
+      owners.forEach((o, i) => {
+        if (o !== t || isHome.has(i)) return;
+        const s = -nb(i, t) * 10 + hexDist(board.cells[i], board.cells[board.homes[t]]) + R();
+        if (s > bs) { bs = s; b = i; }
+      });
+      if (b >= 0) { owners[b] = -1; cnt[t]--; changes.push({ cell: b, from: t, to: -1, step: -1, lose: true }); }
+    }
+  }
   const order = correct.map(t => [t, cnt[t], R()]).sort((a, b) => a[1] - b[1] || a[2] - b[2]).map(a => a[0]);
   const canSteal = i => {
     const v = owners[i];
     if (opts.steal === false || v < 0 || ok.has(v) || isHome.has(i)) return false;
-    if (cap && lost[v] >= cap * mult) return false;
+    if (cap && lost[v] >= cap * capMult) return false;
     if (cnt[v] <= protect) return false;
     return true;
   };
-  const nb = (i, t) => board.nbr[i].filter(j => owners[j] === t).length;
+  const gemDist = i => { let d = 99; treasure.forEach(g => { d = Math.min(d, hexDist(board.cells[i], board.cells[g])); }); return d; };
   function pick(t) {
     const mine = [];
     owners.forEach((o, i) => { if (o === t) mine.push(i); });
@@ -611,7 +728,10 @@ function resolveRound(board, owners0, correct, mult, opts, seed) {
     const neu = F.filter(i => owners[i] === -1);
     if (neu.length) {
       let b = -1, bs = -1e9;
-      for (const i of neu) { const s = nb(i, t) * 10 - hexDist(board.cells[i], home) + R() * 3; if (s > bs) { bs = s; b = i; } }
+      for (const i of neu) {
+        const s = (treasure.has(i) ? 1000 : 0) + nb(i, t) * 10 - hexDist(board.cells[i], home) - (treasure.size ? gemDist(i) * 2 : 0) + R() * 3;
+        if (s > bs) { bs = s; b = i; }
+      }
       return b;
     }
     const en = F.filter(canSteal);
@@ -633,17 +753,23 @@ function resolveRound(board, owners0, correct, mult, opts, seed) {
     }
     return -1;
   }
-  const changes = [], missed = [];
-  for (let k = 0; k < mult; k++) for (const t of order) {
-    const i = pick(t);
-    if (i < 0) { missed.push(t); continue; }
-    const from = owners[i];
-    if (from >= 0) { lost[from]++; cnt[from]--; }
-    cnt[t]++;
-    owners[i] = t;
-    changes.push({ cell: i, from, to: t, step: k });
+  const maxK = Math.max(0, ...correct.map(want));
+  for (let k = 0; k < maxK; k++) for (const t of order) {
+    if (want(t) <= k) continue;
+    let picks = 1;
+    while (picks-- > 0) {
+      const i = pick(t);
+      if (i < 0) { missed.push(t); break; }
+      const from = owners[i];
+      if (from >= 0) { lost[from]++; cnt[from]--; }
+      cnt[t]++;
+      owners[i] = t;
+      const gem = treasure.has(i);
+      if (gem) { treasure.delete(i); gems.push({ team: t, cell: i }); picks++; }   // お宝：もう1マス
+      changes.push({ cell: i, from, to: t, step: k, gem });
+    }
   }
-  return { owners, changes, missed: [...new Set(missed)] };
+  return { owners, changes, missed: [...new Set(missed)], gems, treasure: [...treasure] };
 }
 // ===ENGINE-END===
 
@@ -698,9 +824,9 @@ function swHtml(t, label) {
 }
 
 // ---------- 問題 ----------
-function blankQ() { return { text: '', choices: ['', '', '', ''], answer: '', answerText: '', kind: '1', sec: '', note: '' }; }
-function mq(text, choices, answer, kind, note, sec) {
-  return { text, choices: choices.concat(['', '', '', '']).slice(0, 4), answer, answerText: '', kind: kind || '1', sec: sec || '', note: note || '' };
+function blankQ() { return { text: '', choices: ['', '', '', ''], answer: '', answerText: '', kind: '1', sec: '', note: '', roulette: false, mission: false }; }
+function mq(text, choices, answer, kind, note, sec, more) {
+  return Object.assign(blankQ(), { text, choices: choices.concat(['', '', '', '']).slice(0, 4), answer, kind: kind || '1', sec: sec || '', note: note || '' }, more || {});
 }
 function sampleQuestions() {
   return [
@@ -708,17 +834,17 @@ function sampleQuestions() {
     mq('日本でいちばん長い川は？', ['利根川', '石狩川', '北上川', '信濃川'], 'D', '1', '信濃川は約367km。2位は利根川（約322km）です。'),
     mq('タコの心臓はいくつ？', ['1つ', '2つ', '3つ', '4つ'], 'C', '1', '全身に血を送る心臓が1つと、えらに血を送る心臓が2つあります。'),
     mq('海に面していない都道府県はいくつ？', ['6', '8', '10', '12'], 'B', '1', '栃木・群馬・埼玉・山梨・長野・岐阜・滋賀・奈良の8県です。'),
-    mq('オリンピックの五輪マークに使われていない色は？', ['紫', '青', '黒', '赤'], 'A', '1', '輪の色は青・黄・黒・緑・赤の5色です。'),
+    mq('以心伝心ミッション！ 相談なしで「せーの」。チーム全員が指で同じ数（1〜5）を出せたら成功！', [], '', '1', 'みんなが出しそうな数を読めたかな？', '10', { mission: true, answerText: '全員の数がそろったチーム' }),
     mq('1日は何秒？', ['3,600秒', '8,640秒', '86,400秒', '864,000秒'], 'C', '2', '60秒 × 60分 × 24時間 ＝ 86,400秒です。'),
+    mq('オリンピックの五輪マークに使われていない色は？', ['紫', '青', '黒', '赤'], 'A', '1', '輪の色は青・黄・黒・緑・赤の5色です。'),
     mq('1円玉の重さは？', ['0.5g', '1g', '2g', '3g'], 'B', '1', 'ちょうど1g。アルミニウムでできています。'),
-    mq('日本の国鳥は？', ['キジ', 'ツル', 'トキ', 'ハト'], 'A', '1', '1947年に日本鳥学会がキジを国鳥に選びました。'),
+    mq('日本の国鳥は？', ['キジ', 'ツル', 'トキ', 'ハト'], 'A', '1', '1947年に日本鳥学会がキジを国鳥に選びました。', '', { roulette: true }),
     mq('元素記号「Fe」は何？', ['金', '銀', '銅', '鉄'], 'D', '1', '金はAu、銀はAg、銅はCuです。'),
-    mq('世界でいちばん面積が大きい国は？', ['カナダ', 'ロシア', '中国', 'アメリカ'], 'B', '1', 'ロシアの面積は日本の約45倍です。'),
     mq('キリンの首の骨はいくつ？', ['7個', '14個', '21個', '30個'], 'A', '2', '人間と同じ7個。1つ1つの骨がとても長いのです。'),
+    mq('世界でいちばん面積が大きい国は？', ['カナダ', 'ロシア', '中国', 'アメリカ'], 'B', '1', 'ロシアの面積は日本の約45倍です。'),
+    mq('先生とじゃんけんミッション！ チームの代表1人が前に出て、先生とじゃんけん。勝ったら成功（あいこは、もう一回）', [], '', '1', '', '15', { mission: true, answerText: '先生に勝ったチーム' }),
     mq('富士山の高さは？', ['3,376m', '3,576m', '3,776m', '3,976m'], 'C', '1', '3,776m。「みななろう」と覚えます。'),
-    mq('野生のペンギンがすんでいないのは？', ['北極', '南極', '南アメリカ', 'オーストラリア'], 'A', '1', 'ペンギンは南半球の生き物。北極にはいません。'),
-    mq('月の重力は、地球のおよそ何分の1？', ['2分の1', '3分の1', '6分の1', '10分の1'], 'C', '1', '体重60kgの人は、月では10kgぶんの重さに感じます。'),
-    mq('将棋で、はじめに1人が並べる駒は何枚？', ['14枚', '16枚', '18枚', '20枚'], 'D', '1', '歩9・香2・桂2・銀2・金2・角1・飛1・玉1 ＝ 20枚です。'),
+    mq('野生のペンギンがすんでいないのは？', ['北極', '南極', '南アメリカ', 'オーストラリア'], 'A', '1', 'ペンギンは南半球の生き物。北極にはいません。', '', { roulette: true }),
     mq('光は1秒間に地球を何周する？', ['約半周', '約1周', '約3周', '約7周半'], 'D', '2', '光の速さは秒速約30万km。地球1周は約4万kmです。'),
     mq('東京スカイツリーの高さは？', ['333m', '634m', '834m', '1,034m'], 'B', '1', '634（むさし）m。333mは東京タワーの高さです。'),
     mq('イカの血は何色？', ['赤', '緑', '黄', '青'], 'D', '1', '酸素を運ぶ成分に銅がふくまれていて、青っぽい色になります。'),
@@ -758,8 +884,12 @@ function normAnswer(ans, choices) {
   if (!choices.some(Boolean)) return { letter: '', text: ans };
   return null;
 }
+function qFlags(k) {
+  k = k || '';
+  return { roulette: /ルーレット/.test(k), mission: /ミッション/.test(k) };
+}
 function normKind(k) {
-  k = (k || '').normalize('NFKC').trim();
+  k = (k || '').normalize('NFKC').replace(/ルーレット|ミッション/g, '').replace(/^[\s・,、/+＋]+|[\s・,、/+＋]+$/g, '').trim();
   if (!k || k === '1' || /ふつう|普通/.test(k)) return '1';
   if (k === '2' || /ボーナス|bonus/i.test(k)) return '2';
   if (k === '3' || /逆転|チャンス/.test(k)) return '3';
@@ -782,6 +912,7 @@ function parsePaste(text) {
     else notes.push(`${li + 1}行目：正解「${ans}」が選択肢と合いません（あとで選んでください）`);
     const k = normKind(kind);
     q.kind = k || '1';
+    Object.assign(q, qFlags(kind));
     if (k === null) notes.push(`${li + 1}行目：種類「${kind}」が読めないので「ふつう」にしました`);
     const s = parseInt((sec || '').normalize('NFKC'), 10);
     if (s > 0) q.sec = String(s);
@@ -800,7 +931,7 @@ function defaultNames(n, scheme) {
 function defaultState() {
   return {
     teams: { people: 100, count: 16, names: defaultNames(MAX_TEAMS, 'num'), cols: 4 },
-    opts: { sec: 20, size: 'normal', steal: true, sound: true },
+    opts: { sec: 20, size: 'normal', steal: true, sound: true, gem: true, streak: true, few: true },
     questions: sampleQuestions(),
     game: null,
   };
@@ -850,6 +981,10 @@ function renderTeams() {
   $('#tCols').value = t.cols;
   $('#tSize').value = S.opts.size;
   $('#tSteal').checked = S.opts.steal !== false;
+  $('#tGem').checked = S.opts.gem !== false;
+  $('#tStreak').checked = S.opts.streak !== false;
+  $('#tFew').checked = S.opts.few !== false;
+  $('#fewN').textContent = minorityLimit(t.count);
   const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count);
   $('#tPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : '';
   $('#teamList').innerHTML = t.names.slice(0, t.count).map((nm, i) =>
@@ -864,12 +999,12 @@ function renderSeat() {
   g.innerHTML = t.names.slice(0, t.count).map((nm, i) => swHtml(i, `${i + 1} ${nm}`)).join('');
 }
 function renderBoardPreview() {
-  const b = makeBoard(S.teams.count, SIZE_PER[S.opts.size] || 10, 12345);
-  drawMap($('#boardPreview'), b, initOwners(b), { labels: true });
-  const per = SIZE_PER[S.opts.size] || 10;
-  $('#boardInfo').textContent = `${b.cols}×${b.rows}＝${b.cells.length}マス（${S.teams.count}チーム）。★がスタート地点です。本番では毎回スタート地点の配置が変わります。` +
+  const b = makeBoard(S.teams.count, SIZE_PER[S.opts.size] || SIZE_PER.normal, 12345);
+  const gems = S.opts.gem !== false ? placeTreasures(b, Math.max(2, Math.round(S.teams.count / 2)), 12345) : [];
+  drawMap($('#boardPreview'), b, initOwners(b), { labels: true, gems, gemsLeft: gems });
+  $('#boardInfo').textContent = `${b.cols}×${b.rows}＝${b.cells.length}マス（${S.teams.count}チーム）。★がスタート地点${gems.length ? `、💎がお宝マス（${gems.length}個）` : ''}です。本番では毎回、配置が変わります。` +
     (S.opts.steal === false ? ' うばい合いなし：空きマスがなくなると増えなくなります。' : '') +
-    (per === 7 ? ' せまい：10問目ごろから、うばい合いが始まります。' : per === 13 ? ' ひろい：うばい合いは最後の数問だけです。' : ' ふつう：15問目ごろから、うばい合いが始まります。');
+    ({ small: ' せまい：10問目ごろから、うばい合いが始まります。', large: ' ひろい：うばい合いは最後の数問だけです。' }[S.opts.size] || ' ふつう：15問目ごろから、うばい合いが始まります。');
 }
 $('#tPeople').addEventListener('input', e => { S.teams.people = Math.max(0, parseInt(e.target.value, 10) || 0); saveSoon(); const t = S.teams; const lo = Math.floor(t.people / t.count), hi = Math.ceil(t.people / t.count); $('#tPer').textContent = t.people > 0 ? `→ 1チーム ${lo === hi ? lo : lo + '〜' + hi} 人` : ''; });
 $('#tCount').addEventListener('change', e => {
@@ -882,6 +1017,9 @@ $('#tCount').addEventListener('change', e => {
 $('#tCols').addEventListener('change', e => { S.teams.cols = Math.min(MAX_TEAMS, Math.max(1, parseInt(e.target.value, 10) || 1)); saveSoon(); renderTeams(); });
 $('#tSize').addEventListener('change', e => { S.opts.size = e.target.value; saveSoon(); renderBoardPreview(); });
 $('#tSteal').addEventListener('change', e => { S.opts.steal = e.target.checked; saveSoon(); renderBoardPreview(); });
+$('#tGem').addEventListener('change', e => { S.opts.gem = e.target.checked; saveSoon(); renderBoardPreview(); });
+$('#tStreak').addEventListener('change', e => { S.opts.streak = e.target.checked; saveSoon(); });
+$('#tFew').addEventListener('change', e => { S.opts.few = e.target.checked; saveSoon(); });
 $('#teamList').addEventListener('input', e => {
   const i = +e.target.dataset.i;
   if (!isNaN(i)) { S.teams.names[i] = e.target.value; saveSoon(); renderSeat(); }
@@ -907,7 +1045,7 @@ function drawMap(svg, board, owners, opt) {
   opt = opt || {};
   const W = HEX_W * (board.cols + 0.5), H = 1.5 * HEX_R * (board.rows - 1) + 2 * HEX_R;
   svg.setAttribute('viewBox', `-1 -1 ${(W + 2).toFixed(1)} ${(H + 2).toFixed(1)}`);
-  const homes = new Set(board.homes);
+  const homes = new Set(board.homes), gemSet = new Set(opt.gems || []);
   let html = '';
   board.cells.forEach((k, i) => {
     const [cx, cy] = cellXY(k);
@@ -917,7 +1055,8 @@ function drawMap(svg, board, owners, opt) {
       pts += (cx + HEX_R * Math.cos(a)).toFixed(2) + ',' + (cy + HEX_R * Math.sin(a)).toFixed(2) + ' ';
     }
     const home = homes.has(i);
-    html += `<g class="cell${home ? ' home' : ''}" data-i="${i}"><polygon points="${pts.trim()}"/>` +
+    const gem = gemSet.has(i) ? `<path class="gem" d="M${(cx - 3.4).toFixed(2)} ${(cy - 3.2).toFixed(2)} L${(cx + 3.4).toFixed(2)} ${(cy - 3.2).toFixed(2)} L${(cx + 5.2).toFixed(2)} ${(cy - 0.6).toFixed(2)} L${cx.toFixed(2)} ${(cy + 5.2).toFixed(2)} L${(cx - 5.2).toFixed(2)} ${(cy - 0.6).toFixed(2)} Z"/>` : '';
+    html += `<g class="cell${home ? ' home' : ''}" data-i="${i}"><polygon points="${pts.trim()}"/>${gem}` +
       (home ? `<text x="${cx.toFixed(2)}" y="${(cy - 4.3).toFixed(2)}" font-size="4.6">★</text><text x="${cx.toFixed(2)}" y="${(cy + 2.4).toFixed(2)}" font-size="7.4" class="n"></text>`
             : `<text x="${cx.toFixed(2)}" y="${cy.toFixed(2)}" font-size="5.6" class="n"></text>`) + '</g>';
   });
@@ -925,7 +1064,8 @@ function drawMap(svg, board, owners, opt) {
   svg._cells = $$('g.cell', svg);
   paintMap(svg, owners, opt);
 }
-function paintCell(g, o, labels) {
+function paintCell(g, o, labels, hasGem) {
+  g.classList.toggle('has-gem', !!hasGem && o < 0);
   const fill = o < 0 ? 'var(--neutral)' : TEAM_COLORS[o % TEAM_COLORS.length];
   const ink = o < 0 ? '#9aa3b2' : inkOn(TEAM_COLORS[o % TEAM_COLORS.length]);
   g.querySelector('polygon').style.fill = fill;
@@ -936,7 +1076,8 @@ function paintCell(g, o, labels) {
 }
 function paintMap(svg, owners, opt) {
   opt = opt || {};
-  svg._cells.forEach((g, i) => paintCell(g, owners[i], opt.labels));
+  const left = new Set(opt.gemsLeft || []);
+  svg._cells.forEach((g, i) => paintCell(g, owners[i], opt.labels, left.has(i)));
 }
 function popCell(svg, i, stolen) {
   const g = svg._cells[i];
@@ -956,10 +1097,12 @@ function renderQuestions() {
   let no = 0;
   $('#qList').innerHTML = S.questions.map((q, i) => {
     const label = q.kind === 'p' ? '練習' : `第${++no}問`;
-    return `<div class="qcard${q.kind === 'p' ? ' practice' : ''}" data-i="${i}">
+    return `<div class="qcard${q.kind === 'p' ? ' practice' : ''}${q.mission ? ' mission' : ''}" data-i="${i}">
       <div class="qhead"><b class="qno">${label}</b>
         <select data-f="kind" aria-label="種類">${Object.entries(KIND_LABEL).map(([v, l]) => `<option value="${v}"${q.kind === v ? ' selected' : ''}>${l}</option>`).join('')}</select>
         <label>考える時間 <input type="number" min="5" max="300" data-f="sec" value="${esc(q.sec)}" placeholder="${S.opts.sec}"> 秒</label>
+        <label class="flag" title="問題の前にルーレットを回して、特別ルールを決める"><input type="checkbox" data-f="roulette" ${q.roulette ? 'checked' : ''} ${q.kind === 'p' ? 'disabled' : ''}> 🎰ルーレット</label>
+        <label class="flag" title="クイズではなく、チームで力を合わせる課題"><input type="checkbox" data-f="mission" ${q.mission ? 'checked' : ''}> 🎭ミッション</label>
         <span class="grow"></span>
         <button class="btn small" data-act="up" ${i === 0 ? 'disabled' : ''} title="上へ">↑</button>
         <button class="btn small" data-act="down" ${i === S.questions.length - 1 ? 'disabled' : ''} title="下へ">↓</button>
@@ -967,7 +1110,7 @@ function renderQuestions() {
       </div>
       <textarea data-f="text" rows="2" placeholder="問題文">${esc(q.text)}</textarea>
       <div class="qchoices">${CH.map((c, j) => `<label class="qch"><input type="radio" name="ans${i}" value="${c.k}" data-f="answer" ${q.answer === c.k ? 'checked' : ''} title="${c.k}を正解にする"><span class="chip" style="background:${c.color};color:${c.ink}">${shapeSvg(c.shape, c.ink)}${c.k}</span><input type="text" data-f="c${j}" value="${esc(q.choices[j])}" placeholder="選択肢${c.k}"></label>`).join('')}</div>
-      <div class="line qfree" ${qChoices(q).length ? 'hidden' : ''}>正解（選択肢なしの問題） <input type="text" data-f="answerText" value="${esc(q.answerText)}" placeholder="例：333m（いちばん近いチームが正解）"></div>
+      <div class="line qfree" ${qChoices(q).length ? 'hidden' : ''}>${q.mission ? '成功の条件' : '正解（選択肢なしの問題）'} <input type="text" data-f="answerText" value="${esc(q.answerText)}" placeholder="${q.mission ? '例：先生に勝ったチーム' : '例：333m（いちばん近いチームが正解）'}"></div>
       <div class="line">解説 <input type="text" data-f="note" value="${esc(q.note)}" placeholder="正解発表のときに出る一言（なくてもOK）"></div>
       <div class="qwarn">${esc(qProblems(q).join('／'))}</div>
     </div>`;
@@ -979,7 +1122,8 @@ function renderQSummary() {
   const main = qs.filter(q => q.kind !== 'p');
   const pr = qs.length - main.length;
   const b2 = main.filter(q => q.kind === '2').length, b3 = main.filter(q => q.kind === '3').length;
-  const sec = qs.reduce((s, q) => s + qSec(q, S.opts.sec) + 60, 0);
+  const sec = qs.reduce((s, q) => s + qSec(q, S.opts.sec) + 60 + (q.roulette && q.kind !== 'p' ? 30 : 0), 0);
+  const nr = qs.filter(q => q.roulette && q.kind !== 'p').length, nm = qs.filter(q => q.mission).length;
   const total = Math.round(sec / 60) + 10;
   const bad = qs.map((q, i) => qProblems(q).length ? i : -1).filter(i => i >= 0);
   let cls = 'info', extra = '';
@@ -987,7 +1131,7 @@ function renderQSummary() {
   if (total < 30) { cls = 'warn'; extra = ' 時間があまりそうです。問題をふやすと、うばい合いまでたどりつきます。'; }
   const last = main[main.length - 1];
   const tip = last && last.kind !== '3' ? ' 最後の問題を「逆転チャンス（3マス）」にすると最後まで盛り上がります。' : '';
-  $('#qSummary').innerHTML = `<div class="msg ${cls}">本番 ${main.length}問（ボーナス${b2}・逆転チャンス${b3}）＋ 練習${pr}問 → 問題だけで約${Math.round(sec / 60)}分、ルール説明と結果発表を入れて<b>約${total}分</b>。${extra}${tip}</div>` +
+  $('#qSummary').innerHTML = `<div class="msg ${cls}">本番 ${main.length}問（ボーナス${b2}・逆転チャンス${b3}${nr ? `・🎰ルーレット${nr}` : ''}${nm ? `・🎭ミッション${nm}` : ''}）＋ 練習${pr}問 → 問題だけで約${Math.round(sec / 60)}分、ルール説明と結果発表を入れて<b>約${total}分</b>。${extra}${tip}</div>` +
     (bad.length ? `<div class="msg bad">直すところがある問題が${bad.length}問あります（赤い字）。</div>` : '');
 }
 $('#qSec').addEventListener('change', e => { S.opts.sec = Math.min(300, Math.max(5, parseInt(e.target.value, 10) || 20)); e.target.value = S.opts.sec; saveSoon(); renderQuestions(); });
@@ -998,13 +1142,14 @@ $('#qList').addEventListener('input', e => {
   if (/^c[0-3]$/.test(f)) q.choices[+f[1]] = e.target.value;
   else if (f === 'answer') q.answer = e.target.value;
   else if (f === 'kind') { q.kind = e.target.value; saveSoon(); renderQuestions(); return; }
+  else if (f === 'roulette' || f === 'mission') { q[f] = e.target.checked; saveSoon(); renderQuestions(); return; }
   else q[f] = e.target.value;
   card.querySelector('.qfree').hidden = qChoices(q).length > 0;
   card.querySelector('.qwarn').textContent = qProblems(q).join('／');
   saveSoon();
   renderQSummary();
 });
-$('#qList').addEventListener('change', e => { if (e.target.dataset.f === 'kind') return; saveSoon(); if (e.target.dataset.f === 'sec') renderQSummary(); });
+$('#qList').addEventListener('change', e => { if (['kind', 'roulette', 'mission'].includes(e.target.dataset.f)) return; saveSoon(); if (e.target.dataset.f === 'sec') renderQSummary(); });
 $('#qList').addEventListener('click', e => {
   const b = e.target.closest('button[data-act]');
   if (!b) return;
@@ -1036,6 +1181,13 @@ $('#qPasteAdd').addEventListener('click', () => doPaste(false));
 $('#qPasteReplace').addEventListener('click', () => doPaste(true));
 
 // ---------- ④ 本番 ----------
+const EVENTS = {
+  double: { icon: '🎉', name: 'ダブル', text: 'この問題は、正解で2倍のマス！', color: '#e07b00' },
+  underdog: { icon: '⚡', name: '下剋上', text: '順位が下半分のチームは、正解で＋2マス！', color: '#6d3fd6' },
+  risk: { icon: '💣', name: 'ハイリスク', text: 'まちがえたチームは1マス失う！', color: '#c8102e' },
+  lucky: { icon: '🍀', name: 'ラッキー', text: '全チーム、いますぐ＋1マス！', color: '#16803c' },
+};
+const WHEEL = ['double', 'underdog', 'risk', 'lucky', 'double', 'underdog', 'risk', 'lucky'];
 let BOARD = null;
 function ensureBoard() {
   const g = S.game;
@@ -1044,7 +1196,15 @@ function ensureBoard() {
     BOARD = makeBoard(g.n, g.per, g.seed);
     BOARD._key = g.n + '/' + g.per + '/' + g.seed;
   }
-  if (!Array.isArray(g.owners) || g.owners.length !== BOARD.cells.length) g.owners = initOwners(BOARD);
+  if (!g.feat) g.feat = { gem: false, streak: false, few: false };   // 前の版で始めた本番
+  if (!Array.isArray(g.owners) || g.owners.length !== BOARD.cells.length) { g.owners = initOwners(BOARD); g.treasureAll = null; }
+  if (!Array.isArray(g.treasureAll)) {
+    g.treasureAll = g.feat.gem ? placeTreasures(BOARD, Math.max(2, Math.round(g.n / 2)), g.seed) : [];
+    g.treasure = g.treasureAll.slice();
+  }
+  if (!Array.isArray(g.treasure)) g.treasure = [];
+  if (!Array.isArray(g.streak) || g.streak.length !== g.n) g.streak = new Array(g.n).fill(0);
+  if (!g.events) g.events = {};
   return BOARD;
 }
 function playableQuestions() { return S.questions.filter(q => q.text.trim()).map(q => JSON.parse(JSON.stringify(q))); }
@@ -1053,7 +1213,7 @@ function phaseText(g) {
   if (g.phase === 'final') return '結果発表';
   const q = g.qs[g.qi];
   const lab = q && q.kind === 'p' ? '練習問題' : `第${mainNo(g, g.qi)}問`;
-  return lab + '・' + ({ show: '問題を出したところ', think: '考える時間', up: '「せーの！」のところ', reveal: '正解発表のところ', result: '陣地を広げたあと' }[g.phase] || '');
+  return lab + '・' + ({ spin: 'ルーレットのところ', show: '問題を出したところ', think: '考える時間', up: '「せーの！」のところ', reveal: '正解発表のところ', result: '陣地を広げたあと' }[g.phase] || '');
 }
 function renderPlayTab() {
   const g = S.game;
@@ -1068,17 +1228,21 @@ function renderPlayTab() {
   const warn = [];
   if (!qs.length) warn.push('<div class="msg bad">問題がありません。③で問題を入れてください。</div>');
   if (bad) warn.push(`<div class="msg warn">③に直すところがある問題が${bad}問あります。</div>`);
-  warn.push(`<p class="hint">チーム ${S.teams.count}（②）・問題 ${qs.filter(q => q.kind !== 'p').length}問＋練習${qs.filter(q => q.kind === 'p').length}問（③）・地図 ${({ small: 'せまい', normal: 'ふつう', large: 'ひろい' })[S.opts.size]}</p>`);
+  const fun = [S.opts.gem !== false && '💎お宝', S.opts.streak !== false && '🔥連続正解', S.opts.few !== false && '🎯少数正解',
+    qs.some(q => q.roulette && q.kind !== 'p') && `🎰ルーレット${qs.filter(q => q.roulette && q.kind !== 'p').length}回`, qs.some(q => q.mission) && `🎭ミッション${qs.filter(q => q.mission).length}問`].filter(Boolean);
+  warn.push(`<p class="hint">チーム ${S.teams.count}（②）・問題 ${qs.filter(q => q.kind !== 'p').length}問＋練習${qs.filter(q => q.kind === 'p').length}問（③）・地図 ${({ small: 'せまい', normal: 'ふつう', large: 'ひろい' })[S.opts.size]}・おたのしみ ${fun.length ? fun.join(' ') : 'なし'}</p>`);
   $('#playCheck').innerHTML = warn.join('');
   $('#playNew').disabled = !qs.length;
 }
 function newGame() {
   const n = S.teams.count;
   S.game = {
-    v: 1, n, per: SIZE_PER[S.opts.size] || 10, seed: (Math.random() * 4294967296) >>> 0,
+    v: 2, n, per: SIZE_PER[S.opts.size] || SIZE_PER.normal, seed: (Math.random() * 4294967296) >>> 0,
     names: S.teams.names.slice(0, n), cols: Math.min(S.teams.cols, n), steal: S.opts.steal !== false, sec: S.opts.sec,
-    qs: playableQuestions(), qi: -1, phase: 'intro', owners: null, correct: new Array(n).fill(false),
+    feat: { gem: S.opts.gem !== false, streak: S.opts.streak !== false, few: S.opts.few !== false },
+    qs: playableQuestions(), qi: -1, phase: 'intro', introStep: 0, owners: null, correct: new Array(n).fill(false),
     timer: null, startedAt: null, history: [], last: null, finalStep: 0,
+    streak: new Array(n).fill(0), treasureAll: null, treasure: [], events: {}, wheelAngle: 0,
   };
   BOARD = null;
   ensureBoard();
@@ -1103,6 +1267,8 @@ $('#playSync').addEventListener('click', () => {
 
 function mainNo(g, qi) { let n = 0; for (let i = 0; i <= qi; i++) if (g.qs[i].kind !== 'p') n++; return n; }
 function mainTotal(g) { return g.qs.filter(q => q.kind !== 'p').length; }
+function teamTag(g, t) { return `${swHtml(t)}<b>${esc(g.names[t] || '')}</b>`; }
+function hasExtras(g) { return g.feat.gem || g.feat.streak || g.feat.few || g.qs.some(q => q.roulette || q.mission); }
 
 // 音
 let AC = null;
@@ -1124,24 +1290,29 @@ const SND = {
   buzz: () => tone(196, 0.7, 'sawtooth', 0.18),
   chime: () => { tone(784, 0.35, 'sine', 0.25); tone(1047, 0.6, 'sine', 0.25, 0.28); },
   blip: s => tone(s ? 330 : 1175, 0.07, 'triangle', 0.12),
+  gem: () => [1319, 1568, 2093].forEach((f, i) => tone(f, 0.18, 'sine', 0.16, i * 0.07)),
   fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i === 3 ? 0.9 : 0.2, 'triangle', 0.22, i * 0.16)),
   start: () => tone(1047, 0.18, 'sine', 0.2),
+  drum: () => { for (let i = 0; i < 26; i++) tone(95 + (i % 2) * 12, 0.06, 'triangle', 0.1 + i * 0.006, i * 0.052); tone(140, 0.5, 'sawtooth', 0.12, 1.36); },
+  spin: () => { let t = 0, dt = 0.035; while (t < 3.5) { tone(1400, 0.02, 'square', 0.06, t); t += dt; dt *= 1.085; } },
+  event: () => [659, 784, 988, 1319].forEach((f, i) => tone(f, 0.16, 'square', 0.1, i * 0.09)),
 };
 
 function openStage() {
   document.body.classList.add('staging');
   ensureBoard();
-  drawMap($('#map'), BOARD, S.game.owners, {});
+  drawMap($('#map'), BOARD, S.game.owners, { gems: S.game.treasureAll, gemsLeft: S.game.treasure });
   renderStage();
   startTick();
 }
 function closeStage() {
-  finishAnim(true);
+  finishAnim(true); stopDrum(); stopSpin(true);
   document.body.classList.remove('staging');
   stopTick();
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   showTab('play');
 }
+function repaintMap() { const g = S.game; paintMap($('#map'), g.owners, { gemsLeft: g.treasure }); }
 $('#stClose').addEventListener('click', closeStage);
 $('#stFull').addEventListener('click', () => {
   if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
@@ -1180,11 +1351,12 @@ function timeUp() {
 // 進行
 function goQuestion(i) {
   const g = S.game;
-  finishAnim(true);
+  finishAnim(true); stopDrum(); stopSpin(true);
   if (i >= g.qs.length) { g.phase = 'final'; g.finalStep = 0; saveNow(); renderStage(); return; }
-  g.qi = i; g.phase = 'show';
+  g.qi = i;
   g.correct = new Array(g.n).fill(false);
   g.timer = { running: false, left: qSec(g.qs[i], g.sec) };
+  g.phase = g.qs[i].roulette && g.qs[i].kind !== 'p' && !g.events[i] ? 'spin' : 'show';
   if (!g.startedAt) g.startedAt = Date.now();
   saveNow(); renderStage();
 }
@@ -1193,47 +1365,139 @@ function primary() {
   if (!g) return;
   if (ANIM) { finishAnim(); return; }
   switch (g.phase) {
-    case 'intro': goQuestion(0); break;
+    case 'intro':
+      if (g.introStep === 0 && hasExtras(g)) { g.introStep = 1; saveNow(); renderStage(); } else goQuestion(0);
+      break;
+    case 'spin':
+      if (SPIN) stopSpin(false);
+      else if (g.events[g.qi]) { g.phase = 'show'; saveNow(); renderStage(); }
+      else spin();
+      break;
     case 'show': g.phase = 'think'; g.timer = { running: true, endAt: Date.now() + timeLeft(g) * 1000 }; lastWhole = null; SND.start(); saveNow(); renderStage(); break;
     case 'think': timeUp(); break;
-    case 'up': g.phase = 'reveal'; SND.chime(); saveNow(); renderStage(); break;
+    case 'up':
+      if (DRUM) { stopDrum(); toReveal(); }
+      else { DRUM = setTimeout(() => { DRUM = null; toReveal(); }, 1500); SND.drum(); renderStage(); }
+      break;
     case 'reveal': resolveNow(); break;
     case 'result': goQuestion(g.qi + 1); break;
     case 'final': if (g.finalStep < finalGroups(g).length) { g.finalStep++; saveNow(); renderStage(); if (g.finalStep === finalGroups(g).length) celebrate(); } break;
   }
 }
+// 正解発表のドラムロール
+let DRUM = null;
+function stopDrum() { if (DRUM) { clearTimeout(DRUM); DRUM = null; } }
+function toReveal() { const g = S.game; g.phase = 'reveal'; SND.chime(); saveNow(); renderStage(); }
+
+// ルーレット
+let SPIN = null;
+function spin() {
+  const g = S.game;
+  const prev = Object.keys(g.events).map(Number).filter(i => i < g.qi).sort((a, b) => b - a).map(i => g.events[i])[0];
+  const pool = Object.keys(EVENTS).filter(k => k !== prev);
+  const ev = pool[Math.floor(Math.random() * pool.length)];
+  const slots = WHEEL.map((k, j) => k === ev ? j : -1).filter(j => j >= 0);
+  const slot = slots[Math.floor(Math.random() * slots.length)];
+  const seg = 360 / WHEEL.length;
+  const base = Math.ceil((g.wheelAngle || 0) / 360) * 360;
+  const angle = base + 360 * 6 - (slot * seg + seg / 2) + (Math.random() - 0.5) * seg * 0.6;
+  const w = $('#wheel');
+  if (w) { w.style.transition = 'transform 3.6s cubic-bezier(.12,.72,.18,1)'; w.style.transform = `rotate(${angle}deg)`; }
+  SND.spin();
+  SPIN = { ev, angle, id: setTimeout(() => stopSpin(false), 3700) };
+  renderBar();
+}
+function stopSpin(cancel) {
+  if (!SPIN) return;
+  clearTimeout(SPIN.id);
+  const s = SPIN;
+  SPIN = null;
+  if (cancel) return;
+  applyEvent(s.ev, s.angle);
+}
+function applyEvent(ev, angle) {
+  const g = S.game;
+  g.wheelAngle = angle;
+  if (ev === 'lucky') {
+    const before = g.owners.slice(), gemsBefore = g.treasure.slice(), c0 = counts(before, g.n);
+    g.history.push({ qi: g.qi, phase: 'spin', owners: before, correct: g.correct.slice(), last: g.last, streak: g.streak.slice(), treasure: gemsBefore, events: Object.assign({}, g.events) });
+    const all = [...Array(g.n).keys()];
+    const res = resolveRound(ensureBoard(), before, all, 1, { steal: false, treasure: g.treasure }, (g.seed + g.qi * 7919 + 17) >>> 0);
+    g.owners = res.owners; g.treasure = res.treasure;
+    const c1 = counts(res.owners, g.n);
+    g.last = { qi: g.qi, lucky: true, changes: res.changes, delta: c1.map((v, t) => v - c0[t]), gems: res.gems, rankBefore: ranksOf(c0) };
+    g.events[g.qi] = ev;
+    saveNow(); renderStage(); SND.event();
+    if (res.changes.length) startAnim(before, gemsBefore, res.changes);
+    return;
+  }
+  g.events[g.qi] = ev;
+  saveNow(); renderStage(); SND.event();
+}
+
 function resolveNow() {
-  const g = S.game, q = g.qs[g.qi], mult = qMult(q);
-  const before = g.owners.slice();
+  const g = S.game, q = g.qs[g.qi], mult = qMult(q), ev = g.events[g.qi] || null;
+  const before = g.owners.slice(), gemsBefore = g.treasure.slice(), c0 = counts(before, g.n), rk0 = ranksOf(c0);
   const cor = [];
   g.correct.forEach((c, t) => { if (c) cor.push(t); });
-  g.history.push({ qi: g.qi, owners: before, correct: g.correct.slice(), last: g.last });
+  g.history.push({ qi: g.qi, phase: 'reveal', owners: before, correct: g.correct.slice(), last: g.last, streak: g.streak.slice(), treasure: gemsBefore, events: Object.assign({}, g.events) });
   if (g.history.length > 60) g.history.shift();
   if (!mult) {
     g.last = { qi: g.qi, practice: true, changes: [], delta: new Array(g.n).fill(0), missed: [], nCorrect: cor.length };
   } else {
-    const res = resolveRound(ensureBoard(), before, cor, mult, { steal: g.steal }, (g.seed + g.qi * 7919) >>> 0);
-    const c0 = counts(before, g.n), c1 = counts(res.owners, g.n);
+    const plan = planGains({ n: g.n, mult, correct: cor, streak: g.streak, counts: c0, event: ev, opts: { streak: g.feat.streak, minority: g.feat.few } });
+    const res = resolveRound(ensureBoard(), before, cor, plan.gains, { steal: g.steal, treasure: g.treasure, penalty: ev === 'risk', capMult: mult * (ev === 'double' ? 2 : 1) }, (g.seed + g.qi * 7919) >>> 0);
+    const c1 = counts(res.owners, g.n);
     g.owners = res.owners;
-    g.last = { qi: g.qi, changes: res.changes, delta: c1.map((v, t) => v - c0[t]), missed: res.missed, nCorrect: cor.length };
+    g.treasure = res.treasure;
+    g.streak = plan.streak;
+    g.last = { qi: g.qi, changes: res.changes, delta: c1.map((v, t) => v - c0[t]), missed: res.missed, nCorrect: cor.length,
+      gains: plan.gains, why: plan.why, few: plan.few, gems: res.gems, event: ev, rankBefore: rk0 };
+    g.last.comments = commentary(g, c0, c1, rk0);
   }
   g.phase = 'result';
   saveNow();
   renderStage();
-  if (g.last.changes.length) startAnim(before, g.last.changes);
+  if (g.last.changes.length) startAnim(before, gemsBefore, g.last.changes);
+}
+// 実況：その問題で起きたことから、盛り上がる一言を3つまで
+function commentary(g, c0, c1, rk0) {
+  const n = g.n, rk1 = ranksOf(c1), out = [];
+  const top1 = c1.map((c, t) => t).filter(t => rk1[t] === 1), top0 = c0.map((c, t) => t).filter(t => rk0[t] === 1);
+  if (top1.length === 1 && !(top0.length === 1 && top0[0] === top1[0])) out.push(`👑 ${teamTag(g, top1[0])} が単独1位に！`);
+  let jump = -1, jd = 1;
+  for (let t = 0; t < n; t++) { const d = rk0[t] - rk1[t]; if (d > jd || (d === jd && jump >= 0 && rk1[t] < rk1[jump])) { jd = d; jump = t; } }
+  if (jump >= 0 && jd >= 2 && !(top1.length === 1 && top1[0] === jump)) out.push(`🚀 ${teamTag(g, jump)} が ${rk0[jump]}位 → ${rk1[jump]}位 にジャンプアップ！`);
+  const smax = Math.max(...g.streak);
+  if (g.feat.streak && smax >= 3) {
+    const ts = g.streak.map((s, t) => t).filter(t => g.streak[t] === smax);
+    out.push(`🔥 ${ts.slice(0, 3).map(t => teamTag(g, t)).join(' ')}${ts.length > 3 ? ` ほか${ts.length - 3}チーム` : ''} は${smax}問連続正解中！`);
+  }
+  const sorted = c1.slice().sort((a, b) => b - a);
+  if (top1.length > 1) out.push(`😲 1位が${top1.length}チーム並んでいる！`);
+  else if (sorted[0] - sorted[1] <= 1) out.push('😲 1位と2位の差は、たった1マス！');
+  const left = g.qs.length - 1 - g.qi;
+  if (left === 1 && g.qs[g.qs.length - 1].kind === '3') out.push('⏳ 次はいよいよ最終問題！ 正解で3マス、まだまだ逆転できる！');
+  return out.slice(0, 3);
 }
 function undo() {
   const g = S.game, h = g.history.pop();
   if (!h) return;
-  finishAnim(true);
-  g.qi = h.qi; g.owners = h.owners; g.correct = h.correct; g.last = h.last; g.phase = 'reveal';
-  g.timer = { running: false, left: 0 };
+  finishAnim(true); stopDrum(); stopSpin(true);
+  g.qi = h.qi; g.owners = h.owners; g.correct = h.correct; g.last = h.last; g.phase = h.phase || 'reveal';
+  if (h.streak) g.streak = h.streak;
+  if (h.treasure) g.treasure = h.treasure;
+  if (h.events) g.events = h.events;
+  g.timer = { running: false, left: h.phase === 'spin' ? qSec(g.qs[g.qi], g.sec) : 0 };
   saveNow();
-  paintMap($('#map'), g.owners, {});
+  repaintMap();
   renderStage();
 }
 $('#stPrimary').addEventListener('click', primary);
-$('#stUndo').addEventListener('click', () => { if (confirm('直前の「陣地を広げる」を取り消して、正解チームを選び直しますか？')) undo(); });
+$('#stUndo').addEventListener('click', () => {
+  const h = S.game.history[S.game.history.length - 1];
+  if (confirm(h && h.phase === 'spin' ? '直前の「ラッキー（全チーム＋1マス）」を取り消して、ルーレットを回し直しますか？' : '直前の「陣地を広げる」を取り消して、正解チームを選び直しますか？')) undo();
+});
 $('#stSkip').addEventListener('click', () => { if (confirm('この問題をとばして次へ進みますか？（陣地は変わりません）')) goQuestion(S.game.qi + 1); });
 $('#stLast').addEventListener('click', () => {
   const g = S.game;
@@ -1245,7 +1509,7 @@ $('#stShuffle').addEventListener('click', () => {
   g.owners = null;
   ensureBoard();
   saveNow();
-  drawMap($('#map'), BOARD, g.owners, {});
+  drawMap($('#map'), BOARD, g.owners, { gems: g.treasureAll, gemsLeft: g.treasure });
   renderStage();
 });
 $('#stPause').addEventListener('click', () => {
@@ -1257,6 +1521,7 @@ $('#stPause').addEventListener('click', () => {
 });
 $('#stPlus').addEventListener('click', () => {
   const g = S.game;
+  stopDrum();
   if (g.phase === 'up') { g.phase = 'think'; g.timer = { running: true, endAt: Date.now() + 10000 }; lastWhole = null; }
   else if (g.timer && g.timer.running) g.timer.endAt += 10000;
   else if (g.timer) g.timer.left += 10;
@@ -1276,10 +1541,10 @@ document.addEventListener('keyup', e => { if (document.body.classList.contains('
 
 // 陣地が広がるアニメーション
 let ANIM = null;
-function startAnim(before, changes) {
+function startAnim(before, gemsBefore, changes) {
   finishAnim(true);
-  const svg = $('#map'), disp = before.slice();
-  paintMap(svg, disp, {});
+  const svg = $('#map'), disp = before.slice(), gems = new Set(gemsBefore);
+  paintMap(svg, disp, { gemsLeft: gems });
   const step = Math.max(70, Math.min(260, 3600 / changes.length));
   ANIM = { disp, k: 0, changes, id: null };
   renderRank(disp, false);
@@ -1289,9 +1554,10 @@ function startAnim(before, changes) {
     if (ANIM.k >= changes.length) { finishAnim(); return; }
     const ch = changes[ANIM.k++];
     disp[ch.cell] = ch.to;
-    paintCell(svg._cells[ch.cell], ch.to);
+    if (ch.gem) gems.delete(ch.cell);
+    paintCell(svg._cells[ch.cell], ch.to, true, gems.has(ch.cell));
     popCell(svg, ch.cell, ch.from >= 0);
-    SND.blip(ch.from >= 0);
+    if (ch.gem) SND.gem(); else SND.blip(ch.from >= 0);
     renderRank(disp, false);
   }, step);
 }
@@ -1299,7 +1565,7 @@ function finishAnim(silent) {
   if (!ANIM) return;
   clearInterval(ANIM.id);
   ANIM = null;
-  if (S.game && S.game.owners) paintMap($('#map'), S.game.owners, {});
+  if (S.game && S.game.owners) repaintMap();
   if (!silent) renderStage();
 }
 
@@ -1309,13 +1575,17 @@ function renderTop() {
   if (!g) return;
   const q = g.qs[g.qi];
   let title = '';
-  if (g.phase === 'intro') title = 'ルール説明';
+  if (g.phase === 'intro') title = g.introStep ? 'おたのしみルール' : 'ルール説明';
   else if (g.phase === 'final') title = '結果発表';
   else if (q) {
     title = q.kind === 'p' ? '練習問題' : `第${mainNo(g, g.qi)}問 <small>／ 全${mainTotal(g)}問</small>`;
     if (q.kind === '2') title += '<span class="badge b2">ボーナス 2マス</span>';
     if (q.kind === '3') title += '<span class="badge b3">逆転チャンス 3マス</span>';
     if (q.kind === 'p') title += '<span class="badge bp">陣地は変わりません</span>';
+    if (q.mission) title += '<span class="badge bm">🎭 ミッション</span>';
+    const ev = g.events[g.qi];
+    if (ev) title += `<span class="badge" style="background:${EVENTS[ev].color}">${EVENTS[ev].icon} ${EVENTS[ev].name}</span>`;
+    else if (g.phase === 'spin') title += '<span class="badge b3">🎰 チャンスタイム</span>';
   }
   if ($('#stTitle')._h !== title) { $('#stTitle').innerHTML = title; $('#stTitle')._h = title; }
   const tm = $('#stTimer');
@@ -1337,25 +1607,77 @@ function renderStage() {
   main.classList.toggle('wide-map', g.phase === 'result');
   main.classList.toggle('intro', g.phase === 'intro');
   main.classList.toggle('reveal', g.phase === 'reveal');
+  main.classList.toggle('spin', g.phase === 'spin');
   main.classList.toggle('final', g.phase === 'final');
-  $('#stLeft').innerHTML = g.phase === 'intro' ? rulesHtml(g) : g.phase === 'final' ? finalHtml(g) : questionHtml(g);
+  $('#stLeft').innerHTML = g.phase === 'intro' ? rulesHtml(g) : g.phase === 'final' ? finalHtml(g) : g.phase === 'spin' ? spinHtml(g) : questionHtml(g);
   if (g.phase === 'reveal') bindToggles();
-  if (!ANIM) renderRank(g.owners, g.phase === 'result');
+  fitLeft();
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(fitLeft, 600);   // 列の幅が変わるアニメーションのあとにもう一度
+  if (!ANIM) renderRank(g.owners, g.phase === 'result' || (g.phase === 'spin' && g.last && g.last.lucky && g.last.qi === g.qi));
   renderBar();
+}
+let fitTimer = null;
+function fitLeft() {
+  const L = $('#stLeft');
+  L.classList.remove('tight', 'tighter');
+  if (L.scrollHeight <= L.clientHeight + 1) return;
+  L.classList.add('tight');
+  if (L.scrollHeight <= L.clientHeight + 1) return;
+  L.classList.add('tighter');
 }
 function rulesHtml(g) {
   const hasP = g.qs[0] && g.qs[0].kind === 'p';
+  if (g.introStep === 1) {
+    const li = [];
+    if (g.feat.gem) li.push('<li><b>💎 お宝マス</b>：地図の💎をとったチームは、<b>もう1マス</b>とれる</li>');
+    if (g.feat.streak) li.push(`<li><b>🔥 連続正解</b>：${STREAK_EVERY}問続けて正解するたびに ＋1マス<span class="s">まちがえると、また1から</span></li>`);
+    if (g.feat.few) li.push(`<li><b>🎯 少数正解</b>：正解が${minorityLimit(g.n)}チーム以下のむずかしい問題は、正解チームに ＋1マス</li>`);
+    if (g.qs.some(q => q.roulette && q.kind !== 'p')) li.push('<li><b>🎰 チャンスタイム</b>：問題の前にルーレット！<span class="s">🎉ダブル　⚡下剋上　💣ハイリスク　🍀ラッキー のどれかが起きる</span></li>');
+    if (g.qs.some(q => q.mission)) li.push('<li><b>🎭 ミッション</b>：クイズではなく、チームで力を合わせる課題。できたチームが正解</li>');
+    return `<div class="rules"><h2>おたのしみルール</h2><ol class="fun">${li.join('')}</ol>
+      <div class="tiny">${g.feat.gem ? '地図の💎の場所を見ておこう。' : ''}${hasP ? 'まずは練習問題から。' : ''}</div></div>`;
+  }
   return `<div class="rules"><h2>陣取りクイズのルール</h2><ol>
     <li>チームで相談して、答えを決める（考える時間 ${g.sec}秒）</li>
     <li>「せーの！」で、いっせいに答えを上げる<span class="s">カード・タブレット・指（A＝1本 B＝2本 C＝3本 D＝4本）</span></li>
     <li>正解すると、となりの空きマスを1つとれる<span class="s">ボーナス問題は2マス、最後の逆転チャンスは3マス！</span></li>
     ${g.steal ? '<li>空きマスがなくなったら、<b>まちがえたチーム</b>のマスをうばう！<span class="s">マスをたくさん持っているチームがねらわれる</span></li><li>★（本拠地）と、3マス以下のチームのマスはうばわれない</li>' : '<li>空きマスがなくなったら、そこで陣地は止まる</li>'}
   </ol><div class="win">🏆 最後にマスがいちばん多いチームの優勝！</div>
-  <div class="tiny">地図の★の番号が、自分のチームのスタート地点です。${hasP ? 'まずは練習問題から。' : ''}</div></div>`;
+  <div class="tiny">地図の★の番号が、自分のチームのスタート地点です。${hasExtras(g) ? '' : hasP ? 'まずは練習問題から。' : ''}</div></div>`;
+}
+function wheelSvg(angle) {
+  const seg = 360 / WHEEL.length, R = 96;
+  let body = '';
+  WHEEL.forEach((k, j) => {
+    const a0 = (j * seg - 90) * Math.PI / 180, a1 = ((j + 1) * seg - 90) * Math.PI / 180;
+    body += `<path d="M100 100 L${(100 + R * Math.cos(a0)).toFixed(2)} ${(100 + R * Math.sin(a0)).toFixed(2)} A${R} ${R} 0 0 1 ${(100 + R * Math.cos(a1)).toFixed(2)} ${(100 + R * Math.sin(a1)).toFixed(2)} Z" fill="${EVENTS[k].color}" opacity="${j % 2 ? 0.82 : 1}" stroke="#fff" stroke-width="1.5"/>`;
+    body += `<g transform="rotate(${(j + 0.5) * seg} 100 100)"><text x="100" y="24" text-anchor="middle" font-size="12">${EVENTS[k].icon}</text>${[...EVENTS[k].name].map((ch, m) => `<text x="100" y="${40 + m * 11}" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#fff">${ch === 'ー' ? '｜' : ch}</text>`).join('')}</g>`;
+  });
+  return `<svg viewBox="0 -14 200 216" class="wheel" aria-hidden="true"><g id="wheel" style="transform-origin:100px 100px;transform:rotate(${angle}deg)">${body}<circle cx="100" cy="100" r="15" fill="#fff" stroke="#1d2330" stroke-width="2"/></g><path d="M100 14 L89 -12 L111 -12 Z" fill="#1d2330" stroke="#fff" stroke-width="1.5"/></svg>`;
+}
+function spinHtml(g) {
+  const ev = g.events[g.qi];
+  let h = `<div class="spinhead">🎰 チャンスタイム！<small>${ev ? 'この問題は…' : 'ルーレットを回して、この問題の特別ルールを決めよう'}</small></div>`;
+  h += `<div class="wheelbox">${wheelSvg(g.wheelAngle || 0)}</div>`;
+  if (ev) {
+    const E = EVENTS[ev];
+    h += `<div class="evcard" style="background:${E.color}"><span class="i">${E.icon}</span><span><b>${E.name}！</b><small>${E.text}</small></span></div>`;
+    if (ev === 'lucky' && g.last && g.last.lucky && g.last.gems && g.last.gems.length) h += `<div class="note">💎 ${g.last.gems.map(x => teamTag(g, x.team)).join(' ')} がお宝ゲット！</div>`;
+  }
+  return h;
+}
+function eventLine(g) {
+  const ev = g.events[g.qi];
+  if (!ev || ev === 'lucky') return '';
+  const E = EVENTS[ev];
+  return `<div class="evline" style="border-color:${E.color};color:${E.color}">${E.icon} <b>${E.name}</b>：${E.text}</div>`;
 }
 function choicesHtml(q, reveal) {
   const ch = qChoices(q);
-  if (!ch.length) return '<div class="free">答えを紙やタブレットに書いて、「せーの！」で見せよう<br><small>いちばん近いチームが正解</small></div>';
+  if (!ch.length) return q.mission
+    ? '<div class="free mission">チームで力を合わせよう！<br><small>できたチームが正解</small></div>'
+    : '<div class="free">答えを紙やタブレットに書いて、「せーの！」で見せよう<br><small>いちばん近いチームが正解</small></div>';
   const mb = isMaruBatsu(q);
   const small = ch.some(c => c.text.length > 12);
   return `<div class="choices${reveal ? ' dim' : ''}">` + ch.map(c => {
@@ -1369,12 +1691,17 @@ function questionHtml(g) {
   if (!q) return '';
   const len = q.text.length;
   const lv = len <= 22 ? 'l1' : len <= 40 ? 'l2' : len <= 70 ? 'l3' : 'l4';
-  let h = `<div class="qtext ${lv}">${esc(q.text)}</div>`;
+  let h = '';
+  if (g.phase === 'show' && q.kind === '3' && g.qi === g.qs.length - 1) h += '<div class="lastcall">🔥 最終問題 🔥<small>正解で3マス！ 最後の逆転チャンス</small></div>';
+  h += `<div class="qtext ${lv}${q.mission ? ' mission' : ''}">${q.mission ? '<span class="mtag">🎭 ミッション</span>' : ''}${esc(q.text)}</div>`;
   if (g.phase === 'result') return h + resultHtml(g, q);
+  h += eventLine(g);
   h += choicesHtml(q, g.phase === 'reveal');
-  if (g.phase === 'up') h += `<div class="banner">せーの！<small>${isMaruBatsu(q) ? '○か×か、' : qChoices(q).length ? '' : '答えを'}いっせいに上げて！</small></div>`;
+  if (g.phase === 'up') h += DRUM
+    ? '<div class="banner drum">正解は……<small>ドゥルルルル……</small></div>'
+    : `<div class="banner">せーの！<small>${q.mission ? 'やってみよう！' : isMaruBatsu(q) ? '○か×か、いっせいに上げて！' : qChoices(q).length ? 'いっせいに上げて！' : '答えを、いっせいに上げて！'}</small></div>`;
   if (g.phase === 'reveal') {
-    if (!qChoices(q).length) h += `<div class="answerbox">正解：${esc(q.answerText || '（先生が発表）')}</div>`;
+    if (!qChoices(q).length) h += `<div class="answerbox">${q.mission ? '成功' : '正解'}：${esc(q.answerText || '（先生が発表）')}</div>`;
     if (q.note) h += `<div class="note">${esc(q.note)}</div>`;
     h += togglesHtml(g);
   }
@@ -1410,34 +1737,46 @@ function resultHtml(g, q) {
   if (!L || L.qi !== g.qi) return '';
   let h = `<div class="choices dim">${qChoices(q).length ? qChoices(q).filter(c => CH[c.i].k === q.answer).map(c => { const d = CH[c.i]; return isMaruBatsu(q)
         ? `<div class="choice ok mb" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="ox">${oxSvg(c.i, d.ink)}</span></div>`
-        : `<div class="choice ok" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(c.text)}</span></div>`; }).join('') : `<div class="answerbox" style="grid-column:1/-1">正解：${esc(q.answerText || '')}</div>`}</div>`;
+        : `<div class="choice ok" style="background:${d.color};color:${d.ink};grid-column:1/-1"><span class="mk">${shapeSvg(d.shape, d.ink)}<b>${d.k}</b></span><span class="tx">${esc(c.text)}</span></div>`; }).join('') : `<div class="answerbox" style="grid-column:1/-1">${q.mission ? '成功' : '正解'}：${esc(q.answerText || '')}</div>`}</div>`;
   h += '<div class="result">';
-  if (L.practice) {
-    h += `<h3>正解 ${L.nCorrect}チーム</h3><div class="line">練習なので陣地は変わりません。本番では、正解したチームの陣地が広がります！</div>`;
-  } else {
-    const mult = qMult(q);
-    h += `<h3>正解 ${L.nCorrect}チーム</h3>` + (L.nCorrect ? `<div class="line">正解チームの陣地が ＋${mult}マス 広がりました</div>` : '');
-    const st = {};
-    L.changes.filter(c => c.from >= 0).forEach(c => { const k = c.to + '>' + c.from; st[k] = (st[k] || 0) + 1; });
-    const items = Object.entries(st).map(([k, v]) => { const [to, from] = k.split('>').map(Number); return `<li>${swHtml(to)} が ${swHtml(from)} から ${v}マス うばった！</li>`; });
-    if (items.length) h += `<ul>${items.slice(0, 8).join('')}${items.length > 8 ? `<li>ほか ${items.length - 8}件</li>` : ''}</ul>`;
-    if (L.missed.length) h += `<div class="line">${L.missed.map(t => swHtml(t)).join(' ')} はとれるマスがありませんでした</div>`;
-    if (!L.nCorrect) h += '<div class="line">正解のチームはありませんでした。</div>';
-  }
+  if (L.practice) return h + `<h3>正解 ${L.nCorrect}チーム</h3><div class="line">練習なので陣地は変わりません。本番では、正解したチームの陣地が広がります！</div></div>`;
+  const mult = qMult(q) * (L.event === 'double' ? 2 : 1);
+  h += `<h3>正解 ${L.nCorrect}チーム${L.nCorrect ? ` → ＋${mult}マス` : ''}</h3>`;
+  const items = [];
+  const whyTeams = re => (L.why || []).map((w, t) => w.some(x => re.test(x)) ? t : -1).filter(t => t >= 0);
+  if (L.few) items.push(`🎯 正解はたった${L.nCorrect}チーム！ 少数正解ボーナス ＋1マス`);
+  const ud = whyTeams(/下剋上/);
+  if (ud.length) items.push(`⚡ 下剋上 ＋2マス：${ud.map(t => swHtml(t)).join('')}`);
+  const sk = whyTeams(/連続/);
+  if (sk.length) items.push(`🔥 連続正解ボーナス ＋1マス：${sk.map(t => swHtml(t)).join('')}`);
+  if (L.gems && L.gems.length) items.push(L.gems.length === 1 ? `💎 ${teamTag(g, L.gems[0].team)} がお宝ゲット！ もう1マス` : `💎 お宝ゲット！ もう1マス：${L.gems.map(x => swHtml(x.team)).join('')}`);
+  const lost = L.changes.filter(c => c.lose);
+  if (lost.length) items.push(`💣 ハイリスク：${lost.map(c => swHtml(c.from)).join('')} が1マス失った`);
+  const st = {};
+  L.changes.filter(c => c.from >= 0 && !c.lose).forEach(c => { const k = c.to + '>' + c.from; st[k] = (st[k] || 0) + 1; });
+  const steals = Object.entries(st).map(([k, v]) => { const [to, from] = k.split('>').map(Number); return `${swHtml(to)}が${swHtml(from)}から${v}`; });
+  if (steals.length) items.push(`⚔️ うばった！ ${steals.slice(0, 5).join('、')}${steals.length > 5 ? ` ほか${steals.length - 5}件` : ''}`);
+  if (L.missed.length) items.push(`${L.missed.map(t => swHtml(t)).join('')} はとれるマスがなかった`);
+  if (!L.nCorrect) items.push('正解のチームはありませんでした');
+  if (items.length) h += `<ul>${items.map(x => `<li>${x}</li>`).join('')}</ul>`;
+  if (L.comments && L.comments.length) h += `<div class="live"><span class="livetag">実況</span>${L.comments.map(c => `<div>${c}</div>`).join('')}</div>`;
   return h + '</div>';
 }
-let rankPos = {};
 function renderRank(owners, showDelta) {
   const g = S.game, el = $('#stRank');
   const cnt = counts(owners, g.n), rk = ranksOf(cnt);
   const order = cnt.map((c, t) => t).sort((a, b) => cnt[b] - cnt[a] || a - b);
-  const d = showDelta && g.last && g.last.qi === g.qi ? g.last.delta : null;
+  const L = g.last && g.last.qi === g.qi ? g.last : null;
+  const d = showDelta && L ? L.delta : null, rb = showDelta && L ? L.rankBefore : null;
   // 並びかえを動かして見せる
   const old = {};
   $$('.rk', el).forEach(r => { old[r.dataset.t] = r.getBoundingClientRect().top; });
   el.innerHTML = order.map(t => {
     const dl = d && d[t] ? `<span class="dl ${d[t] > 0 ? 'up' : 'down'}">${d[t] > 0 ? '+' : ''}${d[t]}</span>` : '<span class="dl"></span>';
-    return `<div class="rk${rk[t] === 1 && cnt[t] > 1 ? ' top' : ''}" data-t="${t}"><span class="no">${rk[t]}</span>${swHtml(t)}<span class="nm">${esc(g.names[t] || '')}</span><span class="ct">${cnt[t]}</span>${dl}</div>`;
+    const mv = rb ? rb[t] - rk[t] : 0;
+    const arrow = mv ? `<span class="mv ${mv > 0 ? 'up' : 'down'}">${mv > 0 ? '▲' : '▼'}${Math.abs(mv)}</span>` : '';
+    const fire = g.feat.streak && g.streak[t] >= 2 ? `<span class="fire">🔥${g.streak[t]}</span>` : '';
+    return `<div class="rk${rk[t] === 1 && cnt[t] > 1 ? ' top' : ''}" data-t="${t}"><span class="no">${rk[t]}</span>${swHtml(t)}<span class="nm">${esc(g.names[t] || '')}</span>${fire}${arrow}<span class="ct">${cnt[t]}</span>${dl}</div>`;
   }).join('');
   $$('.rk', el).forEach(r => {
     const o = old[r.dataset.t];
@@ -1455,19 +1794,20 @@ function renderBar() {
   const btn = $('#stPrimary');
   let label = '', go = false;
   if (ANIM) label = '結果をすぐ出す';
-  else if (p === 'intro') { label = g.qs[0] && g.qs[0].kind === 'p' ? '練習問題へ ▶' : '第1問へ ▶'; go = true; }
+  else if (p === 'intro') { label = g.introStep === 0 && hasExtras(g) ? 'おたのしみルールへ ▶' : g.qs[0] && g.qs[0].kind === 'p' ? '練習問題へ ▶' : '第1問へ ▶'; go = true; }
+  else if (p === 'spin') { label = SPIN ? 'すぐ止める' : g.events[g.qi] ? '問題へ ▶' : '🎰 ルーレットを回す'; go = !SPIN; }
   else if (p === 'show') { label = `スタート（${Math.ceil(timeLeft(g))}秒）`; go = true; }
   else if (p === 'think') label = '時間終了 ▶';
-  else if (p === 'up') label = '正解発表 ▶';
+  else if (p === 'up') label = DRUM ? 'すぐ発表' : '正解発表 ▶';
   else if (p === 'reveal') label = q && q.kind === 'p' ? '次へ ▶' : '陣地を広げる ▶';
   else if (p === 'result') { label = g.qi >= lastIdx ? '結果発表へ ▶' : (g.qs[g.qi + 1].kind === 'p' ? '次の練習問題へ ▶' : (g.qi + 1 === lastIdx ? '最終問題へ ▶' : '次の問題へ ▶')); go = true; }
   else if (p === 'final') { const G = finalGroups(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : ''; }
   btn.textContent = label;
   btn.hidden = !label;
   btn.classList.toggle('go', go);
-  $('#stUndo').hidden = !g.history.length || p === 'intro';
-  $('#stSkip').hidden = !['show', 'think', 'up', 'reveal'].includes(p);
-  $('#stLast').hidden = !(['show', 'result'].includes(p) && g.qi < lastIdx - 1);
+  $('#stUndo').hidden = !g.history.length || p === 'intro' || !!SPIN;
+  $('#stSkip').hidden = !['spin', 'show', 'think', 'up', 'reveal'].includes(p) || !!SPIN;
+  $('#stLast').hidden = !(['spin', 'show', 'result'].includes(p) && g.qi < lastIdx - 1) || !!SPIN;
   $('#stShuffle').hidden = p !== 'intro';
   $('#stPause').hidden = p !== 'think';
   $('#stPause').textContent = g.timer && g.timer.running ? '一時停止' : '再開';
@@ -1512,7 +1852,7 @@ function celebrate() {
     if (now - t0 < 4500) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
   })(t0);
 }
-window.addEventListener('resize', () => { if (document.body.classList.contains('staging') && S.game && !ANIM) renderRank(S.game.owners, S.game.phase === 'result'); });
+window.addEventListener('resize', () => { if (document.body.classList.contains('staging') && S.game && !ANIM) { fitLeft(); renderRank(S.game.owners, S.game.phase === 'result'); } });
 
 // ---------- ⑤ 印刷 ----------
 function printKind() { return ($('input[name=pKind]:checked') || {}).value || 'cards'; }
@@ -1533,7 +1873,7 @@ function renderPrint() {
       const lab = q.kind === 'p' ? '練習' : `${++no}`;
       const ch = qChoices(q).map(c => `${CH[c.i].k}. ${esc(c.text)}`).join('<br>');
       const ans = qChoices(q).length ? `${q.answer} ${esc((q.choices['ABCD'.indexOf(q.answer)] || ''))}` : esc(q.answerText);
-      const kind = { '1': '', '2': 'ボーナス2', '3': '逆転3', p: '練習' }[q.kind];
+      const kind = { '1': '', '2': 'ボーナス2', '3': '逆転3', p: '練習' }[q.kind] + (q.roulette && q.kind !== 'p' ? ' 🎰' : '') + (q.mission ? ' 🎭' : '');
       return `<tr><td>${lab}</td><td>${kind}</td><td>${esc(q.text)}</td><td>${ch}</td><td class="ans">${ans}</td><td>${esc(q.note)}</td></tr>`;
     }).join('');
     h = `<div class="page flow pscript"><h1>陣取りクイズ 台本（先生用・生徒に見せない）</h1><table><thead><tr><th>問</th><th>種類</th><th>問題</th><th>選択肢</th><th>正解</th><th>解説</th></tr></thead><tbody>${rows}</tbody></table></div>`;
