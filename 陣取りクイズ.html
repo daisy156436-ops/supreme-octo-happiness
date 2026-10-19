@@ -100,6 +100,43 @@ details summary{cursor:pointer;color:var(--accent)}
 .pscript table{font-size:3.3mm;line-height:1.45}
 .pscript th,.pscript td{border:0.3mm solid #999;padding:1.2mm 1.6mm}
 .pscript td.ans{font-weight:bold;white-space:nowrap}
+/* 台本（問題カード）・進行表 */
+.page.doc{display:flex;flex-direction:column;gap:2.4mm;padding:11mm 13mm;font-size:3.8mm;line-height:1.5}
+.doc .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:0.6mm solid #1d2330;padding-bottom:1.5mm}
+.doc .ph h1{margin:0;font-size:6.5mm}
+.doc .ph span{font-size:4mm;color:#5b6475}
+.doc p{margin:0}
+.doc h2{font-size:4.6mm;margin:1mm 0 0;padding:0.8mm 2.5mm;background:#1d2330;color:#fff;border-radius:1.2mm}
+.doc h3{font-size:4.1mm;margin:1mm 0 0}
+.doc .say{border-left:1.2mm solid #f5c542;background:#fff8e1;padding:1.2mm 3mm;border-radius:0 1.5mm 1.5mm 0}
+.doc .say::before{content:"🎤 "}
+.doc .act{color:#174ea6;font-size:3.5mm;padding-left:2mm}
+.doc table.tl{font-size:3.4mm;line-height:1.45}
+.doc table.tl td,.doc table.tl th{border:0.3mm solid #9aa3b2;padding:0.9mm 1.8mm;vertical-align:top;text-align:left}
+.doc table.tl th{background:#f0f2f6}
+.doc table.tl td:first-child{white-space:nowrap}
+.doc ul{margin:0;padding-left:5mm}
+.doc ul.chk{list-style:none;padding-left:1mm}
+.doc ul.chk li::before{content:"□ ";font-weight:bold}
+.doc .note{font-size:3.2mm;color:#5b6475}
+.flowbox{background:#f3f5fa;border-radius:2mm;padding:2mm 3mm;font-size:3.5mm}
+.flowbox b{color:#174ea6}
+.qb{border:0.4mm solid #c9d0db;border-radius:2.5mm;padding:2.2mm 3.5mm;display:flex;flex-direction:column;gap:1.2mm;break-inside:avoid}
+.qb.p{border-style:dashed}
+.qh{display:flex;align-items:center;gap:2.5mm;font-size:3.5mm}
+.qh .qn{font-size:4.6mm;font-weight:900;background:#1d2330;color:#fff;border-radius:1.2mm;padding:0 2.2mm}
+.qh .qk{font-weight:bold;color:#b42318}
+.qh .qs{margin-left:auto;color:#5b6475}
+.qt{font-size:4.8mm;font-weight:bold;line-height:1.45}
+.qc{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1mm 3mm;font-size:4mm}
+.qc.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.qc span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qc b{display:inline-block;min-width:5mm}
+.qa{font-size:4.4mm}
+.qa b{background:#e6f6ec;color:#16803c;border-radius:1mm;padding:0 2mm}
+.qe{font-size:3.5mm;color:#3d4556}
+.qe::before{content:"解説 ";font-weight:bold;color:#5b6475}
+#pMeasure{position:absolute;left:-10000px;top:0;visibility:hidden}
 
 /* 本番（投影画面） */
 body.staging{overflow:hidden}
@@ -371,7 +408,7 @@ body.staging #stage{display:flex}
       <h2>先生の進め方</h2>
       <ol>
         <li>②でチームの数と名前、③で問題を用意します（サンプル問題20問＋練習1問入り）</li>
-        <li>⑤で回答カードを印刷します（タブレットや指で答えるなら不要）</li>
+        <li>⑤で回答カードを印刷します（タブレットや指で答えるなら不要）。司会用に<b>「進行表とセリフ」</b>と<b>「台本（問題と正解）」</b>も印刷しておくと、当日はそれを読むだけで進められます</li>
         <li>④で「はじめる」→ ルール画面が出ます。地図の★の番号が各チームのスタート地点です</li>
         <li><b>スペースキー</b>（か右下の大きいボタン）で進みます：<br>問題を出す → 読み上げて「スタート」 → 時間切れで「せーの！」 → 「正解発表」（ドラムロール） → 正解チームをタップ → 「陣地を広げる」<br>ルーレットつきの問題は、問題の前に「ルーレットを回す」が出ます</li>
         <li>タップをまちがえたら「1問もどす」でやり直せます</li>
@@ -516,7 +553,8 @@ body.staging #stage{display:flex}
     <div class="row">
       <label><input type="radio" name="pKind" value="cards" checked> 回答カード（A・B・C・D・○・×の6枚）</label>
       <label><input type="radio" name="pKind" value="teams"> チーム札（1チーム1枚）</label>
-      <label><input type="radio" name="pKind" value="script"> 先生用の台本（問題と正解）</label>
+      <label><input type="radio" name="pKind" value="plan"> 進行表とセリフ（準備チェックリストつき）</label>
+      <label><input type="radio" name="pKind" value="script"> 台本（問題と正解・読み上げ用）</label>
     </div>
     <div class="row"><button class="btn primary" id="pPrint">印刷する</button><span class="hint" id="pHint"></span></div>
   </div>
@@ -1867,6 +1905,12 @@ function renderPrint() {
   } else if (k === 'teams') {
     h = S.teams.names.slice(0, S.teams.count).map((nm, t) => { const c = TEAM_COLORS[t]; return `<div class="page"><div class="pteam"><div class="num" style="background:${c};color:${inkOn(c)}">${t + 1}</div><div class="name">${esc(nm)}</div></div></div>`; }).join('');
     $('#pHint').textContent = `${S.teams.count}ページ。チームの場所の目印や、スタート地点（地図の番号）の確認に。`;
+  } else if (k === 'plan') {
+    h = planPages();
+    $('#pHint').textContent = `${(h.match(/class="page/g) || []).length}ページ。司会の先生のセリフ・時間の目安・準備を、②チーム・③問題の内容に合わせて作っています。`;
+  } else if (k === 'script') {
+    h = scriptPages();
+    $('#pHint').textContent = `${(h.match(/class="page/g) || []).length}ページ。問題を読み上げるときの台本です（正解が書いてあるので、生徒に見せないでください）。`;
   } else {
     let no = 0;
     const rows = S.questions.map(q => {
@@ -1880,6 +1924,97 @@ function renderPrint() {
     $('#pHint').textContent = '問題と正解の一覧です。';
   }
   $('#printPreview').innerHTML = h;
+}
+// 台本：問題カードをA4に入るだけつめる（高さを測って、ページに分ける）
+function qBlock(q, label) {
+  const ch = qChoices(q), kind = { '1': '', '2': 'ボーナス（2マス）', '3': '逆転チャンス（3マス）', p: '練習（陣地は変わらない）' }[q.kind];
+  const extras = [q.roulette && q.kind !== 'p' ? '🎰 ルーレット' : '', q.mission ? '🎭 ミッション' : ''].filter(Boolean).join('　');
+  const ans = ch.length ? `${q.answer}. ${esc(q.choices['ABCD'.indexOf(q.answer)] || '')}` : esc(q.answerText || '（いちばん近いチームが正解）');
+  const long = ch.some(c => c.text.length > 7);
+  return `<div class="qb${q.kind === 'p' ? ' p' : ''}"><div class="qh"><span class="qn">${label}</span>${kind ? `<span class="qk">${kind}</span>` : ''}${extras ? `<span>${extras}</span>` : ''}<span class="qs">考える時間 ${qSec(q, S.opts.sec)}秒</span></div>
+    <div class="qt">${esc(q.text)}</div>
+    ${ch.length ? `<div class="qc${long ? ' two' : ''}">${ch.map(c => `<span><b>${CH[c.i].k}.</b> ${esc(c.text)}</span>`).join('')}</div>` : ''}
+    <div class="qa">${q.mission ? '成功' : '正解'}　<b>${ans}</b></div>${q.note ? `<div class="qe">${esc(q.note)}</div>` : ''}</div>`;
+}
+function packPages(title, intro, blocks) {
+  const M = document.createElement('div');
+  M.id = 'pMeasure';
+  M.innerHTML = `<div class="page doc">${'<div class="ph"><h1>' + title + '</h1><span>1/1</span></div>' + intro}</div><div class="page doc"><div class="ph"><h1>${title}</h1><span>1/1</span></div></div>` + blocks.map(b => `<div class="page doc">${b}</div>`).join('');
+  document.body.appendChild(M);
+  const P = M.querySelectorAll('.page'), mm = P[0].getBoundingClientRect().height / 297;
+  const bottomOf = p => (p.lastElementChild.getBoundingClientRect().bottom - p.getBoundingClientRect().top) / mm;
+  const limit = 296 - 11 - 3, first = bottomOf(P[0]), head = bottomOf(P[1]);   // 印刷では1ページ296mm・下の余白11mm
+  const hs = [...P].slice(2).map(p => p.firstElementChild.getBoundingClientRect().height / mm + 2.4);
+  document.body.removeChild(M);
+  const pages = [[]];
+  let used = first;
+  blocks.forEach((b, i) => {
+    if (used + hs[i] > limit && pages[pages.length - 1].length) { pages.push([]); used = head; }
+    pages[pages.length - 1].push(b); used += hs[i];
+  });
+  return pages.map((ps, i) => `<div class="page doc"><div class="ph"><h1>${title}</h1><span>${i + 1}/${pages.length}</span></div>${i === 0 ? intro : ''}${ps.join('')}</div>`).join('');
+}
+function scriptPages() {
+  let no = 0;
+  const qs = S.questions.filter(q => q.text.trim());
+  const blocks = qs.map((q, i) => qBlock(q, q.kind === 'p' ? '練習' : i === qs.length - 1 ? `第${++no}問（最終）` : `第${++no}問`));
+  const intro = `<div class="flowbox">毎問の流れ：問題を読む → <b>スペース</b>「スタート」（考える時間）→ 時間切れで「せーの！」 → <b>スペース</b>「正解発表」（ドラムロール）→ 正解チームを押す → <b>スペース</b>「陣地を広げる」→ 実況を読む</div>`;
+  return packPages('陣取りクイズ 台本（先生用・生徒に見せない）', intro, blocks);
+}
+function planPages() {
+  const o = S.opts, n = S.teams.count, qs = S.questions.filter(q => q.text.trim());
+  const main = qs.filter(q => q.kind !== 'p'), hasP = qs.some(q => q.kind === 'p');
+  const hasR = main.some(q => q.roulette), hasM = qs.some(q => q.mission);
+  const fun = o.gem !== false || o.streak !== false || o.few !== false || hasR || hasM;
+  const per = Math.max(1, Math.round(main.length * 1.5)), t0 = hasP ? 8 : 5, t1 = t0 + per;
+  const say = s => `<div class="say">${s}</div>`, act = s => `<div class="act">▶ ${s}</div>`;
+  const head = (i, of, t) => `<div class="ph"><h1>${t}</h1><span>進行表とセリフ ${i}/${of}</span></div>`;
+  const p1 = `<div class="page doc">${head(1, 3, `陣取りクイズ 進行表（${t1 + 7}分）`)}
+    <p><b>${n}チーム</b>・本番 <b>${main.length}問</b>${hasP ? '＋練習1問' : ''}・考える時間 ${o.sec}秒${o.steal !== false ? '・うばい合いあり' : ''}（②チーム・③問題の内容で作っています）</p>
+    <table class="tl"><tr><th>時刻</th><th>画面</th><th>先生がすること</th></tr>
+      <tr><td>0〜5分</td><td>ルール${fun ? '・おたのしみルール' : ''}</td><td>④本番の「はじめる」。チームは番号順に座る。セリフ①${fun ? '②' : ''}</td></tr>
+      ${hasP ? '<tr><td>5〜8分</td><td>練習問題</td><td>答え方（カード・指）を練習する。陣地は変わらない。セリフ③</td></tr>' : ''}
+      <tr><td>${t0}〜${t1}分</td><td>本番 ${main.length}問</td><td>1問およそ1分半。毎問の流れはセリフ④。${hasR ? 'ルーレットつきの問題は前に🎰（セリフ⑤）。' : ''}${hasM ? 'ミッションはセリフ⑤。' : ''}</td></tr>
+      <tr><td>${t1}〜${t1 + 4}分</td><td>結果発表</td><td>3位 → 2位 → 1位（セリフ⑦）</td></tr>
+      <tr><td>${t1 + 4}〜${t1 + 7}分</td><td></td><td>ふりかえり・終わりのことば（セリフ⑧）・片付け</td></tr></table>
+    <p class="note">時間が足りなくなったら、本番画面の「最終問題へ」で最後の逆転チャンス問題にとべます。</p>
+    <h2>先生の役割分担</h2>
+    <table class="tl"><tr><th>役割</th><th>すること</th></tr>
+      <tr><td>司会・パソコン</td><td>問題を読む。スペースキーで進める。正解チームを押す</td></tr>
+      <tr><td>カード確認（いれば）</td><td>「せーの！」のあと、まちがえたチームの番号を司会に伝える（「全チーム○」を押してから、まちがえたチームだけ外すと速い）</td></tr>
+      ${hasM ? '<tr><td>ミッション係（いれば）</td><td>ミッションの成功を見て司会に伝える。じゃんけんの相手</td></tr>' : ''}</table>
+    <h2>準備チェックリスト</h2><ul class="chk">
+      <li>②チーム：チームの数（${n}）・名前・体育館での並び方（横に${S.teams.cols}チームずつ）</li>
+      <li>③問題：問題と正解の確認（学校オリジナル問題を入れると盛り上がる）</li>
+      <li>⑤印刷：回答カード（1チーム6枚・${n}組）、チーム札（${n}枚）、台本と進行表</li>
+      <li>タブレットで答えるなら「回答カード.html」を配っておく（「陣取りクイズ.html」は配らない）</li>
+      <li>当日：プロジェクター・スピーカーをつなぐ。④本番「はじめから始める」で音を確かめる。「全画面」</li>
+      <li>チームは番号順に座る。チーム札を見える所に置く</li></ul></div>`;
+  const p2 = `<div class="page doc">${head(2, 3, 'セリフ（1）はじめ・毎問の流れ')}
+    <h2>① ルール説明（0分〜）</h2>${act('④本番の「はじめる」でルールの画面が出る')}
+    ${say(`これから陣取りクイズを始めます！ チームで相談してクイズに答えて、スクリーンの地図の陣地を広げていきます。<br>1つ目、答えを決める時間は${o.sec}秒。2つ目、「せーの！」で、いっせいに答えを上げます。上げたあとに変えるのはなし。3つ目、正解すると、となりの空きマスを1つとれます。ボーナス問題は2マス、最後の逆転チャンスは3マス！${o.steal !== false ? '<br>空きマスがなくなったら、まちがえたチームのマスをうばいます。★の本拠地と、3マス以下のチームはうばわれません。' : ''}<br>最後にマスがいちばん多いチームの優勝です。地図の★の番号が、自分のチームのスタート地点です。`)}
+    ${fun ? `<h2>② おたのしみルール</h2>${act('スペースで「おたのしみルール」の画面')}${say('今日は、おたのしみルールもあります。画面を見てください。' + (o.gem !== false ? '地図の💎をとったチームは、もう1マス！ ' : '') + (o.streak !== false ? '3問続けて正解するたびに、＋1マス！ ' : '') + (hasR ? 'ルーレットの問題では、何かが起きます……！' : ''))}` : ''}
+    ${hasP ? `<h2>③ 練習問題</h2>${say('まずは練習問題です。陣地は変わりません。答えの上げ方を練習しましょう。')}${act('カード・指・タブレットの答え方を確かめる。「せーの！」の声をそろえる練習も')}` : ''}
+    <h2>④ 毎問の流れ</h2>
+    ${say('第◯問！（問題を読む）……では、相談スタート！')}${act('スペースで「スタート」→ タイマーが動く')}
+    ${say('（時間切れ）そこまで！ 答えを上げて……せーの！')}${act('スペースで「正解発表」→ ドラムロール')}
+    ${say('正解は……◯！（解説を読む）')}${act('正解したチームを押す（「全チーム○」→ まちがえたチームだけ外すと速い）')}
+    ${act('スペースで「陣地を広げる」→ 画面の実況（「◯班が単独1位に！」など）を読む')}
+    ${say('では、次の問題！')}</div>`;
+  const p3 = `<div class="page doc">${head(3, 3, 'セリフ（2）とくべつな問題・おわり')}
+    ${hasR || hasM ? `<h2>⑤ ルーレット・ミッション</h2>
+    ${hasR ? say('チャンスタイム！ ルーレットを回します！ ……（止まったら、出たものを読む）「ダブル！ この問題に正解すると、2倍のマス！」') + act('ルーレットの問題の前に「🎰 ルーレットを回す」が出る。もう一度押すとすぐ止まる') : ''}
+    ${hasM ? say('ミッションです！ 画面のミッションに、チームで挑戦してください。') + act('成功したチームを「正解」として押す') : ''}` : ''}
+    <h2>⑥ 最終問題（逆転チャンス）</h2>${say('いよいよ最終問題！ 正解すると3マス！ まだまだ逆転できます！')}
+    <h2>⑦ 結果発表</h2>${act('最後の問題のあと「結果発表へ」→ スペースで3位から')}
+    ${say('結果発表です！ 第3位は……（スペース）◯班！ ……第2位は……◯班！ ……そして、第1位は……◯班！ おめでとう！')}
+    <h2>⑧ 終わりのことば</h2>${say('どのチームも、最後まで相談して答えていました。チームで力を合わせると、陣地はどんどん広がりますね。これで陣取りクイズを終わります！')}
+    <h2>困ったとき</h2><table class="tl">
+      <tr><td>正解チームを押しまちがえた</td><td>「1問もどす」で、直前の「陣地を広げる」を取り消して選び直す</td></tr>
+      <tr><td>時間が足りない</td><td>「最終問題へ」で最後の問題へとぶ</td></tr>
+      <tr><td>画面を閉じてしまった</td><td>④本番の「続きから」</td></tr>
+      <tr><td>音が出ない</td><td>画面の「音」と、パソコンの音量</td></tr></table></div>`;
+  return p1 + p2 + p3;
 }
 $$('input[name=pKind]').forEach(r => r.addEventListener('change', renderPrint));
 $('#pPrint').addEventListener('click', () => { renderPrint(); window.print(); });
