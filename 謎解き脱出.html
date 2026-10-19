@@ -201,6 +201,30 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .poster .psq .nz-emo .e{font-size:16mm}
 .poster .psq small{display:block;font-size:4mm;margin-top:2mm}
 .poster .psf{font-size:8mm;font-weight:900;margin:0}
+/* 役割カード */
+.page.rolep{padding:0}
+.rgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);height:100%}
+.rc{border:0.3mm dashed #9aa3b2;padding:4mm 5mm;display:flex;flex-direction:column;gap:1.6mm;font-size:3.5mm;line-height:1.45;overflow:hidden}
+.rch{display:flex;align-items:center;gap:2mm;padding-bottom:1.2mm;border-bottom:0.8mm solid;font-size:5mm}
+.rch .rg{color:#fff;border-radius:1.2mm;padding:0 2mm;font-size:4mm;font-weight:bold}
+.rch.g3{border-color:#6d3fd6}.rch.g3 .rg{background:#6d3fd6}
+.rch.g2{border-color:#b97800}.rch.g2 .rg{background:#b97800}
+.rch.g1{border-color:#16803c}.rch.g1 .rg{background:#16803c}
+.rch .tno{margin:0 0 0 auto;font-size:3.6mm}
+.rch .tno .sw{min-width:6mm;height:5.5mm;font-size:3.6mm}
+.rc .rct{font-weight:bold;font-size:3.5mm;color:#3d4556}
+.rc ol,.rc ul{margin:0;padding-left:5mm}
+.rc ul.ql{columns:2;column-gap:3mm;list-style:none;padding-left:0;font-size:3.2mm}
+.rc .rcf{font-size:3.1mm;color:#3d4556;margin-top:auto;display:flex;flex-wrap:wrap;align-items:flex-end;gap:1mm 2mm}
+.rc .ln{display:inline-block;flex:1;min-width:20mm;border-bottom:0.3mm solid #1d2330;height:4mm}
+.rgrid9{display:grid;grid-template-columns:1fr 1fr;gap:1.2mm 4mm}
+.rgrid9 > div{display:flex;align-items:center;gap:1.5mm}
+.rgrid9 b{display:inline-flex;align-items:center;justify-content:center;min-width:5mm;height:5mm;border-radius:1mm;background:#1d2330;color:#fff;font-size:3mm}
+.rgrid9 b.s2{background:#1f6feb}
+.rgrid9 i{width:6mm;height:6mm;border-radius:50%;border:0.4mm solid #c8102e;flex:none}
+.rgrid9 i.s2{border-color:#1f6feb}
+.stp{display:flex;gap:4mm;justify-content:center}
+.stp span{width:17mm;height:17mm;border-radius:50%;border:0.5mm dashed #16803c;display:flex;align-items:flex-start;justify-content:center;padding-top:1mm;font-size:3.4mm;color:#16803c}
 .story{font-size:3.8mm;line-height:1.6;background:#f3f5fa;border-radius:2mm;padding:2.5mm 4mm}
 .door{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6mm;border:0.8mm solid #1d2330;border-radius:5mm;padding:8mm}
 .door .nz{border:none;font-size:6mm;text-align:center}
@@ -421,6 +445,19 @@ table.roles td,table.roles th{font-size:13px}
 .awards .goal{width:min(80vw,140vh)}
 .awards .goal .gl{font-size:2.6vh}
 .explain .answer small{display:block;font-size:.4em;color:#f2f4f8}
+.finale{margin:auto;text-align:center;max-width:86vw;display:flex;flex-direction:column;align-items:center;gap:1.6vh}
+.finale .fdoor{font-size:16vh;line-height:1;position:relative}
+.finale .fdoor span{position:absolute;right:-5vh;bottom:0;font-size:8vh}
+.finale h2{margin:0;font-size:6vh;color:var(--gold)}
+.finale p{margin:0;font-size:3.4vh}
+.finale .fword{font-size:min(12vh,8vw);font-weight:900;color:#fff;text-shadow:0 0 4vh rgba(245,197,66,.8);letter-spacing:.06em}
+.finale .fcount{color:#b9c3d6}
+.finale.open{animation:rise .8s ease-out}
+.finale.open .fdoor{filter:drop-shadow(0 0 4vh rgba(255,230,140,.9))}
+.finale .letter{background:#fffaf0;color:#3a2e14;border-radius:1.6vh;padding:2.4vh 4vh;text-align:left;max-width:min(80vw,130vh);box-shadow:0 2vh 6vh rgba(0,0,0,.4)}
+.finale .letter p{font-size:min(3.1vh,2.1vw);line-height:1.7;margin:.6vh 0}
+.finale .letter .last{font-size:min(3.8vh,2.6vw);text-align:center;color:#8a5a00}
+.finale .letter .sign{text-align:right;font-size:min(2.6vh,1.8vw);color:#7a6a4a}
 .exa.ex{border:.3vh dashed var(--gold)}
 .exa.ex .n{background:#b8860b}
 
@@ -517,6 +554,8 @@ table.roles td,table.roles th{font-size:13px}
       <li><b>のこり5分・1分の知らせ</b>、<b>最後の10秒は大きなカウントダウン</b></li>
       <li><b>🎖️ 特別賞</b>：表彰のあとに「第1のとびら一番乗り」「真・脱出」「あきらめない賞」（表彰台の外で、最後まで粘って脱出したチーム）「チームワーク賞」（先生から発表）</li>
       <li><b>📸 写真用パネル</b>：⑤で印刷。「脱出成功！」「真・脱出！」「あと一歩…！」を持って記念写真</li>
+      <li><b>🪪 役割カード</b>：⑤で印刷。3年生に「リーダー」（答えは言わずに導くことば集）、2年生に「記録係」（答えを集める表）、1年生に「伝令」（とびら突破スタンプ欄）。全員に、はっきりした出番ができます</li>
+      <li><b>🚪 最後のとびら</b>：解説の最後に、脱出できなかったチームもふくめた<b>全員で</b>声をそろえて合言葉を言うと、とびらが開き、「とびらを作った先輩たち」からの手紙が出ます。縦割り活動のしめくくりに</li>
     </ul>
     <p class="hint">伝令タイムと裏ミッションは、②設定で切れます。</p>
   </div>
@@ -631,7 +670,8 @@ table.roles td,table.roles th{font-size:13px}
         <label><input type="radio" name="pKind" value="sheets" checked> 謎の紙（はじめに配る3枚）</label>
         <label><input type="radio" name="pKind" value="stage2"> 第2ステージの紙（第1のとびらを開けたチームに）</label>
         <label><input type="radio" name="pKind" value="ex"> 裏ミッションの紙（脱出したチームに）</label>
-        <label><input type="radio" name="pKind" value="team"> チームシート（メンバー・役割・ふりかえり）</label></div>
+        <label><input type="radio" name="pKind" value="team"> チームシート（メンバー・役割・ふりかえり）</label>
+        <label><input type="radio" name="pKind" value="role"> 役割カード（リーダー・記録・伝令の6枚）</label></div>
       <div><h3>先生用</h3>
         <label><input type="radio" name="pKind" value="script"> 台本と進行表（準備チェックリスト・会場の図つき）</label>
         <label><input type="radio" name="pKind" value="check"> 答え合わせカード（答え合わせ係の先生用）</label>
@@ -665,7 +705,7 @@ table.roles td,table.roles th{font-size:13px}
     <button id="stUndo">記録を取り消す</button>
     <button id="stEnd">ここで終わる</button>
     <button id="stToEx">🗝️ 真のとびらへ</button>
-    <button id="stToResult">結果発表へ</button>
+    <button id="stToResult">🚪 最後のとびらへ</button>
     <span class="sp"></span>
     <span class="keyhint">スペースキーでも進みます</span>
     <button id="stPrimary"></button>
@@ -929,7 +969,19 @@ const HINT_PLAN = [
 ];
 // 解説の順番（'all' は答えの一覧。裏ミッションがあるときは最後に 'ex'）
 const EX_ORDER = ['all', 1, 2, 3, 4, 5, 6, 'final', 7, 8, 9, 'final2'];
-function exOrder(g) { return g.ex ? [...EX_ORDER, 'ex'] : EX_ORDER; }
+function exOrder(g) { return [...EX_ORDER, ...(g.ex ? ['ex'] : []), 'finale']; }
+// 最後のとびら：全員で声をそろえて開ける → とびらを作った人からの手紙
+function finaleWord(g) { return g.ex ? NZ_TEACH.ex.answer : NZ_TEACH.final2.answer; }
+function finaleHtml(g) {
+  const w = esc(finaleWord(g));
+  if (!g.finaleOpen) return `<div class="finale"><div class="fdoor">🚪<span>🔒</span></div><h2>最後のとびらは、全員の声で開く</h2>
+    <p>${g.tate ? '1年生から3年生まで、' : ''}体育館にいる<b>全員</b>で、声をそろえて言おう</p><div class="fword">「${w}」</div><p class="fcount">3、2、1……せーの！</p></div>`;
+  return `<div class="finale open"><div class="fdoor">🚪<span>✨</span></div><h2>とびらが開いた！</h2>
+    <div class="letter"><p>とびらの向こうに、1まいの手紙がおいてあった。</p>
+    <p>このとびらを作ったのは、ずっと前に、この学校で${g.tate ? '縦割り活動' : '同じ時間'}をすごした先輩たち。<br>${g.tate ? '1年生だけでも、3年生だけでも開かない。' : 'ひとりでは開かない。'}みんなで力を合わせたときだけ開くように作った。</p>
+    <p>今日、きみたちは開けた。きみたちはもう、ひとつのチームだ。</p>
+    <p class="last">${g.ex ? 'そして――<b>みらいも、なかま。</b>' : 'また<b>えがお</b>で会おう。'}</p><p class="sign">とびらを作った先輩たちより</p></div></div>`;
+}
 
 // ---------- 共通 ----------
 const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
@@ -1124,6 +1176,7 @@ const SND = {
   tick: () => tone(880, 0.1, 'square', 0.1),
   end: () => tone(196, 0.9, 'sawtooth', 0.2),
   fanfare: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, i === 3 ? 0.9 : 0.2, 'triangle', 0.22, i * 0.16)),
+  open: () => { tone(82, 0.3, 'square', 0.16); [392, 523, 659, 784, 1047].forEach((f, i) => tone(f, 0.5, 'sine', 0.16, 0.25 + i * 0.12)); },
   lock: () => { tone(110, 0.25, 'square', 0.18); tone(82, 0.5, 'square', 0.18, 0.12); },
   relay: () => [0, 1, 2, 3, 4, 5].forEach(i => tone(i % 2 ? 660 : 880, 0.22, 'square', 0.12, i * 0.25)),
   spurt: () => [0, 1, 2].forEach(i => tone(1175, 0.12, 'square', 0.14, i * 0.18)),
@@ -1270,7 +1323,10 @@ function primary() {
     case 'rules': g.phase = 'play'; g.startAt = Date.now(); g.pausedAt = null; g.pausedTotal = 0; SND.start(); showBanner('スタート！', '謎の紙を表にしよう'); break;
     case 'play': return;
     case 'timeup': g.phase = 'explain'; g.exIdx = 0; break;
-    case 'explain': if (g.exIdx < exOrder(g).length - 1) g.exIdx++; else { g.phase = 'result'; g.finalStep = 0; } break;
+    case 'explain':
+      if (exOrder(g)[g.exIdx] === 'finale' && !g.finaleOpen) { g.finaleOpen = true; SND.open(); celebrate(); break; }
+      if (g.exIdx < exOrder(g).length - 1) g.exIdx++; else { g.phase = 'result'; g.finalStep = 0; }
+      break;
     case 'result': {
       const G = podiumRanks(g);
       if (g.finalStep < G.length) { g.finalStep++; if (g.finalStep === G.length) celebrate(); }
@@ -1287,7 +1343,7 @@ function back() {
   else if (g.phase === 'form') g.phase = 'story';
   else if (g.phase === 'reflect') g.phase = 'awards';
   else if (g.phase === 'awards') g.phase = 'result';
-  else if (g.phase === 'explain') { if (g.exIdx > 0) g.exIdx--; else g.phase = 'timeup'; }
+  else if (g.phase === 'explain') { if (exOrder(g)[g.exIdx] === 'finale' && g.finaleOpen) g.finaleOpen = false; else if (g.exIdx > 0) g.exIdx--; else g.phase = 'timeup'; }
   else if (g.phase === 'result') { g.phase = 'explain'; g.exIdx = exOrder(g).length - 1; }
   saveNow(); renderStage();
 }
@@ -1313,7 +1369,7 @@ $('#stHintNow').addEventListener('click', () => {
 });
 $('#stEnd').addEventListener('click', () => { if (confirm('謎解きを終わりにして、解説に進みますか？')) timeUp(); });
 $('#stToEx').addEventListener('click', () => { const g = S.game; g.phase = 'explain'; g.exIdx = exOrder(g).indexOf('ex'); saveNow(); renderStage(); });
-$('#stToResult').addEventListener('click', () => { const g = S.game; g.phase = 'result'; g.finalStep = 0; saveNow(); renderStage(); });
+$('#stToResult').addEventListener('click', () => { const g = S.game; g.phase = 'explain'; g.exIdx = exOrder(g).indexOf('finale'); g.finaleOpen = false; saveNow(); renderStage(); });
 let UNDO = false;
 $('#stUndo').addEventListener('click', () => { UNDO = !UNDO; renderStage(); });
 $('#stage').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTimeout(() => b.blur(), 0); });
@@ -1371,7 +1427,10 @@ function renderBar() {
   else if (p === 'form') label = 'ルール説明へ ▶';
   else if (p === 'rules') label = '▶ スタート！';
   else if (p === 'timeup') label = '解説へ ▶';
-  else if (p === 'explain') { const nx = exOrder(g)[g.exIdx + 1]; label = nx == null ? '結果発表へ ▶' : nx === 'ex' ? '🗝️ 真のとびらへ ▶' : nzDoor(nx) ? `${shortLabel(nx)}の解説へ ▶` : `謎${nx}の解説へ ▶`; }
+  else if (p === 'explain') {
+    const cur = exOrder(g)[g.exIdx], nx = exOrder(g)[g.exIdx + 1];
+    label = cur === 'finale' && !g.finaleOpen ? '🔓 とびらを開ける ▶' : nx == null ? '結果発表へ ▶' : nx === 'finale' ? '🚪 最後のとびらへ ▶' : nx === 'ex' ? '🗝️ 真のとびらへ ▶' : nzDoor(nx) ? `${shortLabel(nx)}の解説へ ▶` : `謎${nx}の解説へ ▶`;
+  }
   else if (p === 'result') { const G = podiumRanks(g); label = g.finalStep < G.length ? `${G[G.length - 1 - g.finalStep]}位の発表 ▶` : '特別賞へ ▶'; }
   else if (p === 'awards') label = g.tate ? 'ふりかえりへ ▶' : '';
   btn.textContent = label;
@@ -1385,8 +1444,8 @@ function renderBar() {
   $('#stUndo').hidden = p !== 'play';
   $('#stUndo').textContent = UNDO ? '取り消すチームを押す（やめる）' : '記録を取り消す';
   $('#stUndo').classList.toggle('on', UNDO);
-  $('#stToResult').hidden = p !== 'explain' || g.exIdx >= exOrder(g).length - 1;
-  $('#stToEx').hidden = p !== 'explain' || !g.ex || g.exIdx >= exOrder(g).length - 2;
+  $('#stToResult').hidden = p !== 'explain' || exOrder(g)[g.exIdx] === 'finale';
+  $('#stToEx').hidden = p !== 'explain' || !g.ex || ['ex', 'finale'].includes(exOrder(g)[g.exIdx]);
   $('.st-bar .keyhint').hidden = p === 'play';
   $('#stSound').textContent = S.opts.sound ? '音 ON' : '音 OFF';
 }
@@ -1425,7 +1484,7 @@ function formHtml(g) {
       <li><b>役割</b>を決める
         <table class="rtab"><tr><td class="g3">3年生</td><td>リーダー　みんなの意見をまとめる。答えは言わずに、ヒントで導こう</td></tr>
         <tr><td class="g2">2年生</td><td>記録係　答えを紙に書く・時間を見る</td></tr>
-        <tr><td class="g1">1年生</td><td>伝令　あいことばを先生に伝えに行く</td></tr></table></li>
+        <tr><td class="g1">1年生</td><td>伝令　あいことばを先生に伝えに行く</td></tr></table><span class="s">役割カードのやくそくを読もう</span></li>
     </ol></div></div>`;
 }
 function reflectHtml(g) {
@@ -1505,8 +1564,9 @@ function explainHtml(g) {
   if (id === 'all') {
     const row = (p, cls) => `<div class="exa${cls || ''}"><span class="n">${nzDoor(p.id) ? '🚪' : p.id}</span><span class="tt">${esc(p.title)}</span><b>${esc(NZ_TEACH[p.id].answer)}</b></div>`;
     return `<div class="exall"><h2>答え</h2><div class="cols"><div>${NZ_STAGE1.map(p => row(p)).join('')}${row(NZ_FINAL, ' exdoor')}</div><div>${NZ_STAGE2.map(p => row(p, ' s2')).join('')}${row(NZ_FINAL2, ' exdoor s2')}${g.ex ? '<div class="exa ex"><span class="n">🗝️</span><span class="tt">真のとびら（裏ミッション）</span><b>？？？</b></div>' : ''}</div></div>
-      <p class="hint2">▶ で1問ずつくわしく見ます。時間がないときは「結果発表へ」</p></div>`;
+      <p class="hint2">▶ で1問ずつくわしく見ます。時間がないときは「${g.ex ? '🗝️ 真のとびらへ」か「' : ''}🚪 最後のとびらへ」</p></div>`;
   }
+  if (id === 'finale') return finaleHtml(g);
   if (id === 'ex') {
     const T = NZ_TEACH.ex;
     return `<div class="explain"><div class="pz">${nzCard(NZ_EX, { fill: T.answer })}</div>
@@ -1610,6 +1670,24 @@ PR.team = () => {
       <div class="rbox tall"><b>3年生から1・2年生へ／1・2年生から3年生へ</b></div>
       <div class="rbox rec"><b>記録</b>　第1のとびら　　分　　秒　／　脱出　　分　　秒${S.opts.ex !== false ? '　／　👑 真・脱出　　分　　秒' : ''}</div></div>`).join('');
 };
+// 役割カード：1チーム6枚（3年生リーダー×2・2年生記録係×2・1年生伝令×2）
+function roleCard(y, t) {
+  const tag = teamTag(t), head = (cls, ttl) => `<div class="rch ${cls}"><span class="rg">${y}年生</span><b>${ttl}</b>${tag}</div>`;
+  if (y === 3) return `<div class="rc">${head('g3', 'リーダー')}<div class="rct">リーダーのやくそく</div>
+    <ol><li><b>答えは言わない。</b>質問で導く</li><li>全員が謎を見られるように、紙を配る</li><li>1・2年生の考えを、先に聞く</li></ol>
+    <div class="rct">導きのことば（そのまま使ってOK）</div>
+    <ul class="ql"><li>「いま、どこまでわかった？」</li><li>「声に出して読んでみよう」</li><li>「見本と同じところはどこ？」</li><li>「○ の文字だけでもわかる？」</li><li>「1年生はどう思う？」</li><li>「いいね！ ためしてみよう」</li></ul>
+    <div class="rcf">ほめことば：「ナイス！」「さすが！」「ありがとう、助かった！」</div></div>`;
+  if (y === 2) return `<div class="rc">${head('g2', '記録係')}<div class="rct">答えを集めて、ここに書こう（○ の文字は右の○に）</div>
+    <div class="rgrid9">${NAZO.map(p => `<div><b class="${p.stage === 2 ? 's2' : ''}">${p.id}</b><span class="ln"></span><i class="${p.stage === 2 ? 's2' : ''}"></i></div>`).join('')}<div><b>🚪</b><span class="ln"></span></div></div>
+    <div class="rcf">時間を見る係も！ のこり10分・5分になったら、みんなに知らせよう</div></div>`;
+  return `<div class="rc">${head('g1', '伝令')}<div class="rct">伝令のやくそく</div>
+    <ol><li>あいことばがわかったら、紙を持って先生のところへ（体育館は走らない）</li><li><b>伝令タイム</b>はスクリーンの前へ。見たことをおぼえて、チームに伝える</li><li>伝えるときは「◯◯だって！」と大きな声で</li></ol>
+    <div class="rct">とびら突破スタンプ（先生がおす）</div>
+    <div class="stp"><span>🚪1</span><span>🚪2</span>${S.opts.ex !== false ? '<span>🗝️</span>' : ''}</div>
+    <div class="rcf">伝令タイムで見たことは、チームにもどってから書こう：<span class="ln"></span></div></div>`;
+}
+PR.role = () => printTeams().map(t => `<div class="page rolep"><div class="rgrid">${[3, 3, 2, 2, 1, 1].map(y => roleCard(y, t)).join('')}</div></div>`).join('');
 PR.panel = () => {
   const panel = (ic, tt, sub, color) => `<div class="page ppanel" style="--pc:${color}"><div class="pi">${ic}</div><div class="pt">${tt}</div><div class="ps">${sub}</div><div class="pn">チーム名 <span></span></div></div>`;
   return panel('🎉', '脱出成功！', '体育館からの脱出', '#c8102e') + (S.opts.ex !== false ? panel('👑', '真・脱出！', '裏ミッション クリア', '#b8860b') : '') + panel('😭', 'あと一歩…！', '次こそ脱出してみせる！', '#1f6feb');
@@ -1631,7 +1709,7 @@ PR.check = () => {
   const mk = p => [...NZ_TEACH[p.id].answer].map((c, k) => k + 1 === p.mark ? `<u>${c}</u>` : c).join('');
   const card = `<div class="ck"><div class="ckh">答え合わせカード <small>先生用・生徒に見せない</small></div>
     <table class="ckd">
-      <tr><td>🚪 第1のとびら</td><td class="a">${A('final')}</td><td>正しければ<b>1回</b>押す<br>→ 第2ステージの紙</td></tr>
+      <tr><td>🚪 第1のとびら</td><td class="a">${A('final')}</td><td>正しければ<b>1回</b>押す<br>→ 第2ステージの紙${S.opts.tate !== false ? '<br>・伝令カードにスタンプ' : ''}</td></tr>
       <tr><td>🚪 第2のとびら</td><td class="a">${A('final2')}</td><td>正しければ<b>2回目</b>を押す${ex ? '<br>→ 裏ミッションの紙' : ''}</td></tr>
       ${ex ? `<tr><td>🗝️ 真のとびら</td><td class="a">${A('ex')}<small>（未来も仲間）</small></td><td><b>チーム全員</b>で来たら<b>3回目</b></td></tr>` : ''}
     </table>
@@ -1657,7 +1735,7 @@ PR.script = () => {
   const head = t => `<div class="ph"><h1>${t}</h1><div class="tn">台本と進行表 %P%</div></div>`;
   const rows = [
     [0, `${c.story}〜${c.form}分`, 'お話', '④本番の「はじめる」。スペースキーで1行ずつ出るので、台本①を読む', 'チームごとに座る'],
-    ...(tate ? [[c.form, `${c.form}〜${c.rules}分`, `チーム結成タイム（${o.formMin}分）`, '謎の紙（裏返し）・チームシート・えんぴつを配る。台本②', '自己紹介・チーム名・役割']] : []),
+    ...(tate ? [[c.form, `${c.form}〜${c.rules}分`, `チーム結成タイム（${o.formMin}分）`, '謎の紙（裏返し）・チームシート・役割カード・えんぴつを配る。台本②', '自己紹介・チーム名・役割']] : []),
     [c.rules, `${c.rules}〜${c.start}分`, 'ルール', `台本${no(3)}${relay || ex ? '。伝令タイム・裏ミッションを予告' : ''}`, '話を聞く'],
     [c.start, `${c.start}分`, 'スタート！', '「3、2、1、スタート！」と同時にスペースキー', '紙を表にする'],
     [c.start + o.hint0, tm(o.hint0), '💡 ヒント（自動）', `このあと${o.hintGap}分ごとに自動で出る。「ヒントが出たよ」と声をかける`, ''],
@@ -1668,7 +1746,7 @@ PR.script = () => {
     ...(ex ? [[c.start + 23.5, '脱出のあと', '👑 真・脱出', 'チーム全員で来たら<b>3回目</b>を押す', '']] : []),
     [c.end - 5, tm(m - 5), '⏰ のこり5分（自動）', '「ラストスパート！」', ''],
     [c.end, `${c.end}分`, 'タイムアップ（自動）', `台本${no(6)}「えんぴつを置いて」`, ''],
-    [c.end + 0.1, `${c.end}〜${c.result}分`, '解説', `答えの一覧 → 時間があれば1問ずつ${ex ? ' → 🗝️ 真のとびら' : ''}`, ''],
+    [c.end + 0.1, `${c.end}〜${c.result}分`, '解説', `答えの一覧 → 時間があれば1問ずつ${ex ? ' → 🗝️ 真のとびら' : ''} → 🚪 最後のとびら（全員で声をそろえる）`, ''],
     [c.result, `${c.result}〜${c.reflect}分`, '結果発表・特別賞', '3位 → 2位 → 1位 → 特別賞', '拍手'],
     ...(tate ? [[c.reflect, `${c.reflect}〜${c.close}分`, 'ふりかえり', 'チームシートに書く → 終わりのことば', 'MVP・感謝を伝える']] : []),
   ].sort((a, b) => a[0] - b[0]).map(x => x.slice(1));
@@ -1680,14 +1758,14 @@ PR.script = () => {
     <table class="tl"><tr><th>役割</th><th>人数</th><th>すること</th></tr>
       <tr><td>司会</td><td>1人</td><td>台本を読む。スペースキーで画面を進める</td></tr>
       <tr><td>記録（パソコン）</td><td>1人<small>（司会と兼ねてもよい）</small></td><td>答え合わせ係から「◯班、突破！」と聞いたら、画面右のそのチームを押す。押しまちがえたら「記録を取り消す」</td></tr>
-      <tr><td>答え合わせ</td><td>1〜2人</td><td>「答え合わせカード」を持ち、先生の机であいことばを確かめる。第2ステージの紙${ex ? '・裏ミッションの紙' : ''}をわたす</td></tr>
+      <tr><td>答え合わせ</td><td>1〜2人</td><td>「答え合わせカード」を持ち、先生の机であいことばを確かめる。第2ステージの紙${ex ? '・裏ミッションの紙' : ''}をわたす。${tate ? '伝令カードにスタンプ（サイン）をおす' : ''}</td></tr>
       <tr><td>見回り</td><td>ほかの先生</td><td>止まっているチームに声をかける（答えは言わない・台本${no(5)}）。チームワーク賞の候補を見つけておく</td></tr></table>
     <p class="note">先生が1人のときは、答え合わせとパソコンを1か所にまとめます（パソコンの横に答え合わせの机）。</p></div>`;
   const items = [
     ['謎の紙', `${n * 3}枚（1チーム3枚）`, `${tate ? 'チーム結成タイム' : 'スタート前'}に裏返しで配る`],
     ['第2ステージの紙', `${n * 2}枚（両面なら${n}枚）`, '第1のとびらを開けたチームにわたす'],
     ...(ex ? [['裏ミッションの紙', `${Math.ceil(n / 2)}枚（切って${n}枚）`, '脱出したチームにわたす']] : []),
-    ...(tate ? [['チームシート', `${n}枚`, 'チーム結成タイム・ふりかえり']] : []),
+    ...(tate ? [['チームシート', `${n}枚`, 'チーム結成タイム・ふりかえり'], ['役割カード', `${n}枚（切って${n * 6}枚）`, 'チーム結成タイムに配る']] : []),
     ['答え合わせカード', '1枚（切って4枚）', '答え合わせ係の先生'],
     ['台本と進行表（これ）', '%N%枚', '司会・先生全員'],
     ['先生用の答えとヒント', '2枚', '司会・答え合わせ係'],
@@ -1730,8 +1808,8 @@ PR.script = () => {
     ${say('しかも、とびらは2つ。1つ目は6つの謎、2つ目はさらに3つの謎で開きます。')}${act('スペース')}
     ${say(`${tate ? '1年生から3年生まで' : 'チームで'}力を合わせて、体育館から脱出しましょう！`)}${act('スペース（次の画面へ）')}
     ${tate ? `<h2>② チーム結成タイム（${c.form}〜${c.rules}分）</h2>${scr(`チーム結成タイム（${o.formMin}分のタイマー）`)}
-    ${say('まずはチームを作ります。タイマーが0になるまでに、3つのことをしてください。<br>1つ目、自己紹介。1年生から順番に、学年・名前・好きなものを言います。<br>2つ目、チーム名を決めて、チームシートに書きます。<br>3つ目、役割。3年生はリーダー、答えは言わずにヒントで下級生を導きます。2年生は記録係、答えを紙に書きます。1年生は伝令、あいことばを先生に伝えに来ます。<br>では、始め！')}
-    ${act('謎の紙（3枚・裏返し）・チームシート・えんぴつを配る。「スタートまで、紙は裏返しのまま」')}
+    ${say('まずはチームを作ります。タイマーが0になるまでに、3つのことをしてください。<br>1つ目、自己紹介。1年生から順番に、学年・名前・好きなものを言います。<br>2つ目、チーム名を決めて、チームシートに書きます。<br>3つ目、役割。3年生はリーダー、答えは言わずにヒントで下級生を導きます。2年生は記録係、答えを集めて書きます。1年生は伝令、あいことばを先生に伝えに来ます。役割カードを1人1枚わたすので、やくそくを読んでおいてください。<br>では、始め！')}
+    ${act('謎の紙（3枚・裏返し）・チームシート・役割カード・えんぴつを配る。「スタートまで、紙は裏返しのまま」')}
     ${say('（のこり1分）あと1分です。チーム名と役割は決まりましたか？')}${act('タイマーが0になったらスペース')}` : ''}
     </div><div class="page doc big">${head('台本（2）ルール説明・スタート')}
     <h2>${no(3)} ルール説明（${c.rules}〜${c.start}分）</h2>${scr('ルール')}
@@ -1748,7 +1826,7 @@ PR.script = () => {
     <h3>💡 ヒントが出たとき（音が鳴る・自動）</h3>${say('ヒントが出ました！ 困っているチームは、スクリーンを見てください。')}
     <h3>🚪 第1のとびら（3枚目の紙を持ってきたら）</h3>
     ${act(`答え合わせカードで確かめる（<b>${N('final')}</b>）`)}
-    <div class="two2"><div><b>正しい</b>${say('第1のとびら、突破！ おめでとう！')}${act('パソコンでそのチームを<b>1回</b>押す → 第2ステージの紙をわたす')}</div>
+    <div class="two2"><div><b>正しい</b>${say('第1のとびら、突破！ おめでとう！')}${act(`パソコンでそのチームを<b>1回</b>押す → 第2ステージの紙をわたす${tate ? ' → 伝令カードにスタンプ' : ''}`)}</div>
     <div><b>ちがう</b>${say('おしい！ どこかがちがうよ。もう一度たしかめてみよう。')}${act('どの文字がちがうかは言わない')}</div></div>
     <h3>🎉 第2のとびら（脱出）</h3>
     ${act(`<b>${N('final2')}</b> なら<b>2回目</b>を押す${ex ? ' → 裏ミッションの紙をわたす' : ''}`)}
@@ -1761,20 +1839,24 @@ PR.script = () => {
     <h3>👀 見回りの声かけ（答えは言わない）</h3>
     <ul class="tips"><li>「いま、どの謎で止まってる？」</li><li>「その謎は何年生のマーク？ まずその学年の人の考えを聞いてみよう」</li><li>「スクリーンのヒントは見た？」</li><li>「○ の文字だけわかれば、とびらは開くよ。わかる所から埋めてみよう」</li><li>「1年生の意見も聞いてみて」</li></ul>
     <h3>答えの早見表（下線が ○ の文字）</h3><div class="ckn big">${NAZO.map(p => `<span><b>${p.id}</b> ${[...NZ_TEACH[p.id].answer].map((ch, k) => k + 1 === p.mark ? `<u>${ch}</u>` : ch).join('')}</span>`).join('')}<span><b>🚪1</b> ${N('final')}</span><span><b>🚪2</b> ${N('final2')}</span>${ex ? `<span><b>🗝️</b> ${N('ex')}</span>` : ''}</div></div>`;
-  const p5 = `<div class="page doc big">${head('台本（4）タイムアップ・解説・結果発表')}
+  const p5 = `<div class="page doc big">${head('台本（4）タイムアップ・解説・最後のとびら')}
     <h2>${no(6)} タイムアップ（${c.end}分・自動）</h2>${scr('タイムアップ')}
     ${say('そこまで！ えんぴつを置いて、前を向いてください。')}${say('第1のとびらを開けたのは ◯ チーム、脱出できたのは ◯ チームでした！')}${act('数は画面に出る')}
     <h2>${no(7)} 解説（${c.end}〜${c.result}分）</h2>${scr('答えの一覧 → 1問ずつ（スペース）')}
     ${say('では、答えを見ていきましょう。')}
-    ${act(`時間がないときは、一覧のあと${ex ? '「🗝️ 真のとびらへ」' : '「結果発表へ」'}を押す`)}
+    ${act(`時間がないときは、一覧のあと${ex ? '「🗝️ 真のとびらへ」か' : ''}「🚪 最後のとびらへ」を押す`)}
     ${say('（1問ずつのとき）謎2の時計、長いはりと短いはり、どっちを読むか気づきましたか？ ……どの謎がいちばんむずかしかった？ 手をあげてください。')}
-    ${ex ? `<h3>🗝️ 真のとびら</h3>${say('実は、脱出したチームだけが挑戦できる「裏ミッション」がありました。とびらのうらにきざまれていた暗号です。絵は、これまでの謎。数字は、その答えの何文字目か。読むと……「みらいもなかま」。<b>未来も、仲間。</b>今日のチームは、これからもずっと仲間です。')}` : ''}
+    ${ex ? `<h3>🗝️ 真のとびら</h3>${say('実は、脱出したチームだけが挑戦できる「裏ミッション」がありました。とびらのうらにきざまれていた暗号です。絵は、これまでの謎。数字は、その答えの何文字目か。読むと……「みらいもなかま」。<b>未来も、仲間。</b>')}` : ''}
+    <h3>🚪 最後のとびら（全員で）</h3>
+    ${say(`最後のとびらは、全員の声で開きます。脱出できたチームも、あと一歩だったチームも、みんなで声をそろえましょう。せーの……「${ex ? 'みらいもなかま' : 'えがお'}」！`)}
+    ${act('声がそろったらスペース（とびらが開いて紙ふぶき）→ 画面の「先輩からの手紙」をゆっくり読む')}
+    </div><div class="page doc big">${head('台本（5）結果発表・おわり・困ったとき')}
     <h2>${no(8)} 結果発表・特別賞（${c.result}〜${c.reflect}分）</h2>${scr('結果発表 → 特別賞')}
     ${say('お待たせしました。結果発表です！ 第3位は……（スペース）◯◯チーム！')}${act('拍手。2位、1位も同じようにスペースで発表')}
     ${act('スペースで特別賞へ')}
     ${say(`特別賞の発表です。第1のとびら一番乗りは……◯◯チーム！${ex ? ' 裏ミッションを解いた「真・脱出」は……◯◯チーム！' : ''} 表彰台には入らなかったけれど、最後まであきらめずに脱出した「あきらめない賞」は……◯◯チーム！ そして「チームワーク賞」は、先生たちが見ていて決めました……◯◯チーム！`)}
     ${act('画面に出ない賞（あきらめない賞は条件に合うチームがいるときだけ出る）はとばしてよい')}
-    </div><div class="page doc big">${head('台本（5）おわり・困ったとき')}
+
     ${tate ? `<h2>⑨ ふりかえり・終わりのことば（${c.reflect}〜${c.close}分）</h2>${scr('ふりかえり')}
     ${say('チームでふりかえりをします。画面の4つをやってみましょう。チームシートに書いてください。')}${act('2分ほどしたら終わりのことば')}` : `<h2>⑧ 終わりのことば</h2>`}
     ${say(`今日のあいことばは「あきらめない」「えがお」${ex ? '、そして「みらいもなかま」' : ''}でした。最後まであきらめずに考えたこと、えがおで力を合わせたこと、とてもすばらしかったです。${tate ? 'これからの縦割り活動も、このチームで力を合わせていきましょう。' : ''}`)}
@@ -1794,6 +1876,7 @@ const PRINT_HINT = {
   stage2: (n, per) => per ? `${n * 2}ページ（1チーム2ページ×${n}チーム・両面印刷なら${n}枚）。第1のとびらを開けたチームにわたします。` : `2ページで1チーム分（両面なら1枚）。部数を${n}にして印刷します。`,
   ex: (n, per) => per ? `${Math.ceil(n / 2)}枚（1枚に2チーム分）。線で切って、脱出したチームにわたします。` : `1枚に2チーム分。部数を${Math.ceil(n / 2)}にして印刷し、線で切ります。`,
   team: n => `${n}ページ（1チーム1枚）。チーム結成タイムに名前と役割を書き、最後にふりかえりを書きます。`,
+  role: (n, per) => per ? `${n}ページ（1チーム1枚を6枚に切る）。チーム結成タイムに、3年生にリーダー、2年生に記録係、1年生に伝令のカードをわたします。` : `1枚で1チーム分（6枚に切る）。部数を${n}にして印刷します。`,
   panel: () => '脱出したチームがパネルを持って記念写真。「あと一歩…！」も、くやしい顔で撮ると盛り上がります。',
   key: () => '2ページ。生徒に見せないでください。',
   check: () => '1枚に4枚分。切って、答え合わせ係の先生が持ちます。答えが書いてあるので生徒に見せないでください。',
@@ -1805,7 +1888,7 @@ function renderPrint() {
   $('#printPreview').innerHTML = PR[k](S.opts.tate !== false);
   $('#pHint').textContent = PRINT_HINT[k](n, per);
   $('#pPerTeam').checked = per;
-  $('#pPerRow').hidden = !['sheets', 'stage2', 'ex'].includes(k);
+  $('#pPerRow').hidden = !['sheets', 'stage2', 'ex', 'role'].includes(k);
 }
 $$('input[name=pKind]').forEach(r => r.addEventListener('change', renderPrint));
 $('#pPerTeam').addEventListener('change', e => { S.opts.perTeam = e.target.checked; saveSoon(); renderPrint(); });
