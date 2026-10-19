@@ -454,6 +454,16 @@ table.roles td,table.roles th{font-size:13px}
 #relay .rbar i{display:block;height:100%;background:var(--gold)}
 #relay .rclose{position:absolute;right:2vw;bottom:2vh;font:inherit;font-size:2vh;padding:.8vh 1.6vh;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#f2f4f8;border-radius:.9vh;cursor:pointer}
 #relay .rtime{position:absolute;left:2vw;bottom:2vh;font-size:2.6vh;color:#b9c3d6;font-variant-numeric:tabular-nums}
+.prac{margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2vh;max-width:86vw}
+.prac h2{margin:0;font-size:6vh;color:var(--gold)}
+.prac .ppz{background:#fff;border-radius:2vh;padding:2.4vh 4vh}
+.prac .ppz .nz{font-size:3.4vh}
+.prac .ppz .nz-emo .e{font-size:3.2em}
+.prac p{margin:0;font-size:3.6vh;line-height:1.6}
+.prac .pa{font-size:5vh}
+.prac .pa b,.prac p b{color:var(--gold)}
+.prac .pa small{display:block;font-size:.55em;color:#b9c3d6}
+.prac .pmk{display:inline-block;width:1.3em;height:1.3em;line-height:1.2;border:.4vh solid #ff6b6b;border-radius:50%;color:#ff6b6b}
 .rules-slide .fun{margin-top:1.4vh;font-size:2.6vh;background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.5);border-radius:1.2vh;padding:.8vh 2vh}
 .rules-slide .ng{margin-top:1.4vh}
 .awards{width:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:2vh}
@@ -517,17 +527,17 @@ table.roles td,table.roles th{font-size:13px}
 <section class="tab" id="tab-guide">
   <div class="card">
     <h2>どんなゲーム？</h2>
-    <p>「体育館にとじこめられた！」というお話で、5人くらいのチームが協力して謎を解きます。とびらは2つあります。</p>
+    <p>「体育館にとじこめられた！」というお話で、6人くらい（縦割りなら各学年2人ずつ）のチームが協力して謎を解きます。とびらは2つあります。</p>
     <ul>
       <li><b>第1のとびら</b>：謎1〜6の答えの ○ の文字をならべると、あいことば。先生に見せると、第2ステージの紙がもらえます</li>
-      <li><b>第2のとびら</b>：少しむずかしい謎7〜9の答えの 青い○ の文字で、最後のあいことば。先生に見せたら「脱出成功」</li>
+      <li><b>第2のとびら</b>：少しむずかしい謎7〜9（謎9は、かけらを持ち寄る全員の協力の謎）の答えの 青い○ の文字で、最後のあいことば。先生に見せたら「脱出成功」</li>
       <li><b>🗝️ 裏ミッション</b>：脱出したチームだけがもらえる、ひみつの暗号。これまでの謎の答えを使って解くと「真・脱出」</li>
     </ul>
     <p>早く脱出したチームが上位です。脱出できなかったチームも、第1のとびらまでの早さで順位がつきます。早いチームにも最後まで考える謎があり、ゆっくりのチームも第1のとびらで達成感を味わえるようにしてあります。</p>
     <ul>
       <li>人数：縦割りなら<b>6人（各学年2人ずつ）</b>×17チームくらい（2〜20チーム）</li>
-      <li>時間：50分（お話3分・チーム結成5分・ルール2分・<b>謎解き32分</b>・解説4分・表彰とふりかえり4分）</li>
-      <li>用意：プロジェクターかテレビ＋このファイルを開いたパソコン、⑤で印刷した「謎の紙」（1チーム3ページ）・「第2ステージの紙」（1チーム2ページ）・「裏ミッションの紙」（1枚で2チーム分）・「チームシート」、先生用の「台本と進行表」「答え合わせカード」、えんぴつと下じき。あれば「予告ポスター」「写真用パネル」</li>
+      <li>時間：50分（お話3分・チーム結成5分・ルールとれんしゅう2分・<b>謎解き32分</b>・解説と最後のとびら4分・表彰とふりかえり4分）</li>
+      <li>用意：プロジェクターかテレビ＋このファイルを開いたパソコン、⑤で印刷した「謎の紙」（1チーム3ページ）・「第2ステージの紙」（1チーム2ページ）・「裏ミッションの紙」（1枚で2チーム分）・「チームシート」・「役割カード」、先生用の「台本と進行表」「答え合わせカード」、えんぴつと下じき。あれば「予告ポスター」「写真用パネル」</li>
       <li>⑤印刷の<b>「台本と進行表」</b>に、当日のセリフ・時刻・先生の役割分担・準備チェックリスト・会場の図がまとまっています。まずはこれを読んでください</li>
       <li>タブレット：<b>なくてもできます</b>。あれば <b>謎解きカード.html</b> を開くと、答えがその場で正解かわかり、第2ステージもタブレットで続けられます</li>
     </ul>
@@ -537,10 +547,10 @@ table.roles td,table.roles th{font-size:13px}
       <h2>時間の目安（50分）</h2>
       <table class="timeline">
         <tr><td>0〜3分</td><td>チームごとに座る。④本番の「お話」を映す</td></tr>
-        <tr><td>3〜8分</td><td>チーム結成タイム（自己紹介・チーム名・役割）。チームシートと謎の紙を配る（スタートまで裏返し）</td></tr>
-        <tr><td>8〜10分</td><td>ルール説明</td></tr>
+        <tr><td>3〜8分</td><td>チーム結成タイム（自己紹介・チーム名・役割）。チームシート・役割カード・謎の紙を配る（スタートまで裏返し）</td></tr>
+        <tr><td>8〜10分</td><td>ルール説明 → れんしゅうの謎（予告ポスターの謎。答えの ○ の文字を集めるしくみを、1年生が答えて確かめる）</td></tr>
         <tr><td>10〜42分</td><td>謎解き32分。6分たつと、3分ごとにヒントがスクリーンに出る（第2ステージのヒントは24分から）。14分と25分に「伝令タイム」</td></tr>
-        <tr><td>42〜46分</td><td>解説。まず答えの一覧、時間があれば1問ずつ。最後に裏ミッションの答え</td></tr>
+        <tr><td>42〜46分</td><td>解説。まず答えの一覧、時間があれば1問ずつ → 裏ミッションの答え → 全員で声をそろえて開ける「最後のとびら」</td></tr>
         <tr><td>46〜50分</td><td>表彰（3位→2位→1位）・特別賞・ふりかえり</td></tr>
       </table>
       <p class="hint">早いチームは15分ほどで第1のとびら、25分ほどで脱出し、のこり時間で裏ミッション。ゆっくりのチームも、ヒントと伝令タイムで第1のとびらまでは行ける、くらいの難しさです。</p>
@@ -548,12 +558,12 @@ table.roles td,table.roles th{font-size:13px}
     <div class="card">
       <h2>先生の進め方</h2>
       <ol>
-        <li>②でチームの数・制限時間を決め、⑤で「謎の紙」「第2ステージの紙」「チームシート」を印刷します（③で答えを確認）</li>
-        <li>④「はじめる」→ お話（スペースキーで1行ずつ出る）→ チーム結成タイム → ルール →「スタート！」でタイマーが動きます</li>
-        <li>第1のあいことばを持ってきたチームは、答えを確かめて、画面右のそのチームを押し、<b>第2ステージの紙をわたします</b></li>
+        <li>②でチームの数・制限時間を決め、⑤で生徒にわたすもの（謎の紙・第2ステージの紙・裏ミッションの紙・チームシート・役割カード）と先生用（台本と進行表・答え合わせカード）を印刷します（③で答えを確認）</li>
+        <li>④「はじめる」→ お話（スペースキーで1行ずつ出る）→ チーム結成タイム → ルール → れんしゅうの謎 →「スタート！」でタイマーが動きます</li>
+        <li>第1のあいことばを持ってきたチームは、答えを確かめて、画面右のそのチームを押し、<b>第2ステージの紙をわたします</b>（伝令カードにスタンプ）</li>
         <li>第2のあいことばを持ってきたら、もう一度押します（脱出タイムと順位が出ます）。<b>裏ミッションの紙をわたします</b></li>
         <li>裏ミッションの答え（真のあいことば）を持ってきたら、3回目を押します（👑真・脱出）</li>
-        <li>時間になるか全チームが脱出したら、解説 → 表彰 → 特別賞 → ふりかえり</li>
+        <li>時間になるか全チームが脱出したら、解説 → 最後のとびら（全員で）→ 表彰 → 特別賞 → ふりかえり</li>
       </ol>
       <p class="hint">押しまちがえたら「記録を取り消す」を押してから、そのチームを押します。スペースキー（か右下のボタン）で次へ進みます。途中でページを閉じても、開き直すと続きからできます。</p>
     </div>
@@ -564,7 +574,7 @@ table.roles td,table.roles th{font-size:13px}
     <ul>
       <li><b>学年ごとの担当</b>：謎に「1年生から」「2年生から」「3年生から」のマークがつきます。まずその学年の人が考え、わからなければみんなで考えます。第1ステージはどの学年も2つずつ、第2ステージは1年生が謎7、3年生が謎8を担当。1年生の担当は、とっつきやすい謎（えもじ・しりとり・時間割）です</li>
       <li><b>全学年の協力の謎（謎9「3つのかけら」）</b>：かけらを切りはなして、1年生（道順）・2年生（読む場所）・3年生（地図）が1枚ずつ持ちます。かけらは見せ合わずに、口で伝え合わないと解けません。学年をこえて話す場面を、しかけとして作っています</li>
-      <li><b>役割</b>：3年生＝リーダー（答えは言わずに、ヒントで下級生を導く）、2年生＝記録係、1年生＝伝令（あいことばを先生に伝えに行く）。1年生が先生のところへ来るので、全員に出番があります</li>
+      <li><b>役割</b>：3年生＝リーダー（答えは言わずに、ヒントで下級生を導く）、2年生＝記録係（答えを集める）、1年生＝伝令（あいことばを先生に伝えに行く・伝令タイムの主役）。⑤の「役割カード」を1人1枚わたすと、やることがはっきりします</li>
       <li><b>チーム結成タイム</b>（5分）：自己紹介・チーム名・役割決め。タイマーつきの画面を映します</li>
       <li><b>ふりかえり</b>：表彰のあとに、MVP・上級生から下級生へ・下級生から上級生への一言。⑤で印刷する「チームシート」に書けます</li>
     </ul>
@@ -583,15 +593,15 @@ table.roles td,table.roles th{font-size:13px}
       <li><b>🪪 役割カード</b>：⑤で印刷。3年生に「リーダー」（答えは言わずに導くことば集）、2年生に「記録係」（答えを集める表）、1年生に「伝令」（とびら突破スタンプ欄）。全員に、はっきりした出番ができます</li>
       <li><b>🚪 最後のとびら</b>：解説の最後に、脱出できなかったチームもふくめた<b>全員で</b>声をそろえて合言葉を言うと、とびらが開き、「とびらを作った先輩たち」からの手紙が出ます。縦割り活動のしめくくりに</li>
     </ul>
-    <p class="hint">伝令タイムと裏ミッションは、②設定で切れます。</p>
+    <p class="hint">伝令タイム・SOSカード・裏ミッションは、②設定で切れます。</p>
   </div>
   <div class="card">
     <h2>ルール（生徒への説明）</h2>
     <ol>
       <li>謎1〜6を、チームで協力して解く（手分けしてもOK）</li>
       <li>答えの ○ の文字を、謎の番号の順にならべると、第1のとびらのあいことば。3枚目の紙を先生に見せる</li>
-      <li>第2ステージの紙の謎7〜9を解き、青い○ の文字で最後のあいことば。先生に見せたら脱出成功</li>
-      <li>ヒントは時間がたつとスクリーンに出る。「伝令タイム」には、各チーム1人（1年生）がスクリーンの前へ</li>
+      <li>第2ステージの紙の謎7〜9を解き、青い○ の文字で最後のあいことば。先生に見せたら脱出成功。謎9は、かけらを1人1枚ずつ持ち、見せずに口で伝え合う</li>
+      <li>ヒントは時間がたつとスクリーンに出る。「伝令タイム」には、各チーム1人（1年生）がスクリーンの前へ。困ったら「SOSカード」（チームで1回）</li>
       <li>脱出したチームには、裏ミッションの紙。解けたら「真・脱出」</li>
       <li>ほかのチームに答えを教えない。答えは大きな声で言わない</li>
     </ol>
@@ -612,7 +622,7 @@ table.roles td,table.roles th{font-size:13px}
       <ul>
         <li>第2ステージの紙と裏ミッションの紙は、先生の手元にチーム数そろえておき、すぐわたせるようにします</li>
         <li>むずかしそうなら②で制限時間をのばすか、ヒントを早めてください（本番中も「ヒントを今出す」「＋1分」が使えます）</li>
-        <li>解説は、はじめに出る「答えの一覧」だけでもOK（「🗝️ 真のとびらへ」で裏ミッションの答えにとべます）。時間があれば「どの謎が一番むずかしかった？」と聞くと盛り上がります</li>
+        <li>解説は、はじめに出る「答えの一覧」だけでもOK（「🗝️ 真のとびらへ」「🚪 最後のとびらへ」でとべます）。時間があれば「どの謎が一番むずかしかった？」と聞くと盛り上がります</li>
         <li>先生が2人以上いれば、司会・パソコン・答え合わせ（「答え合わせカード」を持つ）・見回りに分かれると、第1のとびらの答え合わせが混みません</li>
         <li>体育館の床で書くので、下じきかバインダーがあると書きやすいです</li>
         <li>あいことばは「あきらめない」と「えがお」、裏ミッションは「みらいもなかま（未来も仲間）」。解説の最後にこのメッセージを見せて、ふりかえりにつなげてください</li>
@@ -1147,7 +1157,7 @@ function renderPlayTab() {
   $('#playStatus').innerHTML = g ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.minutes}分）。「続きから」で戻れます。</div>` : `<p>${S.teams.count}チーム・制限時間${S.opts.minutes}分で始めます（②で変えられます）。</p>`;
 }
 function phaseText(g) {
-  return { story: 'お話の画面', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルールの画面', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表', awards: '特別賞' }[g.phase] || '';
+  return { story: 'お話の画面', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルールの画面', practice: 'れんしゅうの謎', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表', awards: '特別賞' }[g.phase] || '';
 }
 function newGame() {
   const n = S.teams.count;
@@ -1355,7 +1365,8 @@ function primary() {
       break;
     case 'form': g.phase = 'rules'; break;
     case 'reflect': return;
-    case 'rules': g.phase = 'play'; g.startAt = Date.now(); g.pausedAt = null; g.pausedTotal = 0; SND.start(); showBanner('スタート！', '謎の紙を表にしよう'); break;
+    case 'rules': g.phase = 'practice'; g.pracStep = 0; break;
+    case 'practice': if (!g.pracStep) { g.pracStep = 1; SND.door(); break; } g.phase = 'play'; g.startAt = Date.now(); g.pausedAt = null; g.pausedTotal = 0; SND.start(); showBanner('スタート！', '謎の紙を表にしよう'); break;
     case 'play': return;
     case 'timeup': g.phase = 'explain'; g.exIdx = 0; break;
     case 'explain':
@@ -1374,7 +1385,8 @@ function primary() {
 }
 function back() {
   const g = S.game;
-  if (g.phase === 'rules') g.phase = g.tate ? 'form' : 'story';
+  if (g.phase === 'practice') { if (g.pracStep) g.pracStep = 0; else g.phase = 'rules'; }
+  else if (g.phase === 'rules') g.phase = g.tate ? 'form' : 'story';
   else if (g.phase === 'form') g.phase = 'story';
   else if (g.phase === 'reflect') g.phase = 'awards';
   else if (g.phase === 'awards') g.phase = 'result';
@@ -1460,7 +1472,8 @@ function renderBar() {
   let label = '';
   if (p === 'story') label = g.storyStep != null && g.storyStep < STORY_LINES ? 'つづき ▶' : g.tate ? 'チーム結成タイムへ ▶' : 'ルール説明へ ▶';
   else if (p === 'form') label = 'ルール説明へ ▶';
-  else if (p === 'rules') label = '▶ スタート！';
+  else if (p === 'rules') label = 'れんしゅうの謎へ ▶';
+  else if (p === 'practice') label = g.pracStep ? '▶ スタート！' : '答えを見る ▶';
   else if (p === 'timeup') label = '解説へ ▶';
   else if (p === 'explain') {
     const cur = exOrder(g)[g.exIdx], nx = exOrder(g)[g.exIdx + 1];
@@ -1470,7 +1483,7 @@ function renderBar() {
   else if (p === 'awards') label = g.tate ? 'ふりかえりへ ▶' : '';
   btn.textContent = label;
   btn.hidden = !label;
-  $('#stBack').hidden = !['form', 'rules', 'explain', 'result', 'awards', 'reflect'].includes(p);
+  $('#stBack').hidden = !['form', 'rules', 'practice', 'explain', 'result', 'awards', 'reflect'].includes(p);
   $('#stPause').hidden = p !== 'play';
   $('#stPause').textContent = g.pausedAt ? '▶ 再開' : '一時停止';
   $('#stPlus').hidden = !['play', 'timeup'].includes(p);
@@ -1487,10 +1500,11 @@ function renderBar() {
 function renderStage() {
   const g = S.game;
   if (!g) return;
-  $('#stTitle').textContent = { story: '体育館からの脱出', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルール', play: '謎解きタイム', timeup: 'タイムアップ', explain: '解説', result: '結果発表', awards: '特別賞' }[g.phase];
+  $('#stTitle').textContent = { story: '体育館からの脱出', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルール', practice: 'れんしゅうの謎', play: '謎解きタイム', timeup: 'タイムアップ', explain: '解説', result: '結果発表', awards: '特別賞' }[g.phase];
   const m = $('#stMain');
   if (g.phase === 'story') m.innerHTML = storyHtml(g);
   else if (g.phase === 'rules') m.innerHTML = rulesHtml(g);
+  else if (g.phase === 'practice') m.innerHTML = practiceHtml(g);
   else if (g.phase === 'form') { m.innerHTML = formHtml(g); tick(); }
   else if (g.phase === 'reflect') m.innerHTML = reflectHtml(g);
   else if (g.phase === 'play') { m.innerHTML = playHtml(g); bindTeams(); updateClock(); fitHints(); }
@@ -1529,6 +1543,15 @@ function reflectHtml(g) {
     <li><b>1・2年生から</b>：先輩に「ありがとう」を1つ伝えよう</li>
     <li>チームシートに、よかったことを書こう</li>
   </ol><div class="win">あいことばは「あきらめない」「えがお」${g.ex ? '、そして「みらいもなかま」' : ''}。今日のチームワークを、これからの活動にも！</div></div>`;
+}
+// れんしゅうの謎（予告ポスターと同じ謎）：答えの ○ の文字を集めるしくみを、スタート前に全員で体験する
+function practiceHtml(g) {
+  const s = g.pracStep;
+  return `<div class="prac"><h2>れんしゅうの謎</h2>
+    <div class="ppz"><div class="nz"><div class="nz-q">絵の名前の「何文字目か」を読むと……？</div><div class="nz-row">${nzEmo('🐯', 1)}${nzEmo('🏢', 1)}${nzEmo('🍜', 1)}</div>${nzBoxes(3, 1, s ? 'とびら' : '', '', 1)}</div></div>
+    ${s ? `<p class="pa">答えは「<b>とびら</b>」！<small>（とら・ビル・ラーメンの1文字目）</small></p>
+      <p>本番の謎も、答えの中に <span class="pmk">○</span> のついた文字がある。<br>○ の文字を集めてならべると、<b>とびらのあいことば</b>になるよ！</p>`
+      : `<p>わかったチームは、${g.tate ? '<b>1年生が</b>' : ''}手をあげよう！</p>`}</div>`;
 }
 function rulesHtml(g) {
   return `<div class="rules-slide"><h2>ルール</h2><ol>
@@ -1775,7 +1798,7 @@ PR.script = () => {
   const rows = [
     [0, `${c.story}〜${c.form}分`, 'お話', '④本番の「はじめる」。スペースキーで1行ずつ出るので、台本①を読む', 'チームごとに座る'],
     ...(tate ? [[c.form, `${c.form}〜${c.rules}分`, `チーム結成タイム（${o.formMin}分）`, '謎の紙（裏返し）・チームシート・役割カード・えんぴつを配る。台本②', '自己紹介・チーム名・役割']] : []),
-    [c.rules, `${c.rules}〜${c.start}分`, 'ルール', `台本${no(3)}${relay || ex ? '。伝令タイム・裏ミッションを予告' : ''}`, '話を聞く'],
+    [c.rules, `${c.rules}〜${c.start}分`, 'ルール → れんしゅうの謎', `台本${no(3)}${relay || ex ? '。伝令タイム・裏ミッションを予告' : ''}`, tate ? '話を聞く・れんしゅうは1年生が答える' : '話を聞く・れんしゅうに答える'],
     [c.start, `${c.start}分`, 'スタート！', '「3、2、1、スタート！」と同時にスペースキー', '紙を表にする'],
     [c.start + o.hint0, tm(o.hint0), '💡 ヒント（自動）', `このあと${o.hintGap}分ごとに自動で出る。「ヒントが出たよ」と声をかける`, ''],
     ...(relay ? [[c.start + o.relay1, tm(o.relay1), '⚡ 伝令タイム①（自動・40秒）', `${tate ? '1年生' : '各チーム1人'}をスクリーンの前へ（台本${no(5)}）`, tate ? '1年生がおぼえて伝える' : '伝令がおぼえて伝える']] : []),
@@ -1851,14 +1874,17 @@ PR.script = () => {
     ${say('まずはチームを作ります。タイマーが0になるまでに、3つのことをしてください。<br>1つ目、自己紹介。1年生から順番に、学年・名前・好きなものを言います。<br>2つ目、チーム名を決めて、チームシートに書きます。<br>3つ目、役割。3年生はリーダー、答えは言わずにヒントで下級生を導きます。2年生は記録係、答えを集めて書きます。1年生は伝令、あいことばを先生に伝えに来ます。役割カードを1人1枚わたすので、やくそくを読んでおいてください。<br>では、始め！')}
     ${act('謎の紙（3枚・裏返し）・チームシート・役割カード・えんぴつを配る。「スタートまで、紙は裏返しのまま」')}
     ${say('（のこり1分）あと1分です。チーム名と役割は決まりましたか？')}${act('タイマーが0になったらスペース')}` : ''}
-    </div><div class="page doc big">${head('台本（2）ルール説明・スタート')}
+    </div><div class="page doc">${head('台本（2）ルール説明・れんしゅう・スタート')}
     <h2>${no(3)} ルール説明（${c.rules}〜${c.start}分）</h2>${scr('ルール')}
     ${say(`ルールを説明します。<br>1つ目。謎1から6を解くと、答えの中に ○ のついた文字があります。○ の文字を、謎の番号の順にならべると、第1のとびらのあいことばです。${tate ? '謎には「1年生から」などのマークがあります。まずはその学年の人が考えて、わからなかったら、みんなで考えましょう。' : ''}<br>2つ目。あいことばがわかったら、${tate ? '1年生の伝令が' : ''}3枚目の紙を持って、先生のところに来てください。正しければ、第2ステージの紙をわたします。<br>3つ目。第2ステージの謎7から9を解いて、青い ○ の文字をならべると、最後のあいことば。正しければ脱出成功です。謎9は${tate ? '、3つのかけらを1年生・2年生・3年生が1枚ずつ持つ「協力の謎」' : '、3つのかけらを3人で1枚ずつ持つ「協力の謎」'}。かけらは見せずに、口で伝え合ってください。<br>4つ目。${o.hint0}分たつと、スクリーンにヒントが出ます。困ったら前を見てください。<br>5つ目。制限時間は${m}分。早く脱出したチームが上位です。`)}
     ${relay ? say(`それから……とちゅうで「伝令タイム」があります。そのときは${tate ? '1年生' : '伝令の人'}、スクリーンに注目！`) : ''}
     ${ex ? say('そして、脱出したチームには……ひみつの「裏ミッション」が、あるかもしれません。') : ''}
     ${o.sos !== false ? say(`困ったときは、3枚目の紙の下の「SOSカード」を切りとって、見回りの先生にわたしてください。チーム名を元気に言うと、好きな謎のヒントを1つもらえます。チームで1回だけです。${tate ? '使うかどうかは、リーダーを中心にみんなで相談して決めましょう。' : ''}`) : ''}
     ${say('最後に大事なこと。答えは、ほかのチームに聞こえないように、小さな声で話しましょう。')}
-    <h2>${no(4)} スタート（${c.start}分）</h2>${scr('ルール →「スタート！」')}
+    <h3>🔰 れんしゅうの謎（ルールのあと）</h3>${scr('れんしゅうの謎（予告ポスターと同じ謎）')}
+    ${say(`では、れんしゅうです。絵の名前の「何文字目か」を読むと……？ わかったチームは、${tate ? '1年生が' : ''}手をあげてください！`)}${act('何チームか手があがったらスペース（答えが出る）')}
+    ${say('答えは「とびら」！ 本番の謎も、答えの中に ○ のついた文字があります。○ の文字を集めてならべると、とびらのあいことばになります。')}
+    <h2>${no(4)} スタート（${c.start}分）</h2>${scr('れんしゅうの謎 →「スタート！」')}
     ${say('質問はありますか？……では、紙は裏返しのまま。準備はいいですか？ 3、2、1……<b>スタート！</b>')}
     ${act('「スタート！」と同時にスペースキー（タイマーが動く）。ほかの先生は持ち場へ')}
     </div><div class="page doc">${head('見回りの先生用（謎解きのあいだ）')}
