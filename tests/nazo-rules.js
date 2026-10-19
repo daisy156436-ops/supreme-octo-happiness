@@ -85,14 +85,20 @@ ok('謎8：左右を反対にすると「かがみ」', read8(holesOnPage.map(([
 const others = { 上下反対: ([r, c]) => [3 - r, c], '180度': ([r, c]) => [3 - r, 3 - c], '90度': ([r, c]) => [c, 3 - r], '270度': ([r, c]) => [3 - c, r] };
 ok('謎8：ほかの重ね方では答えにならない', Object.values(others).every(f => read8(holesOnPage.map(f)) !== T[8].answer), Object.entries(others).map(([k, f]) => k + ':' + read8(holesOnPage.map(f))).join(' '));
 
-// 9 天びんの謎
-const bal = [...E.NAZO.find(p => p.id === 9).html().matchAll(/<svg viewBox="0 0 200 92"[\s\S]*?<\/svg>/g)].map(m => [...m[0].matchAll(/<text x="\d+" y="30"[^>]*>(.+?)<\/text>/g)].map(x => [...x[1]]));
-const w = { '🍎': 1 };
-// 1つ目：🍌＝🍎🍎、2つ目：🍉＝🍌🍌🍎 から重さを決める
-const solve = ([l, r]) => { const u = l.filter(e => w[e] == null); if (u.length === 1 && r.every(e => w[e] != null)) w[u[0]] = r.reduce((a, e) => a + w[e], 0) / l.length; };
-bal.forEach(solve);
-ok('謎9：🍌は🍎2個、🍉は🍎5個', w['🍌'] === 2 && w['🍉'] === 5, JSON.stringify(w));
-ok('謎9：🍉2個は🍎10個 → 「とお」', 2 * w['🍉'] === 10 && T[9].answer === 'とお');
+// 9 3つのかけら（協力の謎）：絵にかいた道順・読む場所・地図から計算する
+const h9 = P(9).html({});
+const moves = [...h9.split('class="kmv"')[1].split('</div>')[0].matchAll(/<b>(.)<\/b>/g)].map(m => m[1]);
+const steps = [...h9.split('class="kst"')[1].split('</div>')[0].matchAll(/<b>(\d+)<\/b>/g)].map(m => +m[1]);
+const cells = [...h9.split('class="kgrid"')[1].matchAll(/<span[^>]*>(.)<\/span>/g)].map(m => m[1]);
+const grid9 = [0, 1, 2, 3].map(r => cells.slice(r * 4, r * 4 + 4));
+const D9 = { '→': [0, 1], '←': [0, -1], '↓': [1, 0], '↑': [-1, 0] };
+let pos = [cells.indexOf('★') >> 2, cells.indexOf('★') % 4];
+const path9 = moves.map(m => { pos = [pos[0] + D9[m][0], pos[1] + D9[m][1]]; return grid9[pos[0]] && grid9[pos[0]][pos[1]]; });
+ok('謎9：かけらは3つ（道順・読む場所・地図）', moves.length === 7 && steps.length === 4 && cells.length === 16 && (h9.match(/class="kk /g) || []).length === 3, `${moves.join('')} ${steps} ${cells.join('')}`);
+ok('謎9：道順は地図の外に出ない', path9.every(c => c && c !== '★'), path9.join(''));
+ok('謎9：読む場所の文字で「おうえん」', steps.map(n => path9[n - 1]).join('') === T[9].answer, steps.map(n => path9[n - 1]).join(''));
+ok('謎9：止まったマスを全部読むと、意味のないことば', path9.join('') !== T[9].answer && !path9.join('').includes(T[9].answer), path9.join(''));
+ok('謎9：かけらの名前は縦割りなら学年、そうでなければA・B・C', h9.includes('1年生のかけら') && h9.includes('3年生のかけら') && P(9).html({ grade: false }).includes('かけらA') && !P(9).html({ grade: false }).includes('年生'));
 
 // ○の文字 → あいことば
 const letters = E.NZ_STAGE1.map(p => [...T[p.id].answer][p.mark - 1]).join('');
@@ -100,16 +106,16 @@ ok('○の文字を1から順にならべると「あきらめない」', letter
 const letters2 = E.NZ_STAGE2.map(p => [...T[p.id].answer][p.mark - 1]).join('');
 ok('青い○の文字を7から順にならべると「えがお」', letters2 === T.final2.answer, letters2);
 ok('答えの文字数と箱の数が合う', E.NAZO.every(p => [...T[p.id].answer].length === p.boxes && p.mark >= 1 && p.mark <= p.boxes) && E.NZ_FINAL.boxes === [...T.final.answer].length && E.NZ_FINAL2.boxes === [...T.final2.answer].length);
-ok('縦割り：どの学年も3つずつ担当（第1ステージに2つ、第2ステージに1つ）', [1, 2, 3].every(y => E.NZ_STAGE1.filter(p => p.grade === y).length === 2 && E.NZ_STAGE2.filter(p => p.grade === y).length === 1), E.NAZO.map(p => p.id + ':' + p.grade).join(' '));
+ok('縦割り：第1ステージはどの学年も2つずつ、第2ステージは1年・3年が1つずつと全学年の協力の謎', [1, 2, 3].every(y => E.NZ_STAGE1.filter(p => p.grade === y).length === 2) && E.NZ_STAGE2.map(p => p.grade).join() === '1,3,all', E.NAZO.map(p => p.id + ':' + p.grade).join(' '));
 ok('縦割り：1年生の担当は★1〜2の謎', E.NAZO.filter(p => p.grade === 1).every(p => p.level <= 2));
-ok('縦割り：謎に学年マークが出る', E.NAZO.every(p => E.nzCard(p).includes(`${p.grade}年生から`)) && !E.nzCard(E.NAZO[0], { grade: false }).includes('年生から'));
+ok('縦割り：謎に学年マークが出る', E.NAZO.every(p => E.nzCard(p).includes(p.grade === 'all' ? '全学年で協力' : `${p.grade}年生から`)) && !E.nzCard(E.NAZO[0], { grade: false }).includes('年生から') && !E.nzCard(P(9), { grade: false }).includes('全学年'));
 ok('謎1〜6は第1ステージ、謎7〜9は第2ステージ', E.NZ_STAGE1.map(p => p.id).join() === '1,2,3,4,5,6' && E.NZ_STAGE2.map(p => p.id).join() === '7,8,9');
 
 // 答えの確かめ方
 const variants = { 1: ['ありがとう', 'アリガトウ', 'ありがとう。', '有難う', 'あり がとう'], 2: ['きもち', 'キモチ', '気持ち'], 3: ['こあら', 'コアラ', 'ｺｱﾗ'], 4: ['ゆめ', 'ユメ', '夢'], 5: ['なかま', 'ナカマ', '仲間'], 6: ['かい', 'カイ', '会'],
-  7: ['かえり', 'カエリ', '帰り'], 8: ['かがみ', 'カガミ', '鏡'], 9: ['とお', 'とう', 'トオ', '10', '１０', '十'], final: ['あきらめない', 'アキラメナイ', '諦めない', 'あきらめない！'], final2: ['えがお', 'エガオ', '笑顔'] };
+  7: ['かえり', 'カエリ', '帰り'], 8: ['かがみ', 'カガミ', '鏡'], 9: ['おうえん', 'オウエン', '応援', 'おう えん'], final: ['あきらめない', 'アキラメナイ', '諦めない', 'あきらめない！'], final2: ['えがお', 'エガオ', '笑顔'] };
 const wrong = { 1: ['ありがと', 'あがとう'], 2: ['ちねぬ', 'きもちい'], 3: ['こうら', 'らっこ'], 4: ['こたえはゆめ', 'ゆ'], 5: ['なかまたち', 'せいかい'], 6: ['かいぎ', '社'],
-  7: ['かえ', 'りかえ', 'かすり'], 8: ['はずれ', 'ぬもう', 'かがみみ'], 9: ['5', 'ご', 'じゅう', 'いつつ'], final: ['あきらめ', 'ありがとう'], final2: ['えが', 'かがみ', 'あきらめない'] };
+  7: ['かえ', 'りかえ', 'かすり'], 8: ['はずれ', 'ぬもう', 'かがみみ'], 9: ['らおうもえしん', 'おうえ', 'えんおう', 'おえん'], final: ['あきらめ', 'ありがとう'], final2: ['えが', 'かがみ', 'あきらめない'] };
 for (const id of Object.keys(variants)) {
   const p = id === 'final' ? E.NZ_FINAL : id === 'final2' ? E.NZ_FINAL2 : P(+id);
   const good = variants[id].map(v => [v, E.nzCheck(p, v)]);
@@ -141,7 +147,7 @@ const R1 = E.RELAY[0].items.join(' '), R2 = E.RELAY[1].items.join(' ');
 const markOf = id => [...T[id].answer][P(id).mark - 1];
 ok('伝令タイム1回目：謎4・謎6の ○ の文字が正しい', R1.includes(`謎4の ○ の文字は「${markOf(4)}」`) && R1.includes(`謎6の ○ の文字は「${markOf(6)}」`), R1);
 ok('伝令タイム1回目：謎2は長いはり', R1.includes('長いはり') && clocks.slice(1).map(c => c.long).join('') === T[2].answer);
-ok('伝令タイム2回目：謎7・謎8・謎9の情報が正しい', R2.includes('「火」の反対は「水」') && slots[0][0] === '水' && R2.includes('うら返して') && R2.includes('🍉1個は 🍎5個分') && w['🍉'] === 5, R2);
+ok('伝令タイム2回目：謎7・謎8・謎9の情報が正しい', R2.includes('「火」の反対は「水」') && slots[0][0] === '水' && R2.includes('うら返して') && R2.includes('1歩目は「ら」') && path9[0] === 'ら', R2);
 ok('伝令タイム：答えそのものは出さない（とびらのあいことばも）', [...E.RELAY].every(r => r.items.every(x => !Object.values(T).some(a => a.answer.length > 1 && x.includes(a.answer)))));
 
 let f = 0;

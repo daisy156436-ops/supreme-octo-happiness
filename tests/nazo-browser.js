@@ -40,7 +40,7 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   // ③ 謎と答え
   await pg.click('button[data-tab=answers]');
   const ans = await pg.textContent('#answerList');
-  ok('先生用に答え・ヒント・解説（裏ミッションも）', ['ありがとう', 'きもち', 'こあら', 'ゆめ', 'なかま', 'かい', 'あきらめない', 'かえり', 'かがみ', 'とお', 'えがお', 'みらいもなかま'].every(a => ans.includes(a)) && ans.includes('ヒント') && (await pg.$$eval('#answerList .card', x => x.length)) === 12);
+  ok('先生用に答え・ヒント・解説（裏ミッションも）', ['ありがとう', 'きもち', 'こあら', 'ゆめ', 'なかま', 'かい', 'あきらめない', 'かえり', 'かがみ', 'おうえん', 'えがお', 'みらいもなかま'].every(a => ans.includes(a)) && ans.includes('ヒント') && (await pg.$$eval('#answerList .card', x => x.length)) === 12);
   ok('映さないように注意', (await pg.textContent('#tab-answers')).includes('映さないで'));
 
   // ⑤ 印刷
@@ -251,7 +251,7 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   await space(); await space(); await space();
   ok('解説：第2のとびら', (await pg.textContent('.explain .answer')).includes('えがお') && (await pg.$$eval('.collected.s2 span.on', x => x.length)) === 3);
   await pg.click('#stBack');
-  ok('もどる', (await pg.textContent('.explain .answer')).includes('とお'));
+  ok('もどる', (await pg.textContent('.explain .answer')).includes('おうえん'));
   await space();
   ok('第2のとびらの次は「真のとびらへ」', (await pg.textContent('#stPrimary')).includes('真のとびら'));
   await space();
@@ -409,7 +409,7 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   ok('カード：第1のとびら突破の画面', await cp.isVisible('#door1') && (await cp.textContent('#dTeam')).includes('7'));
   await cp.click('#toStage2');
   ok('カード：第2ステージが見える', await cp.isVisible('#stage2') && (await cp.$$eval('#pzList2 .pz', x => x.length)) === 3 && (await cp.textContent('#lCount')).includes('6 / 9'));
-  ok('カード：第2ステージの答え', (await solve(8, 'はずれ')).includes('ちがう') && (await solve(8, 'カガミ')).includes('「が」') && (await solve(9, '10')).includes('「お」'));
+  ok('カード：第2ステージの答え', (await solve(8, 'はずれ')).includes('ちがう') && (await solve(8, 'カガミ')).includes('「が」') && (await solve(9, 'らおうもえしん')).includes('ちがう') && (await solve(9, '応援')).includes('「お」'));
   await solve(7, 'かえり');
   ok('カード：青い○の文字がそろう', (await cp.textContent('#doorBoxes2')).replace(/\d/g, '').includes('えがお'), await cp.textContent('#doorBoxes2'));
   await cp.click('#toFinal2');

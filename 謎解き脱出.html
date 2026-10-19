@@ -107,7 +107,20 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .nz-grid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.1em}
 .nz-grid.wcard span{background:#8c95a6;border-color:#6b7385}
 .nz-grid.wcard span.hole{background:#fff}
-.nz-bal{width:12em;height:5.5em}
+.nz-coop{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:.6em;align-items:stretch}
+.nz-coop .kk{border:2px dashed #9aa3b2;border-radius:.5em;padding:.4em .6em;display:flex;flex-direction:column;gap:.35em;align-items:center;text-align:center}
+.nz-coop .kh{font-weight:900;font-size:.9em;align-self:stretch;border-bottom:3px solid;padding-bottom:.15em}
+.nz-coop .kh small{display:block;font-weight:bold;font-size:.85em;color:#5b6475}
+.nz-coop .g1 .kh{border-color:#16803c;color:#16803c}.nz-coop .g2 .kh{border-color:#b97800;color:#9a5b00}.nz-coop .g3 .kh{border-color:#6d3fd6;color:#6d3fd6}
+.nz-coop .kmv{font-weight:bold;line-height:1.9}
+.nz-coop .kmv b{display:inline-block;width:1.45em;height:1.45em;line-height:1.4;margin:.08em;border:1.5px solid #1d2330;border-radius:.25em;font-size:1.1em}
+.nz-coop .kst b{display:inline-block;min-width:1.5em;height:1.5em;line-height:1.5;margin:.1em;border-radius:50%;background:#fff4d6;border:1.5px solid #b97800;font-size:1.2em}
+.nz-coop .kst span{font-weight:bold;margin-left:.2em}
+.nz-coop .ks{font-size:.8em;color:#3d4556}
+.nz-coop .kgrid{display:inline-grid;grid-template-columns:repeat(4,1.8em);grid-template-rows:repeat(4,1.8em);border:2px solid #1d2330}
+.nz-coop .kgrid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.05em}
+.nz-coop .kgrid span.st{color:#c8102e;background:#fff4d6}
+.nz-gr.gall{background:#fdecea;color:#b42318;border:1px solid #f3b2ac}
 .nz-gr{margin-left:auto;font-size:.8em;font-weight:bold;border-radius:1em;padding:.05em .7em;white-space:nowrap;align-self:center}
 .nz-gr.g1{background:#e6f6ec;color:#16803c;border:1px solid #9fd3b0}
 .nz-gr.g2{background:#fff4e0;color:#9a5b00;border:1px solid #f0c889}
@@ -126,7 +139,9 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .page .nz-wd{width:44mm;height:44mm}
 .page .nz-grid{grid-template-columns:repeat(4,11mm);grid-template-rows:repeat(4,11mm)}
 .page .nz-grid span{font-size:6mm}
-.page .nz-bal{width:62mm;height:28mm}
+.page .nz-coop{font-size:5mm;gap:3mm}
+.page .nz-coop .kk{padding:2.5mm 2mm;border-width:0.6mm}
+.page .nz-coop .kgrid{grid-template-columns:repeat(4,10mm);grid-template-rows:repeat(4,10mm)}
 .page .nz-tt table{font-size:4.2mm}
 .ph{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:0.6mm solid #1d2330;padding-bottom:2mm}
 .ph h1{margin:0;font-size:8mm}
@@ -170,14 +185,15 @@ th{background:#f0f2f6;font-weight:bold;white-space:nowrap}
 .doc.big .act{font-size:3.9mm}
 .doc.big .say{padding:1.4mm 3.5mm}
 .doc.big table.tl{font-size:3.9mm}
-.ckn{display:flex;flex-wrap:wrap;gap:1mm 3mm;font-size:3.8mm}
+.ckn{display:flex;flex-wrap:wrap;gap:0.6mm 2.6mm;font-size:3.6mm}
+.ck .ckn{font-size:3.5mm}
 .ckn span{white-space:nowrap}
 .ckn u{text-decoration:none;border-bottom:0.6mm solid #c8102e;font-weight:bold}
 .ckn.big{font-size:3.8mm;background:#f3f5fa;border-radius:1.5mm;padding:1.5mm 3mm}
 /* 答え合わせカード */
 .page.ckp{padding:0}
 .ckgrid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;height:100%}
-.ck{padding:5.5mm 6mm;display:flex;flex-direction:column;gap:2.2mm;border:0.3mm dashed #9aa3b2;overflow:hidden}
+.ck{padding:5mm 6mm;display:flex;flex-direction:column;gap:1.8mm;border:0.3mm dashed #9aa3b2;overflow:hidden}
 .ckh{font-size:5.5mm;font-weight:900;border-bottom:0.6mm solid #1d2330;padding-bottom:1mm}
 .ckh small{font-size:3mm;font-weight:normal;color:#b42318;margin-left:2mm}
 .ckd{font-size:3.6mm}
@@ -538,7 +554,8 @@ table.roles td,table.roles th{font-size:13px}
     <h2>縦割り活動として行うとき</h2>
     <p>②設定の「縦割り活動モード」を入れると（はじめから入っています）、次のしくみが加わります。</p>
     <ul>
-      <li><b>学年ごとの担当</b>：謎に「1年生から」「2年生から」「3年生から」のマークがつきます。まずその学年の人が考え、わからなければみんなで考えます。どの学年も3つずつ（第1ステージに2つ、第2ステージに1つ）担当します。1年生の担当は、とっつきやすい謎（えもじ・しりとり・時間割）です</li>
+      <li><b>学年ごとの担当</b>：謎に「1年生から」「2年生から」「3年生から」のマークがつきます。まずその学年の人が考え、わからなければみんなで考えます。第1ステージはどの学年も2つずつ、第2ステージは1年生が謎7、3年生が謎8を担当。1年生の担当は、とっつきやすい謎（えもじ・しりとり・時間割）です</li>
+      <li><b>全学年の協力の謎（謎9「3つのかけら」）</b>：かけらを切りはなして、1年生（道順）・2年生（読む場所）・3年生（地図）が1枚ずつ持ちます。かけらは見せ合わずに、口で伝え合わないと解けません。学年をこえて話す場面を、しかけとして作っています</li>
       <li><b>役割</b>：3年生＝リーダー（答えは言わずに、ヒントで下級生を導く）、2年生＝記録係、1年生＝伝令（あいことばを先生に伝えに行く）。1年生が先生のところへ来るので、全員に出番があります</li>
       <li><b>チーム結成タイム</b>（5分）：自己紹介・チーム名・役割決め。タイマーつきの画面を映します</li>
       <li><b>ふりかえり</b>：表彰のあとに、MVP・上級生から下級生へ・下級生から上級生への一言。⑤で印刷する「チームシート」に書けます</li>
@@ -618,11 +635,12 @@ table.roles td,table.roles th{font-size:13px}
   <div class="card">
     <h2>縦割り活動</h2>
     <div class="field"><label><input type="checkbox" id="sTate"> 縦割り活動モード</label></div>
-    <p class="hint">入れると、はじめに「チーム結成タイム」（自己紹介・チーム名・役割）、最後に「ふりかえり」の画面が出ます。謎には「1年生から」などのマークがつき、学年ごとに3つずつ担当します。</p>
+    <p class="hint">入れると、はじめに「チーム結成タイム」（自己紹介・チーム名・役割）、最後に「ふりかえり」の画面が出ます。謎には「1年生から」などのマークがつき、学年ごとに担当します。謎9は全学年で解く「協力の謎」です。</p>
     <div class="field"><label>チーム結成タイム <input type="number" id="sForm" min="1" max="15"> 分</label></div>
     <table class="roles"><tr><th>学年</th><th>役割</th><th>最初に考える謎</th></tr>
       <tr><td>3年生</td><td>リーダー：意見をまとめる。答えは言わずに、ヒントで下級生を導く</td><td>謎5・謎6・謎8</td></tr>
-      <tr><td>2年生</td><td>記録係：答えを紙に書く。時間を見る</td><td>謎2・謎4・謎9</td></tr>
+      <tr><td>2年生</td><td>記録係：答えを紙に書く。時間を見る</td><td>謎2・謎4</td></tr>
+      <tr><td>全員</td><td>謎9「3つのかけら」：1年生＝道順、2年生＝読む場所、3年生＝地図のかけらを持ち、口で伝え合う</td><td>謎9</td></tr>
       <tr><td>1年生</td><td>伝令：あいことばを先生に伝えに行く</td><td>謎1・謎3・謎7</td></tr></table>
   </div>
   <div class="card">
@@ -786,9 +804,14 @@ function nzWindow() {
   return `<div class="nz-win"><div><div class="cap">文字の表</div>${grid((r, c) => `<span>${NZ_GRID[r][c]}</span>`, 'letters')}</div>
     <div><div class="cap">まどのカード（うら）</div>${grid((r, c) => `<span class="${hole(r, c) ? 'hole' : ''}"></span>`, 'wcard')}</div></div>`;
 }
-function nzBalance(left, right) {
-  const pan = (x, items) => `<text x="${x}" y="30" text-anchor="middle" font-size="${items.length > 2 ? 17 : 20}">${items.join('')}</text><path d="M${x - 30} 38 L${x + 30} 38 L${x + 22} 48 L${x - 22} 48 Z" fill="#c9d0db"/><line x1="${x}" y1="48" x2="${x}" y2="58" stroke="#5b6475" stroke-width="2"/>`;
-  return `<svg viewBox="0 0 200 92" class="nz-bal" aria-hidden="true">${pan(45, left)}${pan(155, right)}<line x1="30" y1="58" x2="170" y2="58" stroke="#1d2330" stroke-width="4" stroke-linecap="round"/><path d="M100 58 L88 84 L112 84 Z" fill="#1d2330"/><text x="100" y="52" text-anchor="middle" font-size="12" font-weight="bold" fill="#16803c">つりあう</text></svg>`;
+// 協力の謎：3つのかけら（道順・読む場所・地図）を、学年ごとに1枚ずつ持って、口で伝え合う
+const NZ_COOP = { grid: [['★', 'ら', 'さ', 'た'], ['か', 'お', 'う', 'ね'], ['み', 'え', 'も', 'こ'], ['の', 'し', 'ん', 'は']], moves: ['→', '↓', '→', '↓', '←', '↓', '→'], read: [2, 3, 5, 7] };
+function nzCoop(o) {
+  const tate = !o || o.grade !== false, lab = (y, a, w) => `<div class="kh">✂ ${tate ? `${y}年生のかけら` : `かけら${a}`}<small>${w}</small></div>`;
+  return `<div class="nz-coop">
+    <div class="kk g1">${lab(1, 'A', '道順')}<div class="kmv">★から ${NZ_COOP.moves.map(m => `<b>${m}</b>`).join('')}</div><div class="ks">1回で1マス進む</div></div>
+    <div class="kk g2">${lab(2, 'B', '読む場所')}<div class="kst">${NZ_COOP.read.map(n => `<b>${n}</b>`).join('')}<span>歩目</span></div><div class="ks">止まったマスの文字を、この順に読む</div></div>
+    <div class="kk g3">${lab(3, 'C', '地図')}<div class="kgrid">${NZ_COOP.grid.flat().map(c => `<span${c === '★' ? ' class="st"' : ''}>${c}</span>`).join('')}</div></div></div>`;
 }
 
 const NAZO = [
@@ -841,10 +864,10 @@ const NAZO = [
     ok: { '7a4dddf3': [90, 90, 90], '51b3a9f8': [41968, 41975, 41924] },
   },
   {
-    id: 9, grade: 2, stage: 2, title: '天びんの謎', level: 2, boxes: 2, mark: 2,
-    q: '🍉2個は、🍎何個分？ その数を「ひとつ、ふたつ…」の数え方で読むと？（ひらがな2文字）',
-    html: () => `<div class="nz-row">${nzBalance(['🍌'], ['🍎', '🍎'])}${nzBalance(['🍉'], ['🍌', '🍌', '🍎'])}</div><div class="nz-ex nz-center">🍉🍉 ＝ 🍎 × ？</div>`,
-    ok: { '48b068b6': [90, 90], '54b07b9a': [90, 86], '2d7385a9': [12291, 12320], '34b81e13': [25459, 25425] },
+    id: 9, grade: 'all', stage: 2, title: '3つのかけら', level: 2, boxes: 4, mark: 1,
+    q: 'かけらを切りはなして、1人1枚ずつ持とう。<u>かけらは見せ合わずに、口で伝え合って</u>解く！ 道順のとおりに進むと……？（ひらがな4文字）',
+    html: o => nzCoop(o),
+    ok: { '5aae9709': [90, 90, 90, 90], 'faff60a0': [28620, 21480, 28622, 21309] },
   },
 ];
 // 裏ミッション（脱出したチームだけ）：絵は、これまでの謎。数字は、その謎の答えの「何文字目か」
@@ -878,11 +901,11 @@ const NZ_STAGE1 = NAZO.filter(p => !p.stage), NZ_STAGE2 = NAZO.filter(p => p.sta
 function nzDoor(id) { return id === 'final' || id === 'final2'; }
 function nzPuzzle(id) { return id === 'final' ? NZ_FINAL : id === 'final2' ? NZ_FINAL2 : id === 'ex' ? NZ_EX : NAZO.find(p => p.id === id); }
 // 縦割り活動：まずこの学年の人が考える謎
-function nzGrade(p) { return p.grade ? `<span class="nz-gr g${p.grade}">${p.grade}年生から</span>` : ''; }
+function nzGrade(p) { return p.grade === 'all' ? '<span class="nz-gr gall">全学年で協力</span>' : p.grade ? `<span class="nz-gr g${p.grade}">${p.grade}年生から</span>` : ''; }
 function nzCard(p, o) {
   o = o || {};
   const door = nzDoor(p.id);
-  return `<div class="nz${p.stage === 2 ? ' st2' : ''}${p.id === 'ex' ? ' exq' : ''}"><div class="nz-head"><span class="nz-no">${p.icon || (door ? '🚪' : p.id)}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}${o.grade === false ? '' : nzGrade(p)}</div><div class="nz-q">${p.q}</div>${p.html ? p.html() : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
+  return `<div class="nz${p.stage === 2 ? ' st2' : ''}${p.id === 'ex' ? ' exq' : ''}"><div class="nz-head"><span class="nz-no">${p.icon || (door ? '🚪' : p.id)}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}${o.grade === false ? '' : nzGrade(p)}</div><div class="nz-q">${p.q}</div>${p.html ? p.html(o) : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
 }
 // ===NAZO-END===
 
@@ -934,9 +957,9 @@ const NZ_TEACH = {
     explain: 'そのまま重ねると「は・ず・れ」でハズレ！ まどのカードは「うら」なので、左右を反対にして重ねると「か・が・み」。答えは「かがみ」。',
   },
   9: {
-    answer: 'とお',
-    hints: ['🍌1本は🍎2個分。では🍉1個は🍎何個分？', '🍉1個は🍎5個分。10を「ひとつ、ふたつ…ここのつ」の続きで読むと？'],
-    explain: '🍌＝🍎2個、🍉＝🍌2本＋🍎＝🍎5個。だから🍉2個は🍎10個分。10を「ひとつ、ふたつ…ここのつ、とお」と数えると「とお」。',
+    answer: 'おうえん',
+    hints: ['1年生は道順、2年生は読む歩数を、地図を持つ3年生に口で伝えよう。★から1マスずつ進む', '1歩目は★の右の「ら」。2歩目は下の「お」、3歩目は右の「う」'],
+    explain: '★から → ↓ → ↓ ← ↓ → と1マスずつ進むと「ら・お・う・も・え・し・ん」。2・3・5・7歩目を読むと「お・う・え・ん」＝「おうえん」。3つのかけらがそろわないと解けない、全学年の協力の謎でした。',
   },
   final2: {
     answer: 'えがお',
@@ -952,7 +975,7 @@ const NZ_TEACH = {
 // 伝令タイム：各チームの1人（縦割りなら1年生）だけがスクリーンの前に来て、ひみつ情報をおぼえて帰る
 const RELAY = [
   { title: '第1ステージのひみつ情報', items: ['謎2：時計は「長いはり」だけ読む', '謎4の ○ の文字は「め」', '謎6の ○ の文字は「い」'] },
-  { title: '第2ステージのひみつ情報', items: ['謎7：「火」の反対は「水」よう日', '謎8：まどのカードは うら返して重ねる', '謎9：🍉1個は 🍎5個分'] },
+  { title: '第2ステージのひみつ情報', items: ['謎7：「火」の反対は「水」よう日', '謎8：まどのカードは うら返して重ねる', '謎9：★から1マスずつ。1歩目は「ら」'] },
 ];
 const RELAY_GATHER = 20000, RELAY_SHOW = 15000, RELAY_BACK = 4000;
 // ヒントを出す順番（1回に出すヒントのまとまり）
@@ -1499,7 +1522,7 @@ function rulesHtml(g) {
   return `<div class="rules-slide"><h2>ルール</h2><ol>
     <li><b>第1のとびら</b>：謎1〜6の答えの <b>○</b> の文字をならべると、あいことば<span class="s">${g.tate ? '謎の「◯年生から」マーク：まずその学年の人が考える。わからなければ、みんなで！' : '手分けしてもOK。むずかしい謎は、みんなで考えよう'}</span></li>
     <li>${g.tate ? '<b>1年生（伝令）</b>が' : ''}あいことばを先生に見せると、<b>第2ステージの紙</b>がもらえる<span class="s">タブレットのチームは画面を見せる</span></li>
-    <li><b>第2のとびら</b>：謎7〜9の答えの <b style="color:#7fb0ff">青い○</b> の文字で、最後のあいことば。先生に見せたら脱出成功！</li>
+    <li><b>第2のとびら</b>：謎7〜9の答えの <b style="color:#7fb0ff">青い○</b> の文字で、最後のあいことば。先生に見せたら脱出成功！<span class="s">謎9は${g.tate ? '全学年' : 'みんな'}の協力の謎：かけらは見せずに、口で伝え合う</span></li>
     <li>${g.hint0}分たつと、${g.hintGap}分ごとにヒントがスクリーンに出る</li>
     <li>制限時間は <b>${g.minutes}分</b>。早く脱出したチームが上位！<span class="s">脱出できなくても、第1のとびらまでの早さで順位がつく</span></li>
   </ol>${g.relay || g.ex ? `<div class="fun">${g.relay ? `⚡ とちゅうで「伝令タイム」があるぞ！ ${g.tate ? '1年生' : '伝令'}はスクリーンに注目！` : ''}${g.relay && g.ex ? '<br>' : ''}${g.ex ? '🗝️ 脱出したチームには、ひみつの「裏ミッション」が……！' : ''}</div>` : ''}<div class="ng">🤫 ほかのチームに答えを教えない。答えは小さな声で！</div></div>`;
@@ -1813,7 +1836,7 @@ PR.script = () => {
     ${say('（のこり1分）あと1分です。チーム名と役割は決まりましたか？')}${act('タイマーが0になったらスペース')}` : ''}
     </div><div class="page doc big">${head('台本（2）ルール説明・スタート')}
     <h2>${no(3)} ルール説明（${c.rules}〜${c.start}分）</h2>${scr('ルール')}
-    ${say(`ルールを説明します。<br>1つ目。謎1から6を解くと、答えの中に ○ のついた文字があります。○ の文字を、謎の番号の順にならべると、第1のとびらのあいことばです。${tate ? '謎には「1年生から」などのマークがあります。まずはその学年の人が考えて、わからなかったら、みんなで考えましょう。' : ''}<br>2つ目。あいことばがわかったら、${tate ? '1年生の伝令が' : ''}3枚目の紙を持って、先生のところに来てください。正しければ、第2ステージの紙をわたします。<br>3つ目。第2ステージの謎7から9を解いて、青い ○ の文字をならべると、最後のあいことば。正しければ脱出成功です。<br>4つ目。${o.hint0}分たつと、スクリーンにヒントが出ます。困ったら前を見てください。<br>5つ目。制限時間は${m}分。早く脱出したチームが上位です。`)}
+    ${say(`ルールを説明します。<br>1つ目。謎1から6を解くと、答えの中に ○ のついた文字があります。○ の文字を、謎の番号の順にならべると、第1のとびらのあいことばです。${tate ? '謎には「1年生から」などのマークがあります。まずはその学年の人が考えて、わからなかったら、みんなで考えましょう。' : ''}<br>2つ目。あいことばがわかったら、${tate ? '1年生の伝令が' : ''}3枚目の紙を持って、先生のところに来てください。正しければ、第2ステージの紙をわたします。<br>3つ目。第2ステージの謎7から9を解いて、青い ○ の文字をならべると、最後のあいことば。正しければ脱出成功です。謎9は${tate ? '、3つのかけらを1年生・2年生・3年生が1枚ずつ持つ「協力の謎」' : '、3つのかけらを3人で1枚ずつ持つ「協力の謎」'}。かけらは見せずに、口で伝え合ってください。<br>4つ目。${o.hint0}分たつと、スクリーンにヒントが出ます。困ったら前を見てください。<br>5つ目。制限時間は${m}分。早く脱出したチームが上位です。`)}
     ${relay ? say(`それから……とちゅうで「伝令タイム」があります。そのときは${tate ? '1年生' : '伝令の人'}、スクリーンに注目！`) : ''}
     ${ex ? say('そして、脱出したチームには……ひみつの「裏ミッション」が、あるかもしれません。') : ''}
     ${say('最後に大事なこと。答えは、ほかのチームに聞こえないように、小さな声で話しましょう。')}
