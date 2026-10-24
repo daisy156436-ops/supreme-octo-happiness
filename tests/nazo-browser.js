@@ -19,6 +19,13 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   const ago = min => pg.evaluate(m => { S.game.startAt -= m * 60000; }, min);
 
   ok('はじめは①遊び方', await pg.isVisible('#tab-guide'));
+  ok('①遊び方の上に3ステップと準備チェックリスト（9つ・はじめは0）', (await pg.$$eval('.steps3 .step', x => x.length)) === 3 && (await pg.$$eval('#prepList input', x => x.length)) === 9 && (await pg.textContent('#prepCount')).includes('0 / 9'));
+  ok('長い説明は折りたたんである', (await pg.$$eval('details.card', x => x.length)) === 5 && (await pg.$$eval('details.card[open]', x => x.length)) === 0);
+  await pg.click('#prepList input[data-i="0"]'); await pg.click('#prepList input[data-i="3"]');
+  ok('チェックすると数が増える', (await pg.textContent('#prepCount')).includes('2 / 9') && (await S()).opts.prep[3] === true);
+  await pg.click('.steps3 .step[data-go="play"]');
+  ok('3ステップのボタンでそのタブへ', await pg.isVisible('#tab-play') && (await pg.textContent('#playSummary')).includes('17チーム') && (await pg.textContent('#playSummary')).includes('伝令タイム 14分・25分') && (await pg.textContent('#playSummary')).includes('2 / 9') && await pg.isVisible('#playFull'));
+  await pg.click('button[data-tab=guide]');
 
   // ② 設定
   await pg.click('button[data-tab=setup]');
@@ -51,6 +58,9 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   // ⑤ 印刷
   await pg.click('button[data-tab=print]');
   ok('印刷は「生徒にわたすもの」「先生用」「掲示・演出」に分かれる', (await pg.$$eval('.pgroups h3', x => x.map(e => e.textContent).join())) === '生徒にわたすもの,先生用,掲示・演出' && (await pg.$$eval('input[name=pKind]', x => x.length)) === 11);
+  ok('印刷物ごとにページ数が出る', (await pg.textContent('.pitem .pc[data-k="sheets"]')) === '36ページ' && (await pg.textContent('.pitem .pc[data-k="script"]')) === '8ページ' && (await pg.textContent('.pitem .pc[data-k="check"]')) === '1ページ');
+  await pg.click('.pitem .pdone[data-k="sheets"]');
+  ok('「印刷した」が保存される', (await S()).opts.printed.sheets === true && await pg.$eval('.pitem .pdone[data-k="sheets"]', c => c.closest('label').classList.contains('on')));
   ok('謎の紙：はじめはチームの番号入りで12チーム×3ページ', await pg.isChecked('#pPerTeam') && (await pg.$$eval('#printPreview .page', x => x.length)) === 36 && (await pg.textContent('#pHint')).includes('36ページ') && (await pg.$$eval('#printPreview .page:nth-child(4) .tno', x => x.map(e => e.textContent).join())) === '21組2班');
   ok('謎の紙：どのページにもチームの番号', (await pg.$$eval('#printPreview .page', ps => ps.every(p => p.querySelector('.tno')))));
   ok('謎の紙：3枚目の下にSOSカード（チームごと）', (await pg.$$eval('#printPreview .sos', x => x.length)) === 12 && (await pg.$$eval('#printPreview .page:nth-child(3) .sos .tno', x => x[0].textContent)) === '11組1班');
@@ -231,9 +241,23 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   ok('真・脱出を取り消すと、脱出にもどる', (await S()).game.rec[4].d3 == null && (await S()).game.rec[4].d2 != null);
   await pg.click('.tb[data-t="4"]');
   ok('もう一度押すと真・脱出', (await S()).game.rec[4].d3 != null);
-  // 途中でページを閉じても続きから
+  // 操作のメモ
+  await pg.click('#stHelp');
+  ok('「？ 操作」で操作のメモが出る', await pg.isVisible('#helpBox') && (await pg.textContent('#helpBox')).includes('1回目＝第1のとびら'));
+  await pg.keyboard.press('Escape');
+  ok('Escで閉じる', !(await pg.isVisible('#helpBox')));
+  await pg.keyboard.press('?');
+  ok('キーボードの ? でも出る', await pg.isVisible('#helpBox'));
+  await pg.click('#helpBox .x');
+  ok('✕で閉じる', !(await pg.isVisible('#helpBox')));
+  // 途中でページを閉じても、開き直すと本番の画面がそのまま戻る
   await pg.reload();
-  ok('再読み込み後に「続きから」', await pg.isVisible('#playResume') && (await pg.textContent('#playStatus')).includes('謎解きの途中'));
+  await pg.waitForTimeout(400);
+  ok('再読み込みすると、本番の画面がそのまま戻る（タイマーも）', await pg.isVisible('#stage') && await pg.isVisible('#bigTime') && (await S()).game.phase === 'play');
+  await pg.click('#stClose');
+  ok('閉じると「続きから」', await pg.isVisible('#playResume') && (await pg.textContent('#playStatus')).includes('謎解きの途中'));
+  await pg.reload();
+  ok('閉じてから開き直すと、本番の画面は出ず④本番が開く', !(await pg.isVisible('#stage')) && await pg.isVisible('#tab-play') && await pg.isVisible('#playResume'));
   await pg.click('#playResume');
   ok('続きから同じ記録', (await pg.evaluate(() => standing(S.game).length)) === 3 && await pg.isVisible('#bigTime'));
   // のこり5分・最後の10秒
