@@ -69,6 +69,38 @@ function indexHtml(list) {
   </body></html>`;
 }
 
+// README.md（使い方）を、印刷用のPDFにする（見出し・箇条書き・表・太字・リンクだけの簡単な変換）
+function mdToHtml(md) {
+  const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/`(.+?)`/g, '<code>$1</code>').replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+  const out = [];
+  let list = null, table = null;
+  const close = () => { if (list) { out.push(`</${list}>`); list = null; } if (table) { out.push('</tbody></table>'); table = null; } };
+  for (const line of md.split('\n')) {
+    const h = line.match(/^(#{1,3}) (.*)/), li = line.match(/^- (.*)/), ol = line.match(/^\d+\. (.*)/);
+    if (h) { close(); out.push(`<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`); }
+    else if (line.startsWith('|')) {
+      const cells = line.slice(1, -1).split('|').map(c => c.trim());
+      if (cells.every(c => /^-+$/.test(c))) continue;
+      if (!table) { if (list) close(); table = true; out.push(`<table><thead><tr>${cells.map(c => `<th>${inline(c)}</th>`).join('')}</tr></thead><tbody>`); }
+      else out.push(`<tr>${cells.map(c => `<td>${inline(c)}</td>`).join('')}</tr>`);
+    }
+    else if (li || ol) { const k = li ? 'ul' : 'ol'; if (list !== k) { close(); list = k; out.push(`<${k}>`); } out.push(`<li>${inline((li || ol)[1])}</li>`); }
+    else if (line.trim() === '') close();
+    else { close(); out.push(`<p>${inline(line)}</p>`); }
+  }
+  close();
+  return out.join('\n');
+}
+const GUIDE_CSS = `body{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;color:#1d2330;font-size:3.6mm;line-height:1.55;margin:0}
+  h1{font-size:6.5mm;margin:0 0 2mm;border-bottom:0.6mm solid #1d2330;padding-bottom:1.5mm}
+  h2{font-size:4.6mm;margin:4mm 0 1.5mm;padding:0.8mm 2.5mm;background:#1d2330;color:#fff;border-radius:1.2mm}
+  h3{font-size:4mm;margin:2.5mm 0 1mm}
+  p{margin:1mm 0}ul,ol{margin:1mm 0;padding-left:5.5mm}li{margin:0.4mm 0}
+  table{border-collapse:collapse;width:100%;font-size:3.3mm;line-height:1.4;margin:1mm 0}
+  th,td{border:0.3mm solid #9aa3b2;padding:0.9mm 1.6mm;vertical-align:top;text-align:left}th{background:#f0f2f6}
+  td:first-child{white-space:nowrap}code{background:#eef1f6;border-radius:0.8mm;padding:0 1mm}a{color:#174ea6}`;
+
 (async () => {
   const b = await chromium.launch();
   const list = [];
@@ -107,9 +139,14 @@ function indexHtml(list) {
   await ip.setContent(indexHtml(list), { waitUntil: 'load' });
   await ip.pdf({ path: path.join(OUT, 'はじめに読む（印刷のしかた）.pdf'), format: 'A4', printBackground: true, margin: { top: '12mm', bottom: '12mm', left: '13mm', right: '13mm' } });
   await ip.close();
+  // 使い方（README.md）
+  const gp = await b.newPage();
+  await gp.setContent(`<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><style>${GUIDE_CSS}</style></head><body>${mdToHtml(fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8'))}</body></html>`, { waitUntil: 'load' });
+  await gp.pdf({ path: path.join(OUT, '使い方.pdf'), format: 'A4', printBackground: true, margin: { top: '12mm', bottom: '12mm', left: '13mm', right: '13mm' } });
+  await gp.close();
   await b.close();
   // README.md（GitHub で見る用）
-  const md = ['# 印刷用PDF', '', 'アプリの「⑤印刷」と同じものを、アプリを開けないパソコンでも印刷できるようにPDFにしたものです。くわしくは `はじめに読む（印刷のしかた）.pdf` を見てください。', '',
+  const md = ['# 印刷用PDF', '', 'アプリの「⑤印刷」と同じものを、アプリを開けないパソコンでも印刷できるようにPDFにしたものです。くわしくは `はじめに読む（印刷のしかた）.pdf` を見てください。ゲーム全体の使い方は `使い方.pdf`（表紙の README.md と同じ内容）にあります。', '',
     '先生用の紙は最初の設定（謎解き脱出は17チーム・32分・縦割り活動モード、陣取りクイズは16チーム・サンプル問題）、チームの番号入りの紙は20チーム分です（チームの数だけ、はじめのページを印刷）。A4たて・ふちなし。', '',
     'チームの数や名前、時間などを変えたときは、アプリの「⑤印刷」から「PDFとして保存」で作ってください（このフォルダは `node tests/export-pdf.js` で作り直せます）。', ''];
   for (const [, dir] of JOBS) {
