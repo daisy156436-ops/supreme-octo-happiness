@@ -12,6 +12,7 @@
   --stage:#101828; --stage2:#1b2538; --gold:#f5c542;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:15px;line-height:1.6}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line)}
 header h1{margin:0;font-size:20px}
@@ -1833,10 +1834,10 @@ function roleCard(y, t) {
     <ul class="ql"><li>「いま、どこまでわかった？」</li><li>「声に出して読んでみよう」</li><li>「見本と同じところはどこ？」</li><li>「○ の文字だけでもわかる？」</li><li>「1年生はどう思う？」</li><li>「いいね！ ためしてみよう」</li></ul>
     <div class="rcf">ほめことば：「ナイス！」「さすが！」「ありがとう、助かった！」</div></div>`;
   if (y === 2) return `<div class="rc">${head('g2', '記録係')}<div class="rct">答えを集めて、ここに書こう（○ の文字は右の○に）</div>
-    <div class="rgrid9">${NAZO.map(p => `<div><b class="${p.stage === 2 ? 's2' : ''}">${p.id}</b><span class="ln"></span><i class="${p.stage === 2 ? 's2' : ''}"></i></div>`).join('')}<div><b>🚪</b><span class="ln"></span></div></div>
+    <div class="rgrid9">${NAZO.map(p => `<div><b class="${p.stage === 2 ? 's2' : ''}">${p.id}</b><span class="ln"></span><i class="${p.stage === 2 ? 's2' : ''}"></i></div>`).join('')}<div><b>🚪1</b><span class="ln"></span></div><div><b class="s2">🚪2</b><span class="ln"></span></div></div>
     <div class="rcf">時間を見る係も！ のこり10分・5分になったら、みんなに知らせよう</div></div>`;
   return `<div class="rc">${head('g1', '伝令')}<div class="rct">伝令のやくそく</div>
-    <ol><li>あいことばがわかったら、紙を持って先生のところへ（体育館は走らない）</li><li><b>伝令タイム</b>はスクリーンの前へ。見たことをおぼえて、チームに伝える</li><li>伝えるときは「◯◯だって！」と大きな声で</li></ol>
+    <ol><li>あいことばがわかったら、紙を持って先生のところへ（体育館は走らない）</li><li><b>伝令タイム</b>はスクリーンの前へ。見たことをおぼえて、チームに伝える</li><li>伝えるときは、チームに聞こえる声で、はっきりと（ほかのチームには聞こえないように）</li></ol>
     <div class="rct">とびら突破スタンプ（先生がおす）</div>
     <div class="stp"><span>🚪1</span><span>🚪2</span>${S.opts.ex !== false ? '<span>🗝️</span>' : ''}</div>
     <div class="rcf">伝令タイムで見たことは、チームにもどってから書こう：<span class="ln"></span></div></div>`;

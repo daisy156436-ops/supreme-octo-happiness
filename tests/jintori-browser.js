@@ -79,6 +79,7 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   ok('削除', (await S()).questions.length === 27);
   await pg.click('#qSample');
   ok('サンプル問題にもどす', (await S()).questions.length === 21);
+  ok('選択肢のある問題では「正解（選択肢なし）」の欄が出ない', !(await pg.isVisible('.qcard[data-i="1"] .qfree')) && await pg.isVisible('.qcard[data-i="4"] .qfree'));
   // 練習問題の時間を5秒にして、時間切れを確かめる
   await pg.fill('.qcard[data-i="0"] input[data-f=sec]', '5');
   await pg.waitForTimeout(400);
