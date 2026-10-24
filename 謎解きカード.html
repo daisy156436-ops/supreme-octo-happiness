@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>謎解きカード</title>
+<style>
+:root{--bg:#101828;--card:#ffffff;--ink:#1d2330;--sub:#5b6475;--line:#d9dde5;--gold:#f5c542;--team:#888;--teamInk:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(ellipse at top,#23304a,var(--bg) 70%);color:#f2f4f8;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;font-size:clamp(15px,2.4vmin,22px)}
+.screen{display:none;min-height:100%;padding:max(3vmin,env(safe-area-inset-top)) 3.5vmin 4vmin;flex-direction:column;gap:2.4vmin}
+.screen.on{display:flex}
+button{font:inherit;cursor:pointer;color:inherit}
+h1{margin:0;font-size:1.8em;color:var(--gold)}
+p{margin:0}
+.sub{color:#b9c3d6}
+.teams{display:grid;grid-template-columns:repeat(5,1fr);gap:2vmin}
+.teams button{aspect-ratio:1/1;border:none;border-radius:2.4vmin;font-size:2.2em;font-weight:900;font-family:Arial,sans-serif}
+.big{font-size:1.2em;font-weight:900;padding:.8em 1.6em;border:none;border-radius:.6em;background:var(--gold);color:#1d2330}
+.ghost{font-size:.85em;padding:.5em 1em;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06);border-radius:.5em}
+.bar{display:flex;align-items:center;gap:2vmin;flex-wrap:wrap}
+.bar .sp{flex:1}
+.tbadge{display:inline-flex;align-items:center;justify-content:center;min-width:2.2em;height:2.2em;padding:0 .3em;border-radius:.4em;background:var(--team);color:var(--teamInk);font-weight:900;font-size:1.2em;font-family:Arial,sans-serif}
+.time{font-size:1.4em;font-weight:900;font-variant-numeric:tabular-nums}
+.wait{margin:auto;text-align:center;display:flex;flex-direction:column;gap:3vmin;align-items:center}
+.wait .icon{font-size:5em}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14em,1fr));gap:2vmin}
+.pz{display:flex;align-items:center;gap:.8em;background:var(--card);color:var(--ink);border:none;border-radius:.8em;padding:.8em 1em;text-align:left;min-height:4.4em}
+.pz .no{display:inline-flex;align-items:center;justify-content:center;min-width:1.9em;height:1.9em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.pz .tt{flex:1;font-weight:bold}
+.pz .tt small{display:block;color:#e0a800;font-weight:normal}
+.pz .st{font-size:1.4em;font-weight:900;color:#c3c9d4}
+.pz.done{background:#e6f6ec}
+.pz.done .st{color:#16803c}
+.door{background:rgba(255,255,255,.08);border:2px solid var(--gold);border-radius:1em;padding:1em;display:flex;flex-direction:column;align-items:center;gap:.8em}
+.door .nz-boxes span{background:transparent;color:#fff;border-color:var(--gold)}
+.door .nz-boxes span.mk{background:rgba(245,197,66,.15)}
+.sheet{background:var(--card);color:var(--ink);border-radius:1em;padding:1em 1.1em}
+.sheet .nz{font-size:clamp(15px,2.9vmin,26px)}
+.answer{display:flex;gap:.6em;flex-wrap:wrap}
+.answer input{flex:1;min-width:8em;font:inherit;font-size:1.3em;padding:.5em .7em;border:2px solid var(--line);border-radius:.5em;color:var(--ink)}
+.answer button{font-size:1.2em;font-weight:900;padding:.5em 1.2em;border:none;border-radius:.5em;background:var(--gold);color:#1d2330}
+.res{font-size:1.2em;font-weight:900;min-height:1.5em;text-align:center}
+.res.ng{color:#ff8a8a;animation:shake .35s}
+.res.ok{color:#7ee2a0;animation:okpop .5s ease-out}
+@keyframes okpop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.door.ex{border-color:#b8860b;background:rgba(245,197,66,.12)}
+#truex{align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,#fff3b0,#f5c542 60%,#b8860b);color:#1d2330}
+#truex .icon{font-size:5em;line-height:1}
+#truex h2{font-size:3em;margin:.1em 0}
+#truex .msg{font-size:2.2em;font-weight:900;background:#fff;border-radius:.5em;padding:.2em .8em;box-shadow:0 .2em .6em rgba(0,0,0,.2)}
+#truex .tn{font-size:2em;font-weight:900}
+#truex .tm{font-size:1.7em;font-weight:900;font-variant-numeric:tabular-nums}
+#truex .note{font-size:1.1em}
+#truex .ghost{border-color:#1d2330;color:#1d2330}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:30}
+#ver{position:fixed;right:8px;bottom:6px;font-size:11px;color:#f2f4f8;opacity:.55;pointer-events:none;z-index:5}
+#escaped .big{box-shadow:0 .2em .6em rgba(0,0,0,.3)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#escaped,#door1{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
+#door1{background:#2f5fb0;color:#fff}
+#escaped .icon,#door1 .icon{font-size:5em;line-height:1}
+#escaped h2,#door1 h2{font-size:3em;margin:.1em 0}
+#escaped .tn,#door1 .tn{font-size:2.4em;font-weight:900}
+#escaped .tm,#door1 .tm{font-size:2em;font-weight:900;font-variant-numeric:tabular-nums}
+#escaped .note,#door1 .note{font-size:1.1em;opacity:.85}
+.stage-h{font-weight:900;color:var(--gold);font-size:1.1em;margin-top:.4em}
+.stage-h.s2{color:#7fb0ff}
+.door.s2{border-color:#7fb0ff}
+.door.s2 .nz-boxes span{border-color:#7fb0ff}
+.door.s2 .nz-boxes span.mk{background:rgba(127,176,255,.15)}
+.pz.s2 .no{background:#1f6feb}
+@media (orientation:landscape){.teams{grid-template-columns:repeat(10,1fr)}}
+
+/* ===NAZO-CSS-START=== */
+.nz{color:#1d2330;line-height:1.5}
+.nz-head{display:flex;align-items:baseline;gap:.5em;margin:0 0 .3em}
+.nz-no{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.nz-title{font-weight:900;font-size:1.15em}
+.nz-lv{color:#e0a800;letter-spacing:.05em}
+.nz-q{font-weight:bold;margin:.2em 0 .5em}
+.nz-ex{display:inline-block;font-size:.9em;color:#3d4556;background:#eef1f6;border-radius:.5em;padding:.25em .7em;margin:0 0 .5em}
+.nz-ex .nz-emo{flex-direction:row;vertical-align:middle}
+.nz-ex .nz-emo .e{font-size:1.5em}
+.nz-row{display:flex;flex-wrap:wrap;gap:.5em .7em;align-items:center;justify-content:center}
+.nz-emo{display:inline-flex;flex-direction:column;align-items:center;gap:.1em}
+.nz-emo .e{font-size:2.6em;line-height:1.15;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.nz-emo .n{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;background:#1d2330;color:#fff;font-weight:bold;font-size:.9em}
+.nz-arrow{font-size:1.2em;color:#9aa3b2;font-weight:bold}
+.nz-qbox{display:inline-flex;gap:.15em}
+.nz-qbox span{width:1.5em;height:1.5em;border:2px dashed #c8102e;border-radius:.3em;display:inline-flex;align-items:center;justify-content:center;color:#c8102e;font-weight:bold}
+.nz-clocks{display:flex;flex-wrap:wrap;gap:.6em 1em;justify-content:center}
+.nz-clock{display:flex;flex-direction:column;align-items:center;font-weight:bold;gap:.1em}
+.nz-clock svg{width:7em;height:7em}
+.nz-clock.ex span{color:#3d4556;font-size:.9em}
+.nz-flick{display:flex;flex-wrap:wrap;gap:1em;align-items:center;justify-content:center}
+.nz-keys{display:grid;grid-template-columns:repeat(3,2.8em);gap:.3em;padding:.4em;background:#d7dbe3;border-radius:.6em}
+.nz-keys span{height:2.2em;border-radius:.4em;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.05em;box-shadow:0 1px 0 #9aa3b2}
+.nz-flickr{display:flex;flex-direction:column;align-items:center}
+.nz-code{display:flex;flex-wrap:wrap;gap:.4em;justify-content:center}
+.nz-code span{border:2px solid #1d2330;border-radius:.4em;padding:.1em .45em;font-weight:900;font-size:1.3em;background:#fff}
+.nz-letter{background:#fffaf0;border:1px solid #e8d7b0;border-radius:.4em;padding:.6em 1em;font-size:1.3em;line-height:1.8;letter-spacing:.06em;word-break:break-all}
+.nz-sign{text-align:right;font-size:1em;margin-top:.2em}
+.nz-wd{width:11em;height:11em}
+.nz-boxes{display:flex;gap:.3em;justify-content:center;margin:.6em 0 0}
+.nz-boxes span{position:relative;width:2em;height:2em;border:2px solid #1d2330;border-radius:.3em;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:900;background:#fff}
+.nz-boxes span.mk{border-radius:50%;border-color:#c8102e;background:#fff4d6}
+.nz-boxes span i{position:absolute;top:-.55em;right:-.55em;font-style:normal;font-size:.55em;background:#c8102e;color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}
+.nz-boxes span.mk2{border-color:#1f6feb;background:#e7f0ff}
+.nz-boxes span.mk2 i{background:#1f6feb}
+.nz.st2 .nz-no{background:#1f6feb}
+.nz-center{display:block;text-align:center;width:max-content;margin:.5em auto 0;font-size:1.2em;font-weight:bold}
+.nz-tt{display:flex;flex-wrap:wrap;gap:.6em 1.2em;align-items:center;justify-content:center}
+.nz-tt table{border-collapse:collapse;font-size:.92em;width:auto}
+.nz-tt th,.nz-tt td{border:1px solid #9aa3b2;padding:.15em .45em;text-align:center;white-space:nowrap}
+.nz-tt th{background:#eef1f6}
+.nz-clue{margin:0;padding-left:1.6em;font-weight:bold;list-style:none;counter-reset:c}
+.nz-clue li{counter-increment:c;margin:.25em 0;position:relative}
+.nz-clue li::before{content:counter(c);position:absolute;left:-1.6em;top:.1em;width:1.3em;height:1.3em;border-radius:50%;background:#1d2330;color:#fff;font-size:.85em;display:flex;align-items:center;justify-content:center}
+.nz-win{display:flex;flex-wrap:wrap;gap:1.4em;justify-content:center;align-items:flex-start}
+.nz-win .cap{text-align:center;font-size:.85em;font-weight:bold;margin-bottom:.2em}
+.nz-grid{display:inline-grid;grid-template-columns:repeat(4,2em);grid-template-rows:repeat(4,2em);gap:0;border:2px solid #1d2330}
+.nz-grid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.1em}
+.nz-grid.wcard span{background:#8c95a6;border-color:#6b7385}
+.nz-grid.wcard span.hole{background:#fff}
+.nz-coop{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:.6em;align-items:stretch}
+.nz-coop .kk{border:2px dashed #9aa3b2;border-radius:.5em;padding:.4em .6em;display:flex;flex-direction:column;gap:.35em;align-items:center;text-align:center}
+.nz-coop .kh{display:block;font-weight:900;font-size:.9em;align-self:stretch;border-bottom:3px solid;padding-bottom:.15em}
+.nz-coop details.kk>summary{list-style:none;cursor:pointer;align-self:stretch}
+.nz-coop details.kk>summary::-webkit-details-marker{display:none}
+.nz-coop details.kk:not([open])>summary .kh small::after{content:"（タップで見る）"}
+.nz-coop details.kk[open]>summary .kh small::after{content:"（タップでとじる）"}
+.nz-coop .kh small{display:block;font-weight:bold;font-size:.85em;color:#5b6475}
+.nz-coop .g1 .kh{border-color:#16803c;color:#16803c}.nz-coop .g2 .kh{border-color:#b97800;color:#9a5b00}.nz-coop .g3 .kh{border-color:#6d3fd6;color:#6d3fd6}
+.nz-coop .kmv{font-weight:bold;line-height:1.9}
+.nz-coop .kmv b{display:inline-block;width:1.45em;height:1.45em;line-height:1.4;margin:.08em;border:1.5px solid #1d2330;border-radius:.25em;font-size:1.1em}
+.nz-coop .kst b{display:inline-block;min-width:1.5em;height:1.5em;line-height:1.5;margin:.1em;border-radius:50%;background:#fff4d6;border:1.5px solid #b97800;font-size:1.2em}
+.nz-coop .kst{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+.nz-coop .kst span{font-weight:bold;margin-left:.2em;white-space:nowrap}
+.nz-coop .ks{font-size:.8em;color:#3d4556}
+.nz-coop .kgrid{display:inline-grid;grid-template-columns:repeat(4,1.8em);grid-template-rows:repeat(4,1.8em);border:2px solid #1d2330}
+.nz-coop .kgrid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.05em}
+.nz-coop .kgrid span.st{color:#c8102e;background:#fff4d6}
+.nz-gr.gall{background:#fdecea;color:#b42318;border:1px solid #f3b2ac}
+.nz-gr{margin-left:auto;font-size:.8em;font-weight:bold;border-radius:1em;padding:.05em .7em;white-space:nowrap;align-self:center}
+.nz-gr.g1{background:#e6f6ec;color:#16803c;border:1px solid #9fd3b0}
+.nz-gr.g2{background:#fff4e0;color:#9a5b00;border:1px solid #f0c889}
+.nz-gr.g3{background:#f3eeff;color:#6d3fd6;border:1px solid #cdbdf5}
+.nz-emo .e svg.nz-mi{width:1.1em;height:1.1em;display:block}
+.nz.exq .nz-no{background:#b8860b}
+.nz.exq .nz-boxes span{border-color:#b8860b}
+/* ===NAZO-CSS-END=== */
+</style>
+</head>
+<body>
+<canvas id="cf" hidden></canvas>
+<div id="ver"></div>
+
+<div class="screen" id="pick">
+  <h1>🔒 謎解きカード</h1>
+  <p class="sub">自分のチームの番号をタップしてください。</p>
+  <div class="teams" id="teams"></div>
+  <div class="bar"><span class="sp"></span><button class="ghost" id="reset">記録を消して最初から</button></div>
+</div>
+
+<div class="screen" id="wait">
+  <div class="bar"><span class="tbadge" id="wTeam"></span><span class="sp"></span><button class="ghost" id="wChange">チームを変える</button></div>
+  <div class="wait"><div class="icon">🚪🔒</div><h1>体育館からの脱出</h1><p>先生の「スタート！」の合図で、ボタンを押そう</p><button class="big" id="start">▶ スタート</button></div>
+</div>
+
+<div class="screen" id="list">
+  <div class="bar"><span class="tbadge" id="lTeam"></span><span class="time" id="lTime"></span><span class="sp"></span><span class="sub" id="lCount"></span></div>
+  <div class="stage-h">第1ステージ</div>
+  <div class="grid" id="pzList"></div>
+  <div class="door" id="door1Box"><div style="font-weight:900;color:var(--gold)">🚪 第1のとびら</div><div id="doorBoxes"></div><button class="big" id="toFinal">第1のとびらへ</button></div>
+  <div id="stage2" hidden>
+    <div class="stage-h s2">第2ステージ</div>
+    <div class="grid" id="pzList2"></div>
+    <div class="door s2"><div style="font-weight:900;color:#7fb0ff">🚪 第2のとびら</div><div id="doorBoxes2"></div><button class="big" id="toFinal2">第2のとびらへ</button></div>
+  </div>
+  <div class="door ex" id="exBox" hidden><div style="font-weight:900;color:var(--gold)">🗝️ 真のとびら（裏ミッション）</div><button class="big" id="toEx2">裏ミッションへ</button></div>
+</div>
+
+<div class="screen" id="door1">
+  <div class="icon">🚪✨</div>
+  <h2>第1のとびら 突破！</h2>
+  <div class="tn" id="dTeam"></div>
+  <div class="tm" id="dTime"></div>
+  <div class="note">この画面を先生に見せて、第2ステージへ進もう</div>
+  <button class="big" id="toStage2">第2ステージへ ▶</button>
+</div>
+
+<div class="screen" id="puzzle">
+  <div class="bar"><button class="ghost" id="pBack">← 謎の一覧</button><span class="sp"></span><span class="time" id="pTime"></span></div>
+  <div class="sheet" id="pSheet"></div>
+  <form class="answer" id="pForm"><input id="pIn" placeholder="答えを入れよう（ひらがな）" autocomplete="off" enterkeyhint="done"><button type="submit">こたえる</button></form>
+  <div class="res" id="pRes"></div>
+</div>
+
+<div class="screen" id="escaped">
+  <div class="icon">🎉🚪</div>
+  <h2>脱出成功！</h2>
+  <div class="note">第2のとびらが開いた！</div>
+  <div class="tn" id="eTeam"></div>
+  <div class="tm" id="eTime"></div>
+  <div class="note">この画面を先生に見せよう</div>
+  <button class="big" id="toEx">🗝️ 裏ミッションに挑戦</button>
+  <button class="ghost" id="eBack" style="color:inherit;border-color:currentColor">謎の一覧にもどる</button>
+</div>
+
+<div class="screen" id="truex">
+  <div class="icon">👑🗝️</div>
+  <h2>真・脱出！</h2>
+  <div class="note">とびらを作った人からのメッセージ</div>
+  <div class="msg" id="xWord"></div>
+  <div class="tn" id="xTeam"></div>
+  <div class="tm" id="xTime"></div>
+  <div class="note">チーム全員で、先生に伝えよう！</div>
+  <button class="ghost" id="xBack">謎の一覧にもどる</button>
+</div>
+
+<script>
+// ===NAZO-START===
+// 謎の中身（先生用・生徒用の両方で同じもの）。答えそのものは入れず、確かめ用の値だけを持つ。
+const NZ_VERSION = '2026-10-24';   // 版。先生用・生徒用の画面に出す（変えるのはここだけ）
+function nzNorm(s) {
+  return (s || '').normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s、。，．,.・!！?？「」『』（）()ー－\-]/g, '').toLowerCase();
+}
+function nzHash(id, s) {
+  let h = 0x811c9dc5;
+  const t = 'nazo|' + id + '|' + s;
+  for (let i = 0; i < t.length; i++) { h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return ('0000000' + h.toString(16)).slice(-8);
+}
+function nzDec(arr, key) { const k = [...key].map(c => c.codePointAt(0)); return arr.map((n, i) => String.fromCodePoint(n ^ k[i % k.length] ^ 0x5a)).join(''); }
+// 答えが合っていれば、その答えのひらがなを返す（ちがえば null）
+function nzCheck(p, input) {
+  const v = nzNorm(input), r = p.ok[nzHash(p.id, v)];
+  if (!r) return null;
+  return r === 1 ? v : nzDec(r, v);
+}
+function nzEmo(e, n) { return `<span class="nz-emo"><span class="e">${e}</span>${n ? `<span class="n">${n}</span>` : ''}</span>`; }
+const NZ_DIAL = ['ま', 'き', 'ち', 'あ', 'も', 'す', 'は', 'ね', 'く', 'ろ', 'ぬ', 'ほ'];   // 12時・1時・2時…11時の位置
+function nzClock(h, m) {
+  let s = '<svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#fff" stroke="#1d2330" stroke-width="3"/>';
+  NZ_DIAL.forEach((ch, k) => {
+    const a = (k * 30 - 90) * Math.PI / 180;
+    s += `<text x="${(60 + 44 * Math.cos(a)).toFixed(1)}" y="${(61 + 44 * Math.sin(a)).toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="bold" fill="#1d2330">${ch}</text>`;
+  });
+  const hand = (deg, len, w) => { const a = (deg - 90) * Math.PI / 180; return `<line x1="60" y1="60" x2="${(60 + len * Math.cos(a)).toFixed(1)}" y2="${(60 + len * Math.sin(a)).toFixed(1)}" stroke="#1d2330" stroke-width="${w}" stroke-linecap="round"/>`; };
+  return s + hand((h % 12) * 30 + m * 0.5, 22, 7) + hand(m * 6, 34, 3.5) + '<circle cx="60" cy="60" r="4.5" fill="#1d2330"/></svg>';
+}
+function nzWadou(cls) {
+  const k = (x, y, t, ex) => `<rect x="${x - 21}" y="${y - 21}" width="42" height="42" rx="6" fill="${ex ? '#fff4d6' : '#fff'}" stroke="${ex ? '#c8102e' : '#1d2330'}" stroke-width="${ex ? 3 : 2}" ${ex ? 'stroke-dasharray="6 4"' : ''}/><text x="${x}" y="${y + 1}" text-anchor="middle" dominant-baseline="middle" font-size="26" font-weight="bold" fill="${ex ? '#c8102e' : '#1d2330'}">${t}</text>`;
+  // 矢印（先を三角でかく）
+  const ar = (x1, y1, x2, y2) => {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = 11, W = 7;
+    const bx = x2 - L * Math.cos(a), by = y2 - L * Math.sin(a);
+    const p = [[x2, y2], [bx + W * Math.sin(a), by - W * Math.cos(a)], [bx - W * Math.sin(a), by + W * Math.cos(a)]].map(q => q.map(v => v.toFixed(1)).join(' ')).join(' L');
+    return `<line x1="${x1}" y1="${y1}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="#1d2330" stroke-width="3.5"/><path d="M${p} Z" fill="#1d2330"/>`;
+  };
+  return `<svg viewBox="0 0 220 220" class="${cls || 'nz-wd'}" aria-hidden="true">` +
+    k(110, 28, '社') + k(28, 110, '大') + k(192, 110, '話') + k(110, 192, '議') + k(110, 110, '？', true) +
+    ar(110, 50, 110, 87) + ar(50, 110, 87, 110) + ar(133, 110, 169, 110) + ar(110, 133, 110, 169) + '</svg>';
+}
+function nzBoxes(n, mark, text, num, stage, labels) {
+  // mark：○をつける文字の位置（0なら全部に labels の番号）、num：○につける謎の番号、stage：2なら青い○
+  const t = [...(text || '')];
+  let h = '<div class="nz-boxes">';
+  for (let i = 0; i < n; i++) {
+    const tag = mark === 0 ? (labels ? labels[i] : i + 1) : num && i + 1 === mark ? num : '';
+    const mk = i + 1 === mark || mark === 0 ? (stage === 2 ? 'mk mk2' : 'mk') : '';
+    h += `<span class="${mk}">${t[i] || ''}${tag ? `<i>${tag}</i>` : ''}</span>`;
+  }
+  return h + '</div>';
+}
+function nzTimetable() {
+  const days = ['月', '火', '水', '木', '金'];
+  const tt = [['国語', '数学', '社会', '理科', '英語'], ['数学', '英語', '家庭科', '国語', '体育'], ['理科', '体育', '数学', '社会', '国語'],
+    ['英語', '国語', '音楽', '数学', '理科'], ['体育', '社会', '英語', '美術', '数学'], ['学活', '理科', '国語', '英語', '総合']];
+  return `<div class="nz-tt"><table><tr><th></th>${days.map(d => `<th>${d}</th>`).join('')}</tr>${tt.map((r, i) => `<tr><th>${i + 1}</th>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</table>
+    <ol class="nz-clue"><li>「火」の反対の曜日の、2時間目</li><li>金よう日の前の日の、最後の時間</li><li>「日」と「火」のあいだの曜日の、3時間目</li></ol></div>`;
+}
+const NZ_GRID = [['ぬ', 'は', 'か', 'そ'], ['が', 'て', 'ほ', 'ず'], ['ろ', 'い', 'け', 'も'], ['れ', 'う', 'な', 'み']];
+const NZ_HOLES = [[0, 1], [1, 3], [3, 0]];   // まどのカードの穴（うらから見た位置）
+function nzWindow() {
+  const grid = (f, cls) => `<div class="nz-grid ${cls}">${[0, 1, 2, 3].map(r => [0, 1, 2, 3].map(c => f(r, c)).join('')).join('')}</div>`;
+  const hole = (r, c) => NZ_HOLES.some(h => h[0] === r && h[1] === c);
+  return `<div class="nz-win"><div><div class="cap">文字の表</div>${grid((r, c) => `<span>${NZ_GRID[r][c]}</span>`, 'letters')}</div>
+    <div><div class="cap">まどのカード（うら）</div>${grid((r, c) => `<span class="${hole(r, c) ? 'hole' : ''}"></span>`, 'wcard')}</div></div>`;
+}
+// 協力の謎：3つのかけら（道順・読む場所・地図）を、学年ごとに1枚ずつ持って、口で伝え合う
+const NZ_COOP = { grid: [['★', 'ら', 'さ', 'た'], ['か', 'お', 'う', 'ね'], ['み', 'え', 'も', 'こ'], ['の', 'し', 'ん', 'は']], moves: ['→', '↓', '→', '↓', '←', '↓', '→'], read: [2, 3, 5, 7] };
+function nzCoop(o) {
+  const tate = !o || o.grade !== false, fold = !!(o && o.fold);
+  const lab = (y, a, w) => `<span class="kh">✂ ${tate ? `${y}年生のかけら` : `かけら${a}`}<small>${w}</small></span>`;
+  // fold：タブレット用。かけらを持つ人だけがタップして見る（見せ合わない）
+  const piece = (cls, head, body) => fold ? `<details class="kk ${cls}"><summary>${head}</summary>${body}</details>` : `<div class="kk ${cls}">${head}${body}</div>`;
+  return `${fold ? '<div class="nz-ex">かけらは、持つ人だけがタップして見る。見せ合わずに、口で伝え合おう！</div>' : ''}<div class="nz-coop">
+    ${piece('g1', lab(1, 'A', '道順'), `<div class="kmv">★から ${NZ_COOP.moves.map(m => `<b>${m}</b>`).join('')}</div><div class="ks">1回で1マス進む</div>`)}
+    ${piece('g2', lab(2, 'B', '読む場所'), `<div class="kst">${NZ_COOP.read.map(n => `<b>${n}</b>`).join('')}<span>歩目</span></div><div class="ks">止まったマスの文字を、この順に読む</div>`)}
+    ${piece('g3', lab(3, 'C', '地図'), `<div class="kgrid">${NZ_COOP.grid.flat().map(c => `<span${c === '★' ? ' class="st"' : ''}>${c}</span>`).join('')}</div>`)}</div>`;
+}
+
+const NAZO = [
+  {
+    id: 1, grade: 1, title: 'えもじの暗号', level: 1, boxes: 5, mark: 1,
+    q: '絵の下の数字は、名前の「何文字目か」。読むと、どんなことば？',
+    html: () => `<div class="nz-ex">見本：${nzEmo('🐱', 2)} は「ねこ」の2文字目で「こ」</div><div class="nz-row">${[['🐜', 1], ['🦒', 2], ['🏫', 1], ['🍅', 3], ['🐘', 2]].map(a => nzEmo(a[0], a[1])).join('')}</div>`,
+    ok: { '2adcc81a': [90, 90, 90, 90, 90], '73885c32': [22289, 42547, 80, 22331, 42751], '617dcc9a': [22289, 90, 42741, 116, 22293] },
+  },
+  {
+    id: 2, grade: 2, title: 'ふしぎな時計', level: 2, boxes: 3, mark: 1,
+    q: '見本と同じ読み方で、①②③の時計を読むと？',
+    html: () => `<div class="nz-clocks"><div class="nz-clock ex">${nzClock(6, 15)}<span>見本 → 「あ」</span></div><div class="nz-clock">${nzClock(2, 5)}<span>①</span></div><div class="nz-clock">${nzClock(7, 20)}<span>②</span></div><div class="nz-clock">${nzClock(10, 10)}<span>③</span></div></div>`,
+    ok: { '323e1f1b': [90, 90, 90], '1171b032': [23552, 21465, 90], '7b1ac627': [23552, 21465, 23596] },
+  },
+  {
+    id: 3, grade: 1, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
+    q: '？に入る動物は？',
+    html: () => `<div class="nz-row chain">${['🦊', '🐈', '?', '🎺', '🐼', '🍡', '🦍', '🦁'].map(e => e === '?' ? '<span class="nz-qbox"><span>？</span><span>？</span><span>？</span></span>' : nzEmo(e)).join('<span class="nz-arrow">→</span>')}</div>`,
+    ok: { '1f94369e': [90, 90, 90], '87258062': [90, 90, 90] },   // 答えになる動物は2つ（○の文字は同じ）
+  },
+  {
+    id: 4, grade: 2, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
+    q: '暗号を読むと、答えがわかる。',
+    html: () => `<div class="nz-flick"><div class="nz-keys">${['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', '゛゜', 'わ', '、。'].map(k => `<span>${k}</span>`).join('')}</div><div class="nz-flickr"><div class="nz-ex">見本：<b>な↑</b> ＝ ぬ　<b>な・</b> ＝ な</div><div class="nz-code">${['か↓', 'た・', 'あ→', 'は・', 'や↑', 'ま→'].map(c => `<span>${c}</span>`).join('')}</div></div></div>`,
+    ok: { '45964dc8': [90, 90], '404bae05': [27134, 27129] },
+  },
+  {
+    id: 5, grade: 3, title: 'たぬきの手紙', level: 2, boxes: 3, mark: 1,
+    q: '手紙が伝えたい「こたえ」は？',
+    html: () => '<div class="nz-letter">たせいかたいはた、いっしたょにたがたんばたるたなかたまた</div><div class="nz-sign">🦝 たぬき より</div>',
+    ok: { '75d8b54f': [90, 90, 90], '44a248bb': [32450, 42370, 32470] },
+  },
+  {
+    id: 6, grade: 3, title: '漢字のかくれんぼ', level: 3, boxes: 2, mark: 2,
+    q: '矢印の向きに読むと、どれも漢字2文字のことばになる。？の漢字の読みは？（ひらがな2文字）',
+    html: () => `<div class="nz-row">${nzWadou()}</div>`,
+    ok: { 'd300aca0': [90, 90], '112d5da7': [32523, 32516] },
+  },
+  {
+    id: 7, grade: 1, stage: 2, title: '時間割のなぞ', level: 2, boxes: 3, mark: 2,
+    q: '①②③の時間の教科の、最初の文字を順につなげると？',
+    html: () => nzTimetable(),
+    ok: { 'e065d1d5': [90, 90, 90], '7a570808': [28193, 152, 28384] },
+  },
+  {
+    id: 8, grade: 3, stage: 2, title: 'まどの謎', level: 3, boxes: 3, mark: 2,
+    q: 'まどのカードを文字の表に重ねて、あいた所の文字を、上の段から読もう。',
+    html: () => nzWindow(),
+    ok: { '7a4dddf3': [90, 90, 90], '51b3a9f8': [41968, 41975, 41924] },
+  },
+  {
+    id: 9, grade: 'all', stage: 2, title: '3つのかけら', level: 2, boxes: 4, mark: 1,
+    q: 'かけらを切りはなして、1人1枚ずつ持とう。<u>かけらは見せ合わずに、口で伝え合って</u>解く！ 道順のとおりに進むと……？（ひらがな4文字）',
+    html: o => nzCoop(o),
+    ok: { '5aae9709': [90, 90, 90, 90], 'faff60a0': [28620, 21480, 28622, 21309] },
+  },
+];
+// 裏ミッション（脱出したチームだけ）：絵は、これまでの謎。数字は、その謎の答えの「何文字目か」
+function nzMini(k) {
+  if (k === 'clock') return nzClock(2, 5).replace('<svg ', '<svg class="nz-mi" ');
+  if (k === 'wd') return nzWadou('nz-mi');
+  if (k === 'win') {
+    let s = '<svg viewBox="0 0 44 44" class="nz-mi" aria-hidden="true"><rect x="2" y="2" width="40" height="40" fill="#8c95a6" stroke="#1d2330" stroke-width="2"/>';
+    NZ_HOLES.forEach(([r, c]) => { s += `<rect x="${2 + c * 10}" y="${2 + r * 10}" width="10" height="10" fill="#fff" stroke="#6b7385" stroke-width="1"/>`; });
+    return s + '</svg>';
+  }
+  if (k === 'tt') {
+    let s = '<svg viewBox="0 0 50 44" class="nz-mi" aria-hidden="true"><rect x="1" y="1" width="48" height="42" fill="#fff" stroke="#1d2330" stroke-width="2"/><rect x="1" y="1" width="48" height="10" fill="#eef1f6" stroke="#1d2330" stroke-width="2"/>';
+    ['月', '火', '水', '木', '金'].forEach((d, i) => { s += `<text x="${6 + i * 9.6}" y="8.6" text-anchor="middle" font-size="7.5" font-weight="bold" fill="#1d2330">${d}</text>`; });
+    for (let i = 1; i < 5; i++) s += `<line x1="${1 + i * 9.6}" y1="11" x2="${1 + i * 9.6}" y2="43" stroke="#9aa3b2" stroke-width="1"/>`;
+    for (let j = 1; j < 4; j++) s += `<line x1="1" y1="${11 + j * 8}" x2="49" y2="${11 + j * 8}" stroke="#9aa3b2" stroke-width="1"/>`;
+    return s + '</svg>';
+  }
+  return k;
+}
+const NZ_EX_CODE = [['win', 3], ['🦊', 3], ['wd', 2], ['clock', 2], ['🦝', 1], ['tt', 1], ['🦝', 3]];
+const NZ_EX = {
+  id: 'ex', icon: '🗝️', title: '真のとびら', level: 3, boxes: 7,
+  q: 'とびらのうらに、ふしぎな暗号がきざまれていた。読むと、とびらを作った人からのメッセージに……？（ひらがな7文字）',
+  html: () => `<div class="nz-ex">見本：${nzEmo('🐜', 1)} は「あ」</div><div class="nz-row">${NZ_EX_CODE.map(([k, n]) => nzEmo(nzMini(k), n)).join('')}</div>`,
+  ok: { 'f25b8345': 1, 'a5c6758a': 1, '4593c2ac': 1, 'e379e369': 1 },
+};
+const NZ_FINAL = { id: 'final', title: '第1のとびら', boxes: 6, labels: [1, 2, 3, 4, 5, 6], q: '謎1〜6の答えの ○ の文字を、1から順にならべると…？', ok: { 'e59ee854': 1, '308c5fea': 1 } };
+const NZ_FINAL2 = { id: 'final2', stage: 2, title: '第2のとびら', boxes: 3, labels: [7, 8, 9], q: '謎7〜9の答えの 青い○ の文字を、7から順にならべると…？', ok: { 'c40c5f0d': 1, '351ae2dc': 1 } };
+const NZ_STAGE1 = NAZO.filter(p => !p.stage), NZ_STAGE2 = NAZO.filter(p => p.stage === 2);
+function nzDoor(id) { return id === 'final' || id === 'final2'; }
+function nzPuzzle(id) { return id === 'final' ? NZ_FINAL : id === 'final2' ? NZ_FINAL2 : id === 'ex' ? NZ_EX : NAZO.find(p => p.id === id); }
+// 縦割り活動：まずこの学年の人が考える謎
+function nzGrade(p) { return p.grade === 'all' ? '<span class="nz-gr gall">全学年で協力</span>' : p.grade ? `<span class="nz-gr g${p.grade}">${p.grade}年生から</span>` : ''; }
+function nzCard(p, o) {
+  o = o || {};
+  const door = nzDoor(p.id);
+  return `<div class="nz${p.stage === 2 ? ' st2' : ''}${p.id === 'ex' ? ' exq' : ''}"><div class="nz-head"><span class="nz-no">${p.icon || (door ? '🚪' : p.id)}</span><span class="nz-title">${p.title}</span>${p.level ? `<span class="nz-lv">${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</span>` : ''}${o.grade === false ? '' : nzGrade(p)}</div><div class="nz-q">${p.q}</div>${p.html ? p.html(o) : ''}${o.boxes === false ? '' : nzBoxes(p.boxes, door ? 0 : p.mark, o.fill, o.num ? p.id : '', p.stage, p.labels)}</div>`;
+}
+// ===NAZO-END===
+
+const TEAM_COLORS = ['#e6194b', '#4363d8', '#3cb44b', '#ffe119', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#9a6324',
+  '#000075', '#469990', '#800000', '#808000', '#fabed4', '#dcbeff', '#aaffc3', '#ffd8b1', '#222222', '#8c8c8c'];
+function inkOn(hex) {
+  const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const L = [r, g, b].map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+  return 0.2126 * L[0] + 0.7152 * L[1] + 0.0722 * L[2] > 0.36 ? '#1d2330' : '#ffffff';
+}
+const $ = s => document.querySelector(s);
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 保存できなくても遊べる */ } }
+const LS = 'nazo-card-v1';
+const blankC = () => ({ team: 0, startAt: null, solved: {}, door1At: null, escapedAt: null, exAt: null, exWord: '' });
+let C = (() => { try { return Object.assign(blankC(), JSON.parse(lsGet(LS)) || {}); } catch (e) { return blankC(); } })();
+function save() { lsSet(LS, JSON.stringify(C)); }
+function mmss(ms) { const s = Math.max(0, Math.floor(ms / 1000)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+let current = null;
+
+function screen(id) { document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id)); window.scrollTo(0, 0); }
+function setTeamColor() {
+  const c = TEAM_COLORS[(C.team || 1) - 1];
+  document.documentElement.style.setProperty('--team', c);
+  document.documentElement.style.setProperty('--teamInk', inkOn(c));
+  ['#wTeam', '#lTeam'].forEach(s => { $(s).textContent = C.team; });
+}
+function mark(p) { return C.solved[p.id] ? [...C.solved[p.id]][p.mark - 1] : ''; }
+function cards(list) {
+  return list.map(p => `<button class="pz${C.solved[p.id] ? ' done' : ''}${p.stage === 2 ? ' s2' : ''}" data-id="${p.id}"><span class="no">${p.id}</span><span class="tt">${p.title}<small>${'★'.repeat(p.level)}${'☆'.repeat(3 - p.level)}</small></span><span class="st">${C.solved[p.id] ? '✓ ' + mark(p) : '？'}</span></button>`).join('');
+}
+function renderList() {
+  $('#pzList').innerHTML = cards(NZ_STAGE1);
+  $('#doorBoxes').innerHTML = nzBoxes(6, 0, NZ_STAGE1.map(p => mark(p) || '　').join(''), '', 1, NZ_FINAL.labels);
+  $('#door1Box').classList.toggle('opened', !!C.door1At);
+  $('#toFinal').textContent = C.door1At ? '✓ 第1のとびら 突破ずみ' : '第1のとびらへ';
+  $('#stage2').hidden = !C.door1At;
+  $('#pzList2').innerHTML = cards(NZ_STAGE2);
+  $('#doorBoxes2').innerHTML = nzBoxes(3, 0, NZ_STAGE2.map(p => mark(p) || '　').join(''), '', 2, NZ_FINAL2.labels);
+  $('#exBox').hidden = !C.escapedAt;
+  $('#toEx2').textContent = C.exAt ? '👑 真・脱出ずみ' : '裏ミッションへ';
+  const list = C.door1At ? NAZO : NZ_STAGE1;
+  $('#lCount').textContent = `解いた謎 ${list.filter(p => C.solved[p.id]).length} / ${list.length}`;
+}
+function openPuzzle(p) {
+  current = p;
+  const fill = nzDoor(p.id) ? '' : C.solved[p.id] || '';
+  $('#pSheet').innerHTML = nzCard(p, { fill, num: !nzDoor(p.id) && p.id !== 'ex', fold: true });
+  $('#pIn').value = '';
+  $('#pRes').className = 'res';
+  $('#pRes').textContent = fill ? `正解ずみ！ ○の文字は「${[...fill][p.mark - 1]}」` : '';
+  screen('puzzle');
+}
+['#pzList', '#pzList2'].forEach(s => $(s).addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if (b) openPuzzle(NAZO.find(p => p.id === +b.dataset.id)); }));
+$('#toFinal').addEventListener('click', () => { if (C.door1At) showDoor1(); else openPuzzle(NZ_FINAL); });
+$('#toFinal2').addEventListener('click', () => openPuzzle(NZ_FINAL2));
+$('#pBack').addEventListener('click', () => { renderList(); screen('list'); });
+$('#pForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const p = current, v = $('#pIn').value;
+  if (!p || !v.trim()) return;
+  $('#pIn').blur();
+  const res = $('#pRes');
+  const ok = nzCheck(p, v);
+  if (!ok) {
+    res.className = 'res'; void res.offsetWidth;
+    res.className = 'res ng';
+    res.textContent = 'ちがうみたい…もう一度考えよう';
+    return;
+  }
+  if (p.id === 'final') {
+    if (!C.door1At) C.door1At = Date.now();
+    save(); showDoor1();
+    return;
+  }
+  if (p.id === 'final2') {
+    if (!C.escapedAt) C.escapedAt = Date.now();
+    save(); showEscaped(true);
+    return;
+  }
+  if (p.id === 'ex') {
+    if (!C.exAt) { C.exAt = Date.now(); C.exWord = ok; }
+    save(); showTrue(true);
+    return;
+  }
+  C.solved[p.id] = ok;
+  save();
+  try { if (navigator.vibrate) navigator.vibrate(80); } catch (err) { /* ふるえない端末 */ }
+  $('#pSheet').innerHTML = nzCard(p, { fill: ok, num: true, fold: true });
+  res.className = 'res ok';
+  res.textContent = `⭕ 正解！ ○の文字は「${[...ok][p.mark - 1]}」`;
+});
+function showDoor1() {
+  $('#dTeam').textContent = C.team + '番のチーム';
+  $('#dTime').textContent = 'タイム ' + mmss(C.door1At - C.startAt);
+  screen('door1');
+}
+$('#toStage2').addEventListener('click', () => { renderList(); screen('list'); setTimeout(() => $('#stage2').scrollIntoView({ behavior: 'smooth' }), 50); });
+function showEscaped(fresh) {
+  $('#eTeam').textContent = C.team + '番のチーム';
+  $('#eTime').textContent = 'タイム ' + mmss(C.escapedAt - C.startAt);
+  $('#toEx').textContent = C.exAt ? '👑 真・脱出の画面' : '🗝️ 裏ミッションに挑戦';
+  screen('escaped');
+  if (fresh) confetti();
+}
+// 紙ふぶき（脱出・真・脱出のとき）
+function confetti() {
+  const cv = $('#cf'), ctx = cv.getContext('2d');
+  cv.hidden = false; cv.width = innerWidth; cv.height = innerHeight;
+  const P = [...Array(140)].map((_, i) => ({ x: Math.random() * cv.width, y: -Math.random() * cv.height * 0.5, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, s: 6 + Math.random() * 8, c: TEAM_COLORS[i % 10], a: Math.random() * 6 }));
+  const t0 = performance.now();
+  (function frame(now) {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += 0.1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); });
+    if (now - t0 < 4000) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
+  })(t0);
+}
+$('#eBack').addEventListener('click', () => { renderList(); screen('list'); });
+function exGo() { if (C.exAt) showTrue(); else openPuzzle(NZ_EX); }
+$('#toEx').addEventListener('click', exGo);
+$('#toEx2').addEventListener('click', exGo);
+function showTrue(fresh) {
+  $('#xWord').textContent = '「' + C.exWord + '」';
+  $('#xTeam').textContent = C.team + '番のチーム';
+  $('#xTime').textContent = 'タイム ' + mmss(C.exAt - C.startAt);
+  screen('truex');
+  if (fresh) confetti();
+}
+$('#xBack').addEventListener('click', () => { renderList(); screen('list'); });
+
+$('#teams').innerHTML = TEAM_COLORS.map((c, i) => `<button data-t="${i + 1}" style="background:${c};color:${inkOn(c)}">${i + 1}</button>`).join('');
+$('#teams').addEventListener('click', e => {
+  const b = e.target.closest('button[data-t]');
+  if (!b) return;
+  C.team = +b.dataset.t; save(); setTeamColor();
+  if (C.startAt) { renderList(); screen('list'); } else screen('wait');
+});
+$('#wChange').addEventListener('click', () => screen('pick'));
+$('#start').addEventListener('click', () => { C.startAt = Date.now(); save(); renderList(); screen('list'); });
+$('#reset').addEventListener('click', () => {
+  if (!confirm('解いた謎とタイムを消して、最初からにしますか？')) return;
+  C = blankC(); save();
+});
+setInterval(() => {
+  if (!C.startAt) return;
+  const t = mmss((C.escapedAt || Date.now()) - C.startAt);
+  $('#lTime').textContent = '⏱ ' + t; $('#pTime').textContent = '⏱ ' + t;
+}, 500);
+
+$('#ver').textContent = '版 ' + NZ_VERSION;
+if (!C.team) screen('pick');
+else { setTeamColor(); if (!C.startAt) screen('wait'); else if (C.exAt) showTrue(); else if (C.escapedAt) showEscaped(); else { renderList(); screen('list'); } }
+</script>
+</body>
+</html>
