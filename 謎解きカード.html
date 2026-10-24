@@ -56,6 +56,7 @@ p{margin:0}
 #truex .note{font-size:1.1em}
 #truex .ghost{border-color:#1d2330;color:#1d2330}
 #cf{position:fixed;inset:0;pointer-events:none;z-index:30}
+#ver{position:fixed;right:8px;bottom:6px;font-size:11px;color:#f2f4f8;opacity:.55;pointer-events:none;z-index:5}
 #escaped .big{box-shadow:0 .2em .6em rgba(0,0,0,.3)}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #escaped,#door1{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
@@ -155,6 +156,7 @@ p{margin:0}
 </head>
 <body>
 <canvas id="cf" hidden></canvas>
+<div id="ver"></div>
 
 <div class="screen" id="pick">
   <h1>🔒 謎解きカード</h1>
@@ -222,6 +224,7 @@ p{margin:0}
 <script>
 // ===NAZO-START===
 // 謎の中身（先生用・生徒用の両方で同じもの）。答えそのものは入れず、確かめ用の値だけを持つ。
+const NZ_VERSION = '2026-10-24';   // 版。先生用・生徒用の画面に出す（変えるのはここだけ）
 function nzNorm(s) {
   return (s || '').normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
     .replace(/[\s、。，．,.・!！?？「」『』（）()ー－\-]/g, '').toLowerCase();
@@ -543,6 +546,7 @@ setInterval(() => {
   $('#lTime').textContent = '⏱ ' + t; $('#pTime').textContent = '⏱ ' + t;
 }, 500);
 
+$('#ver').textContent = '版 ' + NZ_VERSION;
 if (!C.team) screen('pick');
 else { setTeamColor(); if (!C.startAt) screen('wait'); else if (C.exAt) showTrue(); else if (C.escapedAt) showEscaped(); else { renderList(); screen('list'); } }
 </script>

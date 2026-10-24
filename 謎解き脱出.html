@@ -545,7 +545,7 @@ table.roles td,table.roles th{font-size:13px}
 <body>
 <header>
   <h1>謎解き脱出ゲーム「体育館からの脱出」</h1>
-  <span id="ver">版 2026-10-24</span>
+  <span id="ver"></span>
 </header>
 <nav class="noprint" id="nav">
   <button data-tab="guide">① 遊び方</button>
@@ -829,6 +829,7 @@ table.roles td,table.roles th{font-size:13px}
 <script>
 // ===NAZO-START===
 // 謎の中身（先生用・生徒用の両方で同じもの）。答えそのものは入れず、確かめ用の値だけを持つ。
+const NZ_VERSION = '2026-10-24';   // 版。先生用・生徒用の画面に出す（変えるのはここだけ）
 function nzNorm(s) {
   return (s || '').normalize('NFKC').replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
     .replace(/[\s、。，．,.・!！?？「」『』（）()ー－\-]/g, '').toLowerCase();
@@ -2142,6 +2143,7 @@ $('#sReset').addEventListener('click', () => {
 });
 
 // ---------- はじめ ----------
+$('#ver').textContent = '版 ' + NZ_VERSION;
 showTab(lsGet('nazo-escape-tab') || 'guide');
 </script>
 </body>

@@ -5,6 +5,7 @@ const ok = (name, cond, info = '') => { results.push([cond ? 'PASS' : 'FAIL', na
 const T = E.NZ_TEACH, P = id => E.NAZO.find(p => p.id === id);
 
 ok('先生用と生徒用で、謎の中身が同じ', E.sharedTeacher === E.sharedCard);
+ok('版は NZ_VERSION の1か所で管理（両方の画面に出す）', /^\d{4}-\d{2}-\d{2}$/.test(E.NZ_VERSION) && !/版 20\d\d-/.test(E.teacherSource) && !/版 20\d\d-/.test(E.cardSource) && E.teacherSource.includes("'版 ' + NZ_VERSION") && E.cardSource.includes("'版 ' + NZ_VERSION"), E.NZ_VERSION);
 ok('先生用と生徒用で、謎の見た目（CSS）が同じ', E.cssTeacher === E.cssCard);
 const answers = [...E.NAZO.map(p => T[p.id].answer), T.final.answer, T.final2.answer, T.ex.answer, '未来も仲間'];
 ok('生徒用のファイルに答えが書かれていない', answers.every(a => !E.cardSource.includes(a)) && !E.cardSource.includes('NZ_TEACH'), answers.filter(a => E.cardSource.includes(a)).join(','));
