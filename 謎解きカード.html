@@ -125,7 +125,11 @@ p{margin:0}
 .nz-grid.wcard span.hole{background:#fff}
 .nz-coop{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:.6em;align-items:stretch}
 .nz-coop .kk{border:2px dashed #9aa3b2;border-radius:.5em;padding:.4em .6em;display:flex;flex-direction:column;gap:.35em;align-items:center;text-align:center}
-.nz-coop .kh{font-weight:900;font-size:.9em;align-self:stretch;border-bottom:3px solid;padding-bottom:.15em}
+.nz-coop .kh{display:block;font-weight:900;font-size:.9em;align-self:stretch;border-bottom:3px solid;padding-bottom:.15em}
+.nz-coop details.kk>summary{list-style:none;cursor:pointer;align-self:stretch}
+.nz-coop details.kk>summary::-webkit-details-marker{display:none}
+.nz-coop details.kk:not([open])>summary .kh small::after{content:"（タップで見る）"}
+.nz-coop details.kk[open]>summary .kh small::after{content:"（タップでとじる）"}
 .nz-coop .kh small{display:block;font-weight:bold;font-size:.85em;color:#5b6475}
 .nz-coop .g1 .kh{border-color:#16803c;color:#16803c}.nz-coop .g2 .kh{border-color:#b97800;color:#9a5b00}.nz-coop .g3 .kh{border-color:#6d3fd6;color:#6d3fd6}
 .nz-coop .kmv{font-weight:bold;line-height:1.9}
@@ -287,11 +291,14 @@ function nzWindow() {
 // 協力の謎：3つのかけら（道順・読む場所・地図）を、学年ごとに1枚ずつ持って、口で伝え合う
 const NZ_COOP = { grid: [['★', 'ら', 'さ', 'た'], ['か', 'お', 'う', 'ね'], ['み', 'え', 'も', 'こ'], ['の', 'し', 'ん', 'は']], moves: ['→', '↓', '→', '↓', '←', '↓', '→'], read: [2, 3, 5, 7] };
 function nzCoop(o) {
-  const tate = !o || o.grade !== false, lab = (y, a, w) => `<div class="kh">✂ ${tate ? `${y}年生のかけら` : `かけら${a}`}<small>${w}</small></div>`;
-  return `<div class="nz-coop">
-    <div class="kk g1">${lab(1, 'A', '道順')}<div class="kmv">★から ${NZ_COOP.moves.map(m => `<b>${m}</b>`).join('')}</div><div class="ks">1回で1マス進む</div></div>
-    <div class="kk g2">${lab(2, 'B', '読む場所')}<div class="kst">${NZ_COOP.read.map(n => `<b>${n}</b>`).join('')}<span>歩目</span></div><div class="ks">止まったマスの文字を、この順に読む</div></div>
-    <div class="kk g3">${lab(3, 'C', '地図')}<div class="kgrid">${NZ_COOP.grid.flat().map(c => `<span${c === '★' ? ' class="st"' : ''}>${c}</span>`).join('')}</div></div></div>`;
+  const tate = !o || o.grade !== false, fold = !!(o && o.fold);
+  const lab = (y, a, w) => `<span class="kh">✂ ${tate ? `${y}年生のかけら` : `かけら${a}`}<small>${w}</small></span>`;
+  // fold：タブレット用。かけらを持つ人だけがタップして見る（見せ合わない）
+  const piece = (cls, head, body) => fold ? `<details class="kk ${cls}"><summary>${head}</summary>${body}</details>` : `<div class="kk ${cls}">${head}${body}</div>`;
+  return `${fold ? '<div class="nz-ex">かけらは、持つ人だけがタップして見る。見せ合わずに、口で伝え合おう！</div>' : ''}<div class="nz-coop">
+    ${piece('g1', lab(1, 'A', '道順'), `<div class="kmv">★から ${NZ_COOP.moves.map(m => `<b>${m}</b>`).join('')}</div><div class="ks">1回で1マス進む</div>`)}
+    ${piece('g2', lab(2, 'B', '読む場所'), `<div class="kst">${NZ_COOP.read.map(n => `<b>${n}</b>`).join('')}<span>歩目</span></div><div class="ks">止まったマスの文字を、この順に読む</div>`)}
+    ${piece('g3', lab(3, 'C', '地図'), `<div class="kgrid">${NZ_COOP.grid.flat().map(c => `<span${c === '★' ? ' class="st"' : ''}>${c}</span>`).join('')}</div>`)}</div>`;
 }
 
 const NAZO = [
@@ -311,7 +318,7 @@ const NAZO = [
     id: 3, grade: 1, title: 'つながる絵', level: 1, boxes: 3, mark: 3,
     q: '？に入る動物は？',
     html: () => `<div class="nz-row chain">${['🦊', '🐈', '?', '🎺', '🐼', '🍡', '🦍', '🦁'].map(e => e === '?' ? '<span class="nz-qbox"><span>？</span><span>？</span><span>？</span></span>' : nzEmo(e)).join('<span class="nz-arrow">→</span>')}</div>`,
-    ok: { '1f94369e': [90, 90, 90] },
+    ok: { '1f94369e': [90, 90, 90], '87258062': [90, 90, 90] },   // 答えになる動物は2つ（○の文字は同じ）
   },
   {
     id: 4, grade: 2, title: 'スマホの暗号', level: 2, boxes: 2, mark: 2,
@@ -433,7 +440,7 @@ function renderList() {
 function openPuzzle(p) {
   current = p;
   const fill = nzDoor(p.id) ? '' : C.solved[p.id] || '';
-  $('#pSheet').innerHTML = nzCard(p, { fill, num: !nzDoor(p.id) && p.id !== 'ex' });
+  $('#pSheet').innerHTML = nzCard(p, { fill, num: !nzDoor(p.id) && p.id !== 'ex', fold: true });
   $('#pIn').value = '';
   $('#pRes').className = 'res';
   $('#pRes').textContent = fill ? `正解ずみ！ ○の文字は「${[...fill][p.mark - 1]}」` : '';
@@ -474,7 +481,7 @@ $('#pForm').addEventListener('submit', e => {
   C.solved[p.id] = ok;
   save();
   try { if (navigator.vibrate) navigator.vibrate(80); } catch (err) { /* ふるえない端末 */ }
-  $('#pSheet').innerHTML = nzCard(p, { fill: ok, num: true });
+  $('#pSheet').innerHTML = nzCard(p, { fill: ok, num: true, fold: true });
   res.className = 'res ok';
   res.textContent = `⭕ 正解！ ○の文字は「${[...ok][p.mark - 1]}」`;
 });

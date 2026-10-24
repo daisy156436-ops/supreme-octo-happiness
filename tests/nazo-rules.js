@@ -39,6 +39,7 @@ ok('謎2：長いはりは文字の方向をまっすぐさす', [...P(2).html()
 const chainNames = { '🦊': 'きつね', '🐈': 'ねこ', '🎺': 'らっぱ', '🐼': 'ぱんだ', '🍡': 'だんご', '🦍': 'ごりら', '🦁': 'らいおん' };
 const seq = [...P(3).html().matchAll(/<span class="e">(.+?)<\/span>|nz-qbox/g)].map(m => m[1] ? chainNames[m[1]] : T[3].answer);
 ok('謎3：？にこあらを入れると、しりとりがつながる', seq.length === 8 && seq.every((w, i) => i === 0 || [...seq[i - 1]].pop() === [...w][0]), seq.join('→'));
+ok('謎3：コブラでも正解（○の文字は同じ「ら」）', E.nzCheck(P(3), 'コブラ') === 'こぶら' && [...'こぶら'][P(3).mark - 1] === [...T[3].answer][P(3).mark - 1] && T[3].explain.includes('コブラでも正解'));
 ok('謎3：？の箱は3つ', (P(3).html().match(/<span>？<\/span>/g) || []).length === 3 && [...T[3].answer].length === 3);
 
 // 4 スマホの暗号（フリック入力：そのまま・左・上・右・下＝あ・い・う・え・お段）
@@ -98,6 +99,8 @@ ok('謎9：かけらは3つ（道順・読む場所・地図）', moves.length =
 ok('謎9：道順は地図の外に出ない', path9.every(c => c && c !== '★'), path9.join(''));
 ok('謎9：読む場所の文字で「おうえん」', steps.map(n => path9[n - 1]).join('') === T[9].answer, steps.map(n => path9[n - 1]).join(''));
 ok('謎9：止まったマスを全部読むと、意味のないことば', path9.join('') !== T[9].answer && !path9.join('').includes(T[9].answer), path9.join(''));
+const h9f = P(9).html({ fold: true });
+ok('謎9：タブレット用は、かけらを1つずつタップして見る', (h9f.match(/<details class="kk /g) || []).length === 3 && h9f.includes('見せ合わずに') && !h9.includes('<details'));
 ok('謎9：かけらの名前は縦割りなら学年、そうでなければA・B・C', h9.includes('1年生のかけら') && h9.includes('3年生のかけら') && P(9).html({ grade: false }).includes('かけらA') && !P(9).html({ grade: false }).includes('年生'));
 
 // ○の文字 → あいことば
