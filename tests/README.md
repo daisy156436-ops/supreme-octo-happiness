@@ -56,7 +56,7 @@ node tests/nazo-browser.js
 
 | ファイル | 内容 |
 |---|---|
-| `export-pdf.js` | 謎解き脱出・陣取りクイズの「⑤印刷」を、最初の設定のまま全部PDFにして `印刷用PDF/` に書き出す（一覧の `印刷用PDF/README.md` も作る） |
+| `export-pdf.js` | 謎解き脱出・陣取りクイズの「⑤印刷」を全部PDFにして `印刷用PDF/` に書き出す（先生用は最初の設定、チームの番号入りの紙は20チーム分、番号なしの紙も）。「はじめに読む（印刷のしかた）.pdf」と `README.md` を作り、USBメモリで運ぶ用の `印刷用PDF.zip` にまとめる（zip は git には入れない） |
 
 ```
 node tests/export-pdf.js
