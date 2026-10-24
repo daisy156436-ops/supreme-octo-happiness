@@ -59,6 +59,37 @@ table.rec{width:auto;min-width:420px}
 table.rec td,table.rec th{white-space:nowrap;font-variant-numeric:tabular-nums}
 table.rec .sw{min-width:26px;height:22px;font-size:13px;margin-right:4px}
 @media (max-width:760px){.preview{grid-template-columns:1fr}}
+details.card>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::before{content:"▶";font-size:12px;color:var(--sub)}
+details.card[open]>summary::before{content:"▼"}
+details.card>summary h2{margin:0}
+details.card[open]>summary{margin-bottom:8px}
+.card.start{border-color:var(--accent);background:#f7faff}
+.steps3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:6px 0}
+.steps3 .step{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 14px;border:2px solid var(--accent);border-radius:10px;background:#fff;font:inherit;cursor:pointer;text-align:left;color:var(--ink)}
+.steps3 .step:hover{background:var(--accent-weak)}
+.steps3 .step b{font-size:22px;color:var(--accent);line-height:1}
+.steps3 .step span{font-weight:bold;font-size:16px}
+.steps3 .step small{color:var(--sub)}
+.prep{display:flex;flex-direction:column;gap:2px}
+.prep label{display:flex;gap:8px;align-items:flex-start;padding:4px 6px;border-radius:6px;cursor:pointer}
+.prep label:hover{background:#f0f2f6}
+.prep label.on{color:var(--sub);text-decoration:line-through}
+.prep input{margin-top:4px}
+.preflight{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.summary{background:#f0f2f6;border-radius:8px;padding:8px 12px;font-size:14px;margin:6px 0;line-height:1.7}
+.pitem{display:flex;align-items:center;gap:8px;padding:2px 0}
+.pitem>label:first-child{flex:1}
+.pitem .pc{display:inline-block;padding:0 7px;border-radius:9px;background:#eef1f6;color:var(--sub);font-size:12px;margin-left:6px;white-space:nowrap}
+.pitem label.done{font-size:12px;color:var(--sub);white-space:nowrap;padding:0}
+.pitem label.done.on{color:var(--good);font-weight:bold}
+#helpBox{position:fixed;right:1.6vw;top:9vh;z-index:27;background:#fff;color:#1d2330;border-radius:1.4vh;padding:1.6vh 2.4vh 1.6vh 2vh;max-width:min(46vw,64vh);box-shadow:0 1vh 4vh rgba(0,0,0,.5);font-size:2vh;line-height:1.5}
+#helpBox h3{margin:0 0 .6vh;font-size:2.4vh}
+#helpBox ul{margin:0;padding-left:2.2vh}
+#helpBox li{margin:.3vh 0}
+#helpBox .x{position:absolute;right:.8vh;top:.6vh;border:none;background:none;font:inherit;font-size:2.4vh;cursor:pointer;color:#5b6475}
+.st-top button.on{background:rgba(245,197,66,.35);border-color:var(--gold)}
 
 /* ===NAZO-CSS-START=== */
 .nz{color:#1d2330;line-height:1.5}
@@ -559,6 +590,20 @@ table.roles td,table.roles th{font-size:13px}
 
 <!-- ① 遊び方 -->
 <section class="tab" id="tab-guide">
+  <div class="card start">
+    <h2>はじめての先生へ：3ステップ</h2>
+    <div class="steps3">
+      <button class="step" data-go="setup"><b>1</b><span>② 設定</span><small>チームの数と名前を入れる（時間は「ふつう」のままでOK）</small></button>
+      <button class="step" data-go="print"><b>2</b><span>⑤ 印刷</span><small>紙を印刷して切る。「台本と進行表」を先生全員で読む</small></button>
+      <button class="step" data-go="play"><b>3</b><span>④ 本番</span><small>音のテスト → 全画面 → はじめる。あとはスペースキー</small></button>
+    </div>
+    <p class="hint">くわしいことは、このページの下（▶ を押すと開きます）と、⑤印刷の「台本と進行表」にあります。</p>
+  </div>
+  <div class="card">
+    <h2>準備チェックリスト <span class="hint" id="prepCount"></span></h2>
+    <div id="prepList" class="prep"></div>
+    <p class="hint">チェックは、このパソコンに保存されます。④本番の画面にも「何個できたか」が出ます。</p>
+  </div>
   <div class="card">
     <h2>どんなゲーム？</h2>
     <p>「体育館にとじこめられた！」というお話で、6人くらい（縦割りなら各学年2人ずつ）のチームが協力して謎を解きます。とびらは2つあります。</p>
@@ -602,8 +647,8 @@ table.roles td,table.roles th{font-size:13px}
       <p class="hint">押しまちがえたら「記録を取り消す」を押してから、そのチームを押します。スペースキー（か右下のボタン）で次へ進みます。途中でページを閉じても、開き直すと続きからできます。</p>
     </div>
   </div>
-  <div class="card">
-    <h2>縦割り活動として行うとき</h2>
+  <details class="card">
+    <summary><h2>縦割り活動として行うとき</h2></summary>
     <p>②設定の「縦割り活動モード」を入れると（はじめから入っています）、次のしくみが加わります。</p>
     <ul>
       <li><b>学年ごとの担当</b>：謎に「1年生から」「2年生から」「3年生から」のマークがつきます。まずその学年の人が考え、わからなければみんなで考えます。第1ステージはどの学年も2つずつ、第2ステージは1年生が謎7、3年生が謎8を担当。1年生の担当は、とっつきやすい謎（えもじ・しりとり・時間割）です</li>
@@ -613,9 +658,9 @@ table.roles td,table.roles th{font-size:13px}
       <li><b>ふりかえり</b>：表彰のあとに、MVP・上級生から下級生へ・下級生から上級生への一言。⑤で印刷する「チームシート」に書けます</li>
     </ul>
     <p class="hint">チーム分けは、6人（各学年2人ずつ）がおすすめです。7人以上になると、謎を見られない人が出やすくなります。表彰とは別に、先生が見ていて「チームワーク賞」を伝えるのもおすすめです。</p>
-  </div>
-  <div class="card">
-    <h2>盛り上げるしかけ</h2>
+  </details>
+  <details class="card">
+    <summary><h2>盛り上げるしかけ</h2></summary>
     <ul>
       <li><b>⚡ 伝令タイム</b>（14分・25分）：スクリーンに「伝令タイム！」。各チームの1年生だけがスクリーンの前に集まり、15秒だけ出る「ひみつ情報」をおぼえて、チームにもどって伝えます（メモ禁止）。1年生が主役になる時間です</li>
       <li><b>🗝️ 裏ミッション</b>：脱出したチームへの、ひみつの暗号。これまでの謎の答えを使います。早いチームも最後まで考えられます。解けたチームは「👑真・脱出」。答えは解説の最後に、みんなに発表します</li>
@@ -629,9 +674,9 @@ table.roles td,table.roles th{font-size:13px}
       <li><b>🏅 証明書</b>：本番のあとに⑤で印刷すると、チームごとにタイムと順位の入った「脱出証明書」（脱出できなかったチームは「挑戦証明書」）になります。後日わたすと、縦割りのチームの思い出が手元に残ります</li>
     </ul>
     <p class="hint">伝令タイム・SOSカード・裏ミッションは、②設定で切れます。</p>
-  </div>
-  <div class="card">
-    <h2>ルール（生徒への説明）</h2>
+  </details>
+  <details class="card">
+    <summary><h2>ルール（生徒への説明）</h2></summary>
     <ol>
       <li>謎1〜6を、チームで協力して解く（手分けしてもOK）</li>
       <li>答えの ○ の文字を、謎の番号の順にならべると、第1のとびらのあいことば。3枚目の紙を先生に見せる</li>
@@ -640,10 +685,10 @@ table.roles td,table.roles th{font-size:13px}
       <li>脱出したチームには、裏ミッションの紙。解けたら「真・脱出」</li>
       <li>ほかのチームに答えを教えない。答えは大きな声で言わない</li>
     </ol>
-  </div>
+  </details>
   <div class="two">
-    <div class="card">
-      <h2>タブレットを使うとき</h2>
+    <details class="card">
+      <summary><h2>タブレットを使うとき</h2></summary>
       <ul>
         <li><b>謎解きカード.html</b> をチームのタブレットに配ります（ネットはいりません）。答えは暗号にしてあるので、ファイルを開いても答えは見えません</li>
         <li>チームの番号を選び、先生の「スタート！」で画面のスタートを押します</li>
@@ -651,9 +696,9 @@ table.roles td,table.roles th{font-size:13px}
         <li>紙の謎も一緒に配ると、チームで手分けしやすくなります</li>
         <li><b>このファイル（謎解き脱出.html）は生徒に配らないでください。</b>答えが入っています</li>
       </ul>
-    </div>
-    <div class="card">
-      <h2>うまくいくコツ</h2>
+    </details>
+    <details class="card">
+      <summary><h2>うまくいくコツ</h2></summary>
       <ul>
         <li>第2ステージの紙と裏ミッションの紙は、先生の手元にチーム数そろえておき、すぐわたせるようにします</li>
         <li>むずかしそうなら②で制限時間をのばすか、ヒントを早めてください（本番中も「ヒントを今出す」「＋1分」が使えます）</li>
@@ -665,7 +710,7 @@ table.roles td,table.roles th{font-size:13px}
         <li>家のパソコンで準備して学校のパソコンで本番をするときは、⑥保存でファイルに書き出して運びます。本番のあとも書き出しておくと、記録が残ります</li>
         <li>あいことばは「あきらめない」と「えがお」、裏ミッションは「みらいもなかま（未来も仲間）」。解説の最後にこのメッセージを見せて、ふりかえりにつなげてください</li>
       </ul>
-    </div>
+    </details>
   </div>
 </section>
 
@@ -735,13 +780,15 @@ table.roles td,table.roles th{font-size:13px}
   <div class="card">
     <h2>本番</h2>
     <div id="playStatus"></div>
-    <div class="row">
-      <button class="btn primary big" id="playResume">続きから</button>
-      <button class="btn big" id="playNew">はじめる</button>
-      <button class="btn big" id="playSound">🔊 音のテスト</button>
+    <div id="playSummary" class="summary"></div>
+    <div class="preflight">
+      <button class="btn big" id="playSound">1. 🔊 音のテスト</button>
+      <button class="btn big" id="playFull">2. ⛶ 全画面にする</button>
+      <button class="btn big" id="playNew">3. ▶ はじめる</button>
+      <button class="btn primary big" id="playResume">▶ 続きから</button>
     </div>
     <div id="soundMsg"></div>
-    <p class="hint">「はじめる」を押すと、お話の画面が出ます。プロジェクターとスピーカーをつないで「音のテスト」をしてから押してください。</p>
+    <p class="hint">「はじめる」を押すと、お話の画面が出ます。そのあとは<b>スペースキー</b>で進みます。本番の画面の右上「？ 操作」に、操作のメモが出ます。画面を閉じてしまっても、開き直すと本番の画面がそのまま戻ります。</p>
   </div>
 </section>
 
@@ -751,19 +798,19 @@ table.roles td,table.roles th{font-size:13px}
     <h2>印刷</h2>
     <div class="pgroups">
       <div><h3>生徒にわたすもの</h3>
-        <label><input type="radio" name="pKind" value="sheets" checked> 謎の紙（はじめに配る3枚）</label>
-        <label><input type="radio" name="pKind" value="stage2"> 第2ステージの紙（第1のとびらを開けたチームに）</label>
-        <label><input type="radio" name="pKind" value="ex"> 裏ミッションの紙（脱出したチームに）</label>
-        <label><input type="radio" name="pKind" value="team"> チームシート（メンバー・役割・ふりかえり）</label>
-        <label><input type="radio" name="pKind" value="role"> 役割カード（リーダー・記録・伝令の6枚）</label>
-        <label><input type="radio" name="pKind" value="cert"> 証明書（本番のあとに。タイムと順位が自動で入る）</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="sheets" checked> 謎の紙（はじめに配る3枚）<span class="pc" data-k="sheets"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="sheets"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="stage2"> 第2ステージの紙（第1のとびらを開けたチームに）<span class="pc" data-k="stage2"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="stage2"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="ex"> 裏ミッションの紙（脱出したチームに）<span class="pc" data-k="ex"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="ex"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="team"> チームシート（メンバー・役割・ふりかえり）<span class="pc" data-k="team"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="team"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="role"> 役割カード（リーダー・記録・伝令の6枚）<span class="pc" data-k="role"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="role"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="cert"> 証明書（本番のあとに。タイムと順位が自動で入る）<span class="pc" data-k="cert"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="cert"> 印刷した</label></div></div>
       <div><h3>先生用</h3>
-        <label><input type="radio" name="pKind" value="script"> 台本と進行表（準備チェックリスト・会場の図つき）</label>
-        <label><input type="radio" name="pKind" value="check"> 答え合わせカード（答え合わせ係の先生用）</label>
-        <label><input type="radio" name="pKind" value="key"> 答えとヒント（くわしい解説つき）</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="script"> 台本と進行表（準備チェックリスト・会場の図つき）<span class="pc" data-k="script"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="script"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="check"> 答え合わせカード（答え合わせ係の先生用）<span class="pc" data-k="check"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="check"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="key"> 答えとヒント（くわしい解説つき）<span class="pc" data-k="key"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="key"> 印刷した</label></div></div>
       <div><h3>掲示・演出</h3>
-        <label><input type="radio" name="pKind" value="poster"> 予告ポスター（挑戦状）</label>
-        <label><input type="radio" name="pKind" value="panel"> 写真用パネル（脱出成功！など）</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="poster"> 予告ポスター（挑戦状）<span class="pc" data-k="poster"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="poster"> 印刷した</label></div>
+        <div class="pitem"><label><input type="radio" name="pKind" value="panel"> 写真用パネル（脱出成功！など）<span class="pc" data-k="panel"></span></label><label class="done"><input type="checkbox" class="pdone" data-k="panel"> 印刷した</label></div></div>
     </div>
     <div class="row" id="pPerRow"><label><input type="checkbox" id="pPerTeam"> チームの番号を入れて、チームごとに印刷する（部数1でOK・配るときにまちがえない）</label></div>
     <div class="row"><button class="btn primary" id="pPrint">印刷する</button><span class="hint" id="pHint"></span></div>
@@ -802,6 +849,7 @@ table.roles td,table.roles th{font-size:13px}
   <div class="st-top">
     <div id="stTitle"></div>
     <span class="sp"></span>
+    <button id="stHelp">？ 操作</button>
     <button id="stSound"></button>
     <button id="stFull">全画面</button>
     <button id="stClose">✕ 閉じる</button>
@@ -821,6 +869,15 @@ table.roles td,table.roles th{font-size:13px}
     <button id="stPrimary"></button>
   </div>
 </div>
+<div id="helpBox" hidden><button class="x" aria-label="とじる">✕</button><h3>操作のメモ</h3><ul>
+  <li><b>スペース</b>（Enter・→）：次へ進む。お話は1行ずつ</li>
+  <li><b>チームのボタン</b>：あいことばが正しければ押す。<b>1回目＝第1のとびら、2回目＝脱出、3回目＝真・脱出</b></li>
+  <li>押しまちがえ：「記録を取り消す」→ そのチーム</li>
+  <li>謎解き中：一時停止／＋1分／ヒントを今出す／ここで終わる</li>
+  <li>伝令タイム（14分・25分）は自動。「すぐに情報を出す」で早送り</li>
+  <li>解説で時間がないとき：「真のとびらへ」「最後のとびらへ」</li>
+  <li>画面を閉じても、開き直すと本番の画面が戻る</li>
+  <li>このメモ：「？ 操作」か、キーボードの <b>?</b> で出し入れ</li></ul></div>
 <div id="relay" hidden></div>
 <div id="cdown" hidden></div>
 <div id="banner" hidden></div>
@@ -1158,6 +1215,7 @@ function showTab(name) {
   $$('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
   $$('section.tab').forEach(s => s.classList.toggle('on', s.id === 'tab-' + name));
   lsSet('nazo-escape-tab', name);
+  if (name === 'guide') renderPrep();
   if (name === 'setup') renderSetup();
   if (name === 'answers') renderAnswers();
   if (name === 'play') renderPlayTab();
@@ -1165,6 +1223,27 @@ function showTab(name) {
   if (name === 'save') renderSave();
 }
 $('#nav').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) showTab(b.dataset.tab); });
+
+// ---------- ① 遊び方：準備チェックリスト ----------
+const PREP_ITEMS = [
+  'チーム分け（各学年2人ずつの6人）をして、チームの番号を名簿に書いた',
+  '②設定で、チームの数とチーム名を入れた',
+  '先生の役割分担（司会・パソコン・答え合わせ・見回り）を決めた',
+  '⑤印刷の「台本と進行表」を先生全員で読んだ',
+  '紙を印刷して、裏ミッションの紙・役割カード・答え合わせカードを切った',
+  'えんぴつ・消しゴム・下じき・はさみ（1チーム1本）・スタンプを用意した',
+  '先生だけでリハーサルをして、⑥保存の「本番の記録を消す」をした',
+  '（タブレットを使うときだけ）謎解きカード.html をチームのタブレットに入れた',
+  '当日：プロジェクターとスピーカーをつないで、④本番の「音のテスト」をした',
+];
+function prepDone() { return (S.opts.prep || []).filter(Boolean).length; }
+function renderPrep() {
+  const p = S.opts.prep || [];
+  $('#prepList').innerHTML = PREP_ITEMS.map((s, i) => `<label class="${p[i] ? 'on' : ''}"><input type="checkbox" data-i="${i}"${p[i] ? ' checked' : ''}> <span>${esc(s)}</span></label>`).join('');
+  $('#prepCount').textContent = `${prepDone()} / ${PREP_ITEMS.length} できた`;
+}
+$('#prepList').addEventListener('change', e => { const i = +e.target.dataset.i; if (isNaN(i)) return; const p = S.opts.prep = S.opts.prep || []; p[i] = e.target.checked; saveSoon(); renderPrep(); });
+$$('.steps3 .step').forEach(b => b.addEventListener('click', () => { showTab(b.dataset.go); window.scrollTo(0, 0); }));
 
 // ---------- ② 設定 ----------
 function hintTimes(o) { return HINT_PLAN.map((_, i) => (o.hint0 + i * o.hintGap) * 60000); }
@@ -1239,11 +1318,14 @@ function renderAnswers() {
 
 // ---------- ④ 本番 ----------
 function renderPlayTab() {
-  const g = S.game;
+  const g = S.game, o = S.opts;
   $('#playResume').hidden = !g;
   $('#playNew').classList.toggle('primary', !g);
-  $('#playStatus').innerHTML = g ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.minutes}分）。「続きから」で戻れます。</div>` : `<p>${S.teams.count}チーム・制限時間${S.opts.minutes}分で始めます（②で変えられます）。</p>`;
+  $('#playStatus').innerHTML = g ? `<div class="msg info">本番の途中です：<b>${esc(phaseText(g))}</b>（${g.n}チーム・${g.minutes}分）。「続きから」で戻れます。</div>` : '';
+  const fun = [o.tate !== false ? '縦割り活動モード' : '', o.relay !== false ? `伝令タイム ${o.relay1}分・${o.relay2}分` : '', o.sos !== false ? 'SOSカード' : '', o.ex !== false ? '裏ミッション' : ''].filter(Boolean).join('・');
+  $('#playSummary').innerHTML = `この設定で始めます：<b>${S.teams.count}チーム</b>・制限時間 <b>${o.minutes}分</b>・${fun}（②設定で変えられます）<br>準備チェックリスト：<b>${prepDone()} / ${PREP_ITEMS.length}</b> できた（①遊び方）`;
 }
+$('#playFull').addEventListener('click', () => { if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); });
 function phaseText(g) {
   return { story: 'お話の画面', form: 'チーム結成タイム', reflect: 'ふりかえり', rules: 'ルールの画面', practice: 'れんしゅうの謎', play: `謎解きの途中（のこり ${mmss(remaining(g))}）`, timeup: '終了したところ', explain: `解説（${g.exIdx + 1}問目）`, result: '結果発表', awards: '特別賞' }[g.phase] || '';
 }
@@ -1317,11 +1399,14 @@ const SND = {
 };
 
 function openStage() {
+  lsSet('nazo-escape-staging', '1');
   document.body.classList.add('staging');
   renderStage();
   startTick();
 }
 function closeStage() {
+  lsSet('nazo-escape-staging', '0');
+  toggleHelp(false);
   document.body.classList.remove('staging');
   stopTick();
   RELAY_NOW = null; $('#relay').hidden = true; showCountdown(0);
@@ -1334,6 +1419,10 @@ $('#stFull').addEventListener('click', () => {
   else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
 });
 $('#stSound').addEventListener('click', () => { S.opts.sound = !S.opts.sound; saveSoon(); renderBar(); });
+// 操作のメモ（本番画面の右上「？ 操作」か、キーボードの ?）
+function toggleHelp(show) { const b = $('#helpBox'); b.hidden = show == null ? !b.hidden : !show; $('#stHelp').classList.toggle('on', !b.hidden); }
+$('#stHelp').addEventListener('click', () => toggleHelp());
+$('#helpBox .x').addEventListener('click', () => toggleHelp(false));
 
 // タイマー
 let tickId = null, lastSec = null;
@@ -1517,6 +1606,8 @@ $('#stage').addEventListener('click', e => { const b = e.target.closest('button'
 document.addEventListener('keydown', e => {
   if (!document.body.classList.contains('staging')) return;
   if (e.target.matches && e.target.matches('input,textarea,select')) return;
+  if (e.key === '?' || e.key === 'h' || e.key === 'H') { e.preventDefault(); toggleHelp(); return; }
+  if (e.key === 'Escape' && !$('#helpBox').hidden) { toggleHelp(false); return; }
   if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
     e.preventDefault();
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
@@ -2078,13 +2169,21 @@ const PRINT_HINT = {
   cert: n => `${n}ページ（1チーム1枚）。${S.game && S.game.rec ? '本番の記録（タイムと順位）が入っています。' : '本番のあとに印刷すると、タイムと順位が自動で入ります（今は空らんのひな形で、手で書きこめます）。'}ふりかえりのときか、後日わたします。`,
   script: () => `${$$('#printPreview .page').length}ページ。②設定（時間・チーム数・伝令タイムなど）に合わせて、時刻や枚数が変わります。`,
 };
+function pagesOf(k) { try { return (PR[k](S.opts.tate !== false).match(/class="page/g) || []).length; } catch (e) { return 0; } }
 function renderPrint() {
   const k = printKind(), n = S.teams.count, per = S.opts.perTeam !== false;
   $('#printPreview').innerHTML = PR[k](S.opts.tate !== false);
   $('#pHint').textContent = PRINT_HINT[k](n, per);
   $('#pPerTeam').checked = per;
   $('#pPerRow').hidden = !['sheets', 'stage2', 'ex', 'role'].includes(k);
+  $$('.pitem .pc').forEach(s => { s.textContent = pagesOf(s.dataset.k) + 'ページ'; });
+  $$('.pitem .pdone').forEach(c => { c.checked = !!(S.opts.printed || {})[c.dataset.k]; c.closest('label').classList.toggle('on', c.checked); });
 }
+$('#tab-print').addEventListener('change', e => {
+  if (!e.target.classList.contains('pdone')) return;
+  S.opts.printed = Object.assign({}, S.opts.printed, { [e.target.dataset.k]: e.target.checked }); saveSoon();
+  e.target.closest('label').classList.toggle('on', e.target.checked);
+});
 $$('input[name=pKind]').forEach(r => r.addEventListener('change', renderPrint));
 $('#pPerTeam').addEventListener('change', e => { S.opts.perTeam = e.target.checked; saveSoon(); renderPrint(); });
 $('#pPrint').addEventListener('click', () => { renderPrint(); window.print(); });
@@ -2144,7 +2243,10 @@ $('#sReset').addEventListener('click', () => {
 
 // ---------- はじめ ----------
 $('#ver').textContent = '版 ' + NZ_VERSION;
-showTab(lsGet('nazo-escape-tab') || 'guide');
+// 本番の途中なら④本番を開く。本番の画面を出したまま閉じてしまったときは、画面ごと戻す
+const g0 = S.game, mid = g0 && !['result', 'awards', 'reflect'].includes(g0.phase);
+showTab(mid ? 'play' : (lsGet('nazo-escape-tab') || 'guide'));
+if (mid && lsGet('nazo-escape-staging') === '1' && ['form', 'rules', 'practice', 'play', 'timeup'].includes(g0.phase)) openStage();
 </script>
 </body>
 </html>
