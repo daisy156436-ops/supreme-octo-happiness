@@ -37,6 +37,11 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   await pg.fill('#sRelay2', '31'); await pg.dispatchEvent('#sRelay2', 'change');
   ok('伝令タイムが制限時間の直前なら知らせる', (await pg.textContent('#hintPlan')).includes('伝令タイムが制限時間'));
   await pg.fill('#sRelay2', '25'); await pg.dispatchEvent('#sRelay2', 'change');
+  ok('おすすめ設定：いまは「ふつう」', await pg.$eval('button[data-preset=normal]', b => b.classList.contains('primary')) && !(await pg.$eval('button[data-preset=easy]', b => b.classList.contains('primary'))));
+  await pg.click('button[data-preset=easy]');
+  ok('おすすめ設定「やさしめ」で35分・ヒント4分後', (await pg.inputValue('#sMin')) === '35' && (await pg.inputValue('#sHint0')) === '4' && (await S()).opts.relay2 === 26 && await pg.$eval('button[data-preset=easy]', b => b.classList.contains('primary')));
+  await pg.click('button[data-preset=normal]');
+  ok('「ふつう」にもどす', (await pg.inputValue('#sMin')) === '32' && (await pg.inputValue('#sHint0')) === '6' && (await S()).opts.relay2 === 25);
   // ③ 謎と答え
   await pg.click('button[data-tab=answers]');
   const ans = await pg.textContent('#answerList');
@@ -45,7 +50,7 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
 
   // ⑤ 印刷
   await pg.click('button[data-tab=print]');
-  ok('印刷は「生徒にわたすもの」「先生用」「掲示・演出」に分かれる', (await pg.$$eval('.pgroups h3', x => x.map(e => e.textContent).join())) === '生徒にわたすもの,先生用,掲示・演出' && (await pg.$$eval('input[name=pKind]', x => x.length)) === 10);
+  ok('印刷は「生徒にわたすもの」「先生用」「掲示・演出」に分かれる', (await pg.$$eval('.pgroups h3', x => x.map(e => e.textContent).join())) === '生徒にわたすもの,先生用,掲示・演出' && (await pg.$$eval('input[name=pKind]', x => x.length)) === 11);
   ok('謎の紙：はじめはチームの番号入りで12チーム×3ページ', await pg.isChecked('#pPerTeam') && (await pg.$$eval('#printPreview .page', x => x.length)) === 36 && (await pg.textContent('#pHint')).includes('36ページ') && (await pg.$$eval('#printPreview .page:nth-child(4) .tno', x => x.map(e => e.textContent).join())) === '21組2班');
   ok('謎の紙：どのページにもチームの番号', (await pg.$$eval('#printPreview .page', ps => ps.every(p => p.querySelector('.tno')))));
   ok('謎の紙：3枚目の下にSOSカード（チームごと）', (await pg.$$eval('#printPreview .sos', x => x.length)) === 12 && (await pg.$$eval('#printPreview .page:nth-child(3) .sos .tno', x => x[0].textContent)) === '11組1班');
@@ -57,6 +62,11 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   const fits = async () => { await pg.emulateMedia({ media: 'print' }); const o = await pg.$$eval('#printPreview .page', ps => ps.map(p => p.scrollHeight - p.clientHeight)); await pg.emulateMedia({ media: 'screen' }); return o; };
   let over = await fits();
   ok('印刷で各ページに収まる', over.every(v => v <= 1), over.join(','));
+  await pg.check('input[name=pKind][value=cert]');
+  ok('証明書：本番の前は空らんのひな形（チームの数だけ）', (await pg.$$eval('#printPreview .page.cert', x => x.length)) === 12 && (await pg.textContent('#pHint')).includes('空らん') && (await pg.$$eval('#printPreview .cert .bl', x => x.length)) > 12 && (await pg.textContent('#printPreview .cert')).includes('脱出証明書'));
+  over = await fits();
+  ok('証明書も各ページに収まる', over.every(v => v <= 1), over.join(','));
+  await pg.check('input[name=pKind][value=sheets]');
   await pg.check('input[name=pKind][value=stage2]');
   ok('第2ステージの紙は2ページ・謎7〜9と第2のとびら', (await pg.$$eval('#printPreview .page', x => x.length)) === 2 && (await pg.$$eval('#printPreview .nz', x => x.length)) === 4 && (await pg.textContent('#printPreview')).includes('第2のとびら'));
   ok('第2ステージの紙の1ページ目にメモ欄', (await pg.$$eval('#printPreview .page:first-child .memo', x => x.length)) === 1);
@@ -122,6 +132,8 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
   // ④ 本番
   await pg.click('button[data-tab=play]');
   ok('はじめは「続きから」なし', !(await pg.isVisible('#playResume')));
+  await pg.click('#playSound');
+  ok('音のテスト', (await pg.textContent('#soundMsg')).includes('鳴りましたか') && (await S()).opts.sound === true);
   await pg.click('#playNew');
   ok('お話の画面', await pg.isVisible('#stage') && (await pg.textContent('#stMain')).includes('体育館からの脱出') && (await pg.textContent('#stMain')).includes('32分') && (await pg.textContent('#stMain')).includes('2つ'));
   ok('お話：はじめは題名だけ、スペースで1行ずつ', (await pg.$$eval('.story-slide .sl.on', x => x.length)) === 0 && (await pg.textContent('#stPrimary')).includes('つづき'));
@@ -295,11 +307,39 @@ const fileUrl = f => url.pathToFileURL(path.join(__dirname, '..', f)).href;
     return ok1 && ok2;
   }));
   await space();
-  ok('ふりかえりの画面', (await S()).game.phase === 'reflect' && (await pg.textContent('#stMain')).includes('MVP') && (await pg.textContent('#stMain')).includes('みらいもなかま') && !(await pg.isVisible('#stPrimary')));
+  await pg.waitForTimeout(300);
+  ok('ふりかえりの画面（2分のタイマーつき）', (await S()).game.phase === 'reflect' && (await pg.textContent('#stMain')).includes('MVP') && (await pg.textContent('#stMain')).includes('みらいもなかま') && !(await pg.isVisible('#stPrimary')) && /^(2:00|1:5\d)$/.test(await pg.textContent('#reflTime')), await pg.textContent('#reflTime'));
+  await pg.evaluate(() => { S.game.reflectEnd = Date.now() + 1200; });
+  await pg.waitForTimeout(1700);
+  ok('ふりかえりのタイマーが0で止まる', (await pg.textContent('#reflTime')) === '0:00' && (await S()).game.phase === 'reflect');
   await pg.click('#stBack');
   ok('ふりかえりから戻ると特別賞', (await S()).game.phase === 'awards');
   await pg.click('#stBack');
   ok('特別賞から戻ると結果発表', (await S()).game.phase === 'result');
+
+  // ⑥ 保存：本番の記録・書き出し・読み込み・証明書
+  await pg.click('#stClose');
+  await pg.click('button[data-tab=save]');
+  const rec = await pg.textContent('#recTable');
+  ok('⑥保存に本番の記録の表（順位・あと一歩）', (await pg.$$eval('#recTable table.rec tbody tr', x => x.length)) === 12 && rec.includes('1位') && rec.includes('あと一歩') && rec.includes('👑') && rec.includes('一番乗り'));
+  const dl = await Promise.all([pg.waitForEvent('download'), pg.click('#sExport')]);
+  const saved = JSON.parse(require('fs').readFileSync(await dl[0].path(), 'utf8'));
+  ok('ファイルに書き出す（チーム・設定・本番の記録）', saved.app === 'nazo-escape' && saved.teams.count === 12 && saved.game && saved.game.rec[4].d3 != null && (await pg.textContent('#sMsg')).includes('書き出しました'));
+  await pg.click('button[data-tab=print]'); await pg.check('input[name=pKind][value=cert]');
+  const ct = await pg.textContent('#printPreview');
+  ok('証明書に本番の記録が入る（脱出証明書・挑戦証明書・順位・真のあいことば）', ct.includes('脱出証明書') && ct.includes('挑戦証明書') && ct.includes('第1位') && ct.includes('みらいもなかま」にたどりつきました') && (await pg.textContent('#pHint')).includes('記録（タイムと順位）が入っています'));
+  over = await fits();
+  ok('記録入りの証明書も収まる', over.every(v => v <= 1), over.join(','));
+  await pg.click('button[data-tab=save]');
+  await pg.click('#sClearGame');
+  ok('本番の記録を消す（チーム・設定は残る）', !(await S()).game && (await S()).teams.count === 12 && (await pg.textContent('#recTable')).includes('まだ本番の記録はありません'));
+  await pg.setInputFiles('#sImport', { name: 'a.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(saved)) });
+  await pg.waitForTimeout(300);
+  ok('ファイルから読み込む（記録がもどる）', (await S()).game && (await S()).game.rec[4].d3 != null && (await pg.textContent('#sMsg')).includes('本番の記録あり') && (await pg.$$eval('#recTable table.rec tbody tr', x => x.length)) === 12);
+  await pg.setInputFiles('#sImport', { name: 'b.json', mimeType: 'application/json', buffer: Buffer.from('{"app":"other"}') });
+  await pg.waitForTimeout(300);
+  ok('ちがうファイルは読まない', (await pg.textContent('#sMsg')).includes('読めませんでした') && (await S()).game);
+  await pg.click('button[data-tab=play]'); await pg.click('#playResume');
 
   // 縦割りモードを切ると、結成タイム・ふりかえり・学年マークなし
   await pg.click('#stClose');

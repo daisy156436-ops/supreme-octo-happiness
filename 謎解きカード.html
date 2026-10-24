@@ -54,6 +54,7 @@ p{margin:0}
 #truex .tm{font-size:1.7em;font-weight:900;font-variant-numeric:tabular-nums}
 #truex .note{font-size:1.1em}
 #truex .ghost{border-color:#1d2330;color:#1d2330}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:30}
 #escaped .big{box-shadow:0 .2em .6em rgba(0,0,0,.3)}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 #escaped,#door1{align-items:center;justify-content:center;text-align:center;background:var(--team);color:var(--teamInk)}
@@ -148,6 +149,7 @@ p{margin:0}
 </style>
 </head>
 <body>
+<canvas id="cf" hidden></canvas>
 
 <div class="screen" id="pick">
   <h1>🔒 謎解きカード</h1>
@@ -461,12 +463,12 @@ $('#pForm').addEventListener('submit', e => {
   }
   if (p.id === 'final2') {
     if (!C.escapedAt) C.escapedAt = Date.now();
-    save(); showEscaped();
+    save(); showEscaped(true);
     return;
   }
   if (p.id === 'ex') {
     if (!C.exAt) { C.exAt = Date.now(); C.exWord = ok; }
-    save(); showTrue();
+    save(); showTrue(true);
     return;
   }
   C.solved[p.id] = ok;
@@ -482,21 +484,35 @@ function showDoor1() {
   screen('door1');
 }
 $('#toStage2').addEventListener('click', () => { renderList(); screen('list'); setTimeout(() => $('#stage2').scrollIntoView({ behavior: 'smooth' }), 50); });
-function showEscaped() {
+function showEscaped(fresh) {
   $('#eTeam').textContent = C.team + '番のチーム';
   $('#eTime').textContent = 'タイム ' + mmss(C.escapedAt - C.startAt);
   $('#toEx').textContent = C.exAt ? '👑 真・脱出の画面' : '🗝️ 裏ミッションに挑戦';
   screen('escaped');
+  if (fresh) confetti();
+}
+// 紙ふぶき（脱出・真・脱出のとき）
+function confetti() {
+  const cv = $('#cf'), ctx = cv.getContext('2d');
+  cv.hidden = false; cv.width = innerWidth; cv.height = innerHeight;
+  const P = [...Array(140)].map((_, i) => ({ x: Math.random() * cv.width, y: -Math.random() * cv.height * 0.5, vx: (Math.random() - 0.5) * 3, vy: 2 + Math.random() * 4, s: 6 + Math.random() * 8, c: TEAM_COLORS[i % 10], a: Math.random() * 6 }));
+  const t0 = performance.now();
+  (function frame(now) {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    P.forEach(p => { p.x += p.vx; p.y += p.vy; p.a += 0.1; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2); ctx.restore(); });
+    if (now - t0 < 4000) requestAnimationFrame(frame); else { ctx.clearRect(0, 0, cv.width, cv.height); cv.hidden = true; }
+  })(t0);
 }
 $('#eBack').addEventListener('click', () => { renderList(); screen('list'); });
 function exGo() { if (C.exAt) showTrue(); else openPuzzle(NZ_EX); }
 $('#toEx').addEventListener('click', exGo);
 $('#toEx2').addEventListener('click', exGo);
-function showTrue() {
+function showTrue(fresh) {
   $('#xWord').textContent = '「' + C.exWord + '」';
   $('#xTeam').textContent = C.team + '番のチーム';
   $('#xTime').textContent = 'タイム ' + mmss(C.exAt - C.startAt);
   screen('truex');
+  if (fresh) confetti();
 }
 $('#xBack').addEventListener('click', () => { renderList(); screen('list'); });
 
