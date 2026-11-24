@@ -108,3 +108,5 @@
 ## 検査とPDFの作り直し（先生は使いません）
 
 `tests/` の自動検査と、`node tests/export-pdf.js` による印刷用PDFの書き出しについては [tests/README.md](tests/README.md) を見てください。
+
+作り方や決めごとの引き継ぎは [CLAUDE.md](CLAUDE.md) にあります（別のチャットや先生以外の人が続きを作るときに読むもの）。
