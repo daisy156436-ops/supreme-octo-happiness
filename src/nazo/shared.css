@@ -1,0 +1,78 @@
+/* ===NAZO-CSS-START=== */
+.nz{color:#1d2330;line-height:1.5}
+.nz-head{display:flex;align-items:baseline;gap:.5em;margin:0 0 .3em}
+.nz-no{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;border-radius:.4em;background:#1d2330;color:#fff;font-weight:900}
+.nz-title{font-weight:900;font-size:1.15em}
+.nz-lv{color:#e0a800;letter-spacing:.05em}
+.nz-q{font-weight:bold;margin:.2em 0 .5em}
+.nz-ex{display:inline-block;font-size:.9em;color:#3d4556;background:#eef1f6;border-radius:.5em;padding:.25em .7em;margin:0 0 .5em}
+.nz-ex .nz-emo{flex-direction:row;vertical-align:middle}
+.nz-ex .nz-emo .e{font-size:1.5em}
+.nz-row{display:flex;flex-wrap:wrap;gap:.5em .7em;align-items:center;justify-content:center}
+.nz-emo{display:inline-flex;flex-direction:column;align-items:center;gap:.1em}
+.nz-emo .e{font-size:2.6em;line-height:1.15;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.nz-emo .n{display:inline-flex;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;background:#1d2330;color:#fff;font-weight:bold;font-size:.9em}
+.nz-arrow{font-size:1.2em;color:#9aa3b2;font-weight:bold}
+.nz-qbox{display:inline-flex;gap:.15em}
+.nz-qbox span{width:1.5em;height:1.5em;border:2px dashed #c8102e;border-radius:.3em;display:inline-flex;align-items:center;justify-content:center;color:#c8102e;font-weight:bold}
+.nz-clocks{display:flex;flex-wrap:wrap;gap:.6em 1em;justify-content:center}
+.nz-clock{display:flex;flex-direction:column;align-items:center;font-weight:bold;gap:.1em}
+.nz-clock svg{width:7em;height:7em}
+.nz-clock.ex span{color:#3d4556;font-size:.9em}
+.nz-flick{display:flex;flex-wrap:wrap;gap:1em;align-items:center;justify-content:center}
+.nz-keys{display:grid;grid-template-columns:repeat(3,2.8em);gap:.3em;padding:.4em;background:#d7dbe3;border-radius:.6em}
+.nz-keys span{height:2.2em;border-radius:.4em;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.05em;box-shadow:0 1px 0 #9aa3b2}
+.nz-flickr{display:flex;flex-direction:column;align-items:center}
+.nz-code{display:flex;flex-wrap:wrap;gap:.4em;justify-content:center}
+.nz-code span{border:2px solid #1d2330;border-radius:.4em;padding:.1em .45em;font-weight:900;font-size:1.3em;background:#fff}
+.nz-letter{background:#fffaf0;border:1px solid #e8d7b0;border-radius:.4em;padding:.6em 1em;font-size:1.3em;line-height:1.8;letter-spacing:.06em;word-break:break-all}
+.nz-sign{text-align:right;font-size:1em;margin-top:.2em}
+.nz-wd{width:11em;height:11em}
+.nz-boxes{display:flex;gap:.3em;justify-content:center;margin:.6em 0 0}
+.nz-boxes span{position:relative;width:2em;height:2em;border:2px solid #1d2330;border-radius:.3em;display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:900;background:#fff}
+.nz-boxes span.mk{border-radius:50%;border-color:#c8102e;background:#fff4d6}
+.nz-boxes span i{position:absolute;top:-.55em;right:-.55em;font-style:normal;font-size:.55em;background:#c8102e;color:#fff;border-radius:50%;width:1.6em;height:1.6em;display:flex;align-items:center;justify-content:center}
+.nz-boxes span.mk2{border-color:#1f6feb;background:#e7f0ff}
+.nz-boxes span.mk2 i{background:#1f6feb}
+.nz.st2 .nz-no{background:#1f6feb}
+.nz-center{display:block;text-align:center;width:max-content;margin:.5em auto 0;font-size:1.2em;font-weight:bold}
+.nz-tt{display:flex;flex-wrap:wrap;gap:.6em 1.2em;align-items:center;justify-content:center}
+.nz-tt table{border-collapse:collapse;font-size:.92em;width:auto}
+.nz-tt th,.nz-tt td{border:1px solid #9aa3b2;padding:.15em .45em;text-align:center;white-space:nowrap}
+.nz-tt th{background:#eef1f6}
+.nz-clue{margin:0;padding-left:1.6em;font-weight:bold;list-style:none;counter-reset:c}
+.nz-clue li{counter-increment:c;margin:.25em 0;position:relative}
+.nz-clue li::before{content:counter(c);position:absolute;left:-1.6em;top:.1em;width:1.3em;height:1.3em;border-radius:50%;background:#1d2330;color:#fff;font-size:.85em;display:flex;align-items:center;justify-content:center}
+.nz-win{display:flex;flex-wrap:wrap;gap:1.4em;justify-content:center;align-items:flex-start}
+.nz-win .cap{text-align:center;font-size:.85em;font-weight:bold;margin-bottom:.2em}
+.nz-grid{display:inline-grid;grid-template-columns:repeat(4,2em);grid-template-rows:repeat(4,2em);gap:0;border:2px solid #1d2330}
+.nz-grid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.1em}
+.nz-grid.wcard span{background:#8c95a6;border-color:#6b7385}
+.nz-grid.wcard span.hole{background:#fff}
+.nz-coop{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:.6em;align-items:stretch}
+.nz-coop .kk{border:2px dashed #9aa3b2;border-radius:.5em;padding:.4em .6em;display:flex;flex-direction:column;gap:.35em;align-items:center;text-align:center}
+.nz-coop .kh{display:block;font-weight:900;font-size:.9em;align-self:stretch;border-bottom:3px solid;padding-bottom:.15em}
+.nz-coop details.kk>summary{list-style:none;cursor:pointer;align-self:stretch}
+.nz-coop details.kk>summary::-webkit-details-marker{display:none}
+.nz-coop details.kk:not([open])>summary .kh small::after{content:"（タップで見る）"}
+.nz-coop details.kk[open]>summary .kh small::after{content:"（タップでとじる）"}
+.nz-coop .kh small{display:block;font-weight:bold;font-size:.85em;color:#5b6475}
+.nz-coop .g1 .kh{border-color:#16803c;color:#16803c}.nz-coop .g2 .kh{border-color:#b97800;color:#9a5b00}.nz-coop .g3 .kh{border-color:#6d3fd6;color:#6d3fd6}
+.nz-coop .kmv{font-weight:bold;line-height:1.9}
+.nz-coop .kmv b{display:inline-block;width:1.45em;height:1.45em;line-height:1.4;margin:.08em;border:1.5px solid #1d2330;border-radius:.25em;font-size:1.1em}
+.nz-coop .kst b{display:inline-block;min-width:1.5em;height:1.5em;line-height:1.5;margin:.1em;border-radius:50%;background:#fff4d6;border:1.5px solid #b97800;font-size:1.2em}
+.nz-coop .kst{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+.nz-coop .kst span{font-weight:bold;margin-left:.2em;white-space:nowrap}
+.nz-coop .ks{font-size:.8em;color:#3d4556}
+.nz-coop .kgrid{display:inline-grid;grid-template-columns:repeat(4,1.8em);grid-template-rows:repeat(4,1.8em);border:2px solid #1d2330}
+.nz-coop .kgrid span{display:flex;align-items:center;justify-content:center;border:1px solid #9aa3b2;font-weight:bold;font-size:1.05em}
+.nz-coop .kgrid span.st{color:#c8102e;background:#fff4d6}
+.nz-gr.gall{background:#fdecea;color:#b42318;border:1px solid #f3b2ac}
+.nz-gr{margin-left:auto;font-size:.8em;font-weight:bold;border-radius:1em;padding:.05em .7em;white-space:nowrap;align-self:center}
+.nz-gr.g1{background:#e6f6ec;color:#16803c;border:1px solid #9fd3b0}
+.nz-gr.g2{background:#fff4e0;color:#9a5b00;border:1px solid #f0c889}
+.nz-gr.g3{background:#f3eeff;color:#6d3fd6;border:1px solid #cdbdf5}
+.nz-emo .e svg.nz-mi{width:1.1em;height:1.1em;display:block}
+.nz.exq .nz-no{background:#b8860b}
+.nz.exq .nz-boxes span{border-color:#b8860b}
+/* ===NAZO-CSS-END=== */
